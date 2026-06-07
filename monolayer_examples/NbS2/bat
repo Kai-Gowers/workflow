@@ -1,0 +1,24 @@
+#!/bin/bash
+#SBATCH --job-name=vasp
+#SBATCH --nodes=6
+#SBATCH --ntasks-per-node=44
+#SBATCH --mem=180G
+#SBATCH --partition=long
+#SBATCH --time=120:00:00
+
+
+module purge
+module load intel-oneapi-compilers/2025.0.4
+module load intel-oneapi-mkl/2024.2.2
+module load intel-oneapi-mpi/2021.14.1
+
+export OMP_NUM_THREADS=1
+export I_MPI_HYDRA_BOOTSTRAP=slurm
+export I_MPI_PIN_DOMAIN=core
+ulimit -s unlimited
+
+export VASP_PATH=/projects/twist2d/modules/vasp/vasp.6.5.1/bin
+cd "$SLURM_SUBMIT_DIR"
+mpirun $VASP_PATH/vasp_std
+
+
