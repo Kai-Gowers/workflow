@@ -1,10 +1,14 @@
 # Bilayer Combinations
 # Format: material1_material2_stacking or material_bilayer_stacking
-# Stacking: 3R (0-degree twist) or 2H (180-degree twist)
+# Stacking by pair type:
+#   TMD/TMD: 3R, 2H
+#   Honeycomb/Honeycomb: AA_prime (AA for graphene homo), AB
+#   TMD/Honeycomb: TM_TX, TM_H
 # Generated systematically from materials list
 
 # Homostructures (same material)
-graphene_bilayer_3R
+graphene_bilayer_AA
+graphene_bilayer_AB
 MoS2_bilayer_3R
 MoS2_bilayer_2H
 MoSe2_bilayer_3R
@@ -25,14 +29,36 @@ TaS2_bilayer_3R
 TaS2_bilayer_2H
 TaSe2_bilayer_3R
 TaSe2_bilayer_2H
-BN_bilayer_3R
-BN_bilayer_2H
-GaN_bilayer_3R
-GaN_bilayer_2H
+BN_bilayer_AA_prime
+BN_bilayer_AB
+GaN_bilayer_AA_prime
+GaN_bilayer_AB
 
 # Heterostructures (different materials)
-graphene_BN_3R
-graphene_BN_2H
+graphene_MoS2_TM_TX
+graphene_MoS2_TM_H
+graphene_MoSe2_TM_TX
+graphene_MoSe2_TM_H
+graphene_MoTe2_TM_TX
+graphene_MoTe2_TM_H
+graphene_WS2_TM_TX
+graphene_WS2_TM_H
+graphene_WSe2_TM_TX
+graphene_WSe2_TM_H
+graphene_WTe2_TM_TX
+graphene_WTe2_TM_H
+graphene_NbS2_TM_TX
+graphene_NbS2_TM_H
+graphene_NbSe2_TM_TX
+graphene_NbSe2_TM_H
+graphene_TaS2_TM_TX
+graphene_TaS2_TM_H
+graphene_TaSe2_TM_TX
+graphene_TaSe2_TM_H
+graphene_BN_AA_prime
+graphene_BN_AB
+graphene_GaN_AA_prime
+graphene_GaN_AB
 MoS2_MoSe2_3R
 MoS2_MoSe2_2H
 MoS2_MoTe2_3R
@@ -51,8 +77,10 @@ MoS2_TaS2_3R
 MoS2_TaS2_2H
 MoS2_TaSe2_3R
 MoS2_TaSe2_2H
-MoS2_GaN_3R
-MoS2_GaN_2H
+MoS2_BN_TM_TX
+MoS2_BN_TM_H
+MoS2_GaN_TM_TX
+MoS2_GaN_TM_H
 MoSe2_MoTe2_3R
 MoSe2_MoTe2_2H
 MoSe2_WS2_3R
@@ -69,8 +97,10 @@ MoSe2_TaS2_3R
 MoSe2_TaS2_2H
 MoSe2_TaSe2_3R
 MoSe2_TaSe2_2H
-MoSe2_GaN_3R
-MoSe2_GaN_2H
+MoSe2_BN_TM_TX
+MoSe2_BN_TM_H
+MoSe2_GaN_TM_TX
+MoSe2_GaN_TM_H
 MoTe2_WS2_3R
 MoTe2_WS2_2H
 MoTe2_WSe2_3R
@@ -85,8 +115,10 @@ MoTe2_TaS2_3R
 MoTe2_TaS2_2H
 MoTe2_TaSe2_3R
 MoTe2_TaSe2_2H
-MoTe2_GaN_3R
-MoTe2_GaN_2H
+MoTe2_BN_TM_TX
+MoTe2_BN_TM_H
+MoTe2_GaN_TM_TX
+MoTe2_GaN_TM_H
 WS2_WSe2_3R
 WS2_WSe2_2H
 WS2_WTe2_3R
@@ -99,8 +131,10 @@ WS2_TaS2_3R
 WS2_TaS2_2H
 WS2_TaSe2_3R
 WS2_TaSe2_2H
-WS2_GaN_3R
-WS2_GaN_2H
+WS2_BN_TM_TX
+WS2_BN_TM_H
+WS2_GaN_TM_TX
+WS2_GaN_TM_H
 WSe2_WTe2_3R
 WSe2_WTe2_2H
 WSe2_NbS2_3R
@@ -111,8 +145,10 @@ WSe2_TaS2_3R
 WSe2_TaS2_2H
 WSe2_TaSe2_3R
 WSe2_TaSe2_2H
-WSe2_GaN_3R
-WSe2_GaN_2H
+WSe2_BN_TM_TX
+WSe2_BN_TM_H
+WSe2_GaN_TM_TX
+WSe2_GaN_TM_H
 WTe2_NbS2_3R
 WTe2_NbS2_2H
 WTe2_NbSe2_3R
@@ -121,25 +157,37 @@ WTe2_TaS2_3R
 WTe2_TaS2_2H
 WTe2_TaSe2_3R
 WTe2_TaSe2_2H
-WTe2_GaN_3R
-WTe2_GaN_2H
+WTe2_BN_TM_TX
+WTe2_BN_TM_H
+WTe2_GaN_TM_TX
+WTe2_GaN_TM_H
 NbS2_NbSe2_3R
 NbS2_NbSe2_2H
 NbS2_TaS2_3R
 NbS2_TaS2_2H
 NbS2_TaSe2_3R
 NbS2_TaSe2_2H
-NbS2_GaN_3R
-NbS2_GaN_2H
+NbS2_BN_TM_TX
+NbS2_BN_TM_H
+NbS2_GaN_TM_TX
+NbS2_GaN_TM_H
 NbSe2_TaS2_3R
 NbSe2_TaS2_2H
 NbSe2_TaSe2_3R
 NbSe2_TaSe2_2H
-NbSe2_GaN_3R
-NbSe2_GaN_2H
+NbSe2_BN_TM_TX
+NbSe2_BN_TM_H
+NbSe2_GaN_TM_TX
+NbSe2_GaN_TM_H
 TaS2_TaSe2_3R
 TaS2_TaSe2_2H
-TaS2_GaN_3R
-TaS2_GaN_2H
-TaSe2_GaN_3R
-TaSe2_GaN_2H
+TaS2_BN_TM_TX
+TaS2_BN_TM_H
+TaS2_GaN_TM_TX
+TaS2_GaN_TM_H
+TaSe2_BN_TM_TX
+TaSe2_BN_TM_H
+TaSe2_GaN_TM_TX
+TaSe2_GaN_TM_H
+BN_GaN_AA_prime
+BN_GaN_AB

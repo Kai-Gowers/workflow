@@ -1,12 +1,12 @@
 {
   "created": "/home/gowers/workflow",
-  "monolayer_batch_size": 15,
+  "monolayer_batch_size": 50,
   "bilayer_batch_size": 15,
-  "symmetry_filter": "hexagonal_P63mmc",
+  "symmetry_filter": null,
   "total_monolayers": 13,
-  "total_bilayers": 137,
+  "total_bilayers": 182,
   "total_monolayer_batches": 1,
-  "total_bilayer_batches": 10,
+  "total_bilayer_batches": 13,
   "monolayer_batches": [
     {
       "batch_number": 1,
@@ -32,7 +32,8 @@
     {
       "batch_number": 1,
       "bilayers": [
-        "graphene_bilayer_3R",
+        "graphene_bilayer_AA",
+        "graphene_bilayer_AB",
         "MoS2_bilayer_3R",
         "MoS2_bilayer_2H",
         "MoSe2_bilayer_3R",
@@ -45,42 +46,76 @@
         "WSe2_bilayer_2H",
         "WTe2_bilayer_3R",
         "WTe2_bilayer_2H",
-        "NbS2_bilayer_3R",
-        "NbS2_bilayer_2H"
+        "NbS2_bilayer_3R"
       ],
       "count": 15
     },
     {
       "batch_number": 2,
       "bilayers": [
+        "NbS2_bilayer_2H",
         "NbSe2_bilayer_3R",
         "NbSe2_bilayer_2H",
         "TaS2_bilayer_3R",
         "TaS2_bilayer_2H",
         "TaSe2_bilayer_3R",
         "TaSe2_bilayer_2H",
-        "BN_bilayer_3R",
-        "BN_bilayer_2H",
-        "GaN_bilayer_3R",
-        "GaN_bilayer_2H",
-        "graphene_BN_3R",
-        "graphene_BN_2H",
-        "MoS2_MoSe2_3R",
-        "MoS2_MoSe2_2H",
-        "MoS2_MoTe2_3R"
+        "BN_bilayer_AA_prime",
+        "BN_bilayer_AB",
+        "GaN_bilayer_AA_prime",
+        "GaN_bilayer_AB",
+        "graphene_MoS2_TM_TX",
+        "graphene_MoS2_TM_H",
+        "graphene_MoSe2_TM_TX",
+        "graphene_MoSe2_TM_H"
       ],
       "count": 15
     },
     {
       "batch_number": 3,
       "bilayers": [
+        "graphene_MoTe2_TM_TX",
+        "graphene_MoTe2_TM_H",
+        "graphene_WS2_TM_TX",
+        "graphene_WS2_TM_H",
+        "graphene_WSe2_TM_TX",
+        "graphene_WSe2_TM_H",
+        "graphene_WTe2_TM_TX",
+        "graphene_WTe2_TM_H",
+        "graphene_NbS2_TM_TX",
+        "graphene_NbS2_TM_H",
+        "graphene_NbSe2_TM_TX",
+        "graphene_NbSe2_TM_H",
+        "graphene_TaS2_TM_TX",
+        "graphene_TaS2_TM_H",
+        "graphene_TaSe2_TM_TX"
+      ],
+      "count": 15
+    },
+    {
+      "batch_number": 4,
+      "bilayers": [
+        "graphene_TaSe2_TM_H",
+        "graphene_BN_AA_prime",
+        "graphene_BN_AB",
+        "graphene_GaN_AA_prime",
+        "graphene_GaN_AB",
+        "MoS2_MoSe2_3R",
+        "MoS2_MoSe2_2H",
+        "MoS2_MoTe2_3R",
         "MoS2_MoTe2_2H",
         "MoS2_WS2_3R",
         "MoS2_WS2_2H",
         "MoS2_WSe2_3R",
         "MoS2_WSe2_2H",
         "MoS2_WTe2_3R",
-        "MoS2_WTe2_2H",
+        "MoS2_WTe2_2H"
+      ],
+      "count": 15
+    },
+    {
+      "batch_number": 5,
+      "bilayers": [
         "MoS2_NbS2_3R",
         "MoS2_NbS2_2H",
         "MoS2_NbSe2_3R",
@@ -88,18 +123,20 @@
         "MoS2_TaS2_3R",
         "MoS2_TaS2_2H",
         "MoS2_TaSe2_3R",
-        "MoS2_TaSe2_2H"
+        "MoS2_TaSe2_2H",
+        "MoS2_BN_TM_TX",
+        "MoS2_BN_TM_H",
+        "MoS2_GaN_TM_TX",
+        "MoS2_GaN_TM_H",
+        "MoSe2_MoTe2_3R",
+        "MoSe2_MoTe2_2H",
+        "MoSe2_WS2_3R"
       ],
       "count": 15
     },
     {
-      "batch_number": 4,
+      "batch_number": 6,
       "bilayers": [
-        "MoS2_GaN_3R",
-        "MoS2_GaN_2H",
-        "MoSe2_MoTe2_3R",
-        "MoSe2_MoTe2_2H",
-        "MoSe2_WS2_3R",
         "MoSe2_WS2_2H",
         "MoSe2_WSe2_3R",
         "MoSe2_WSe2_2H",
@@ -109,18 +146,20 @@
         "MoSe2_NbS2_2H",
         "MoSe2_NbSe2_3R",
         "MoSe2_NbSe2_2H",
-        "MoSe2_TaS2_3R"
+        "MoSe2_TaS2_3R",
+        "MoSe2_TaS2_2H",
+        "MoSe2_TaSe2_3R",
+        "MoSe2_TaSe2_2H",
+        "MoSe2_BN_TM_TX",
+        "MoSe2_BN_TM_H"
       ],
       "count": 15
     },
     {
-      "batch_number": 5,
+      "batch_number": 7,
       "bilayers": [
-        "MoSe2_TaS2_2H",
-        "MoSe2_TaSe2_3R",
-        "MoSe2_TaSe2_2H",
-        "MoSe2_GaN_3R",
-        "MoSe2_GaN_2H",
+        "MoSe2_GaN_TM_TX",
+        "MoSe2_GaN_TM_H",
         "MoTe2_WS2_3R",
         "MoTe2_WS2_2H",
         "MoTe2_WSe2_3R",
@@ -130,19 +169,21 @@
         "MoTe2_NbS2_3R",
         "MoTe2_NbS2_2H",
         "MoTe2_NbSe2_3R",
-        "MoTe2_NbSe2_2H"
+        "MoTe2_NbSe2_2H",
+        "MoTe2_TaS2_3R",
+        "MoTe2_TaS2_2H",
+        "MoTe2_TaSe2_3R"
       ],
       "count": 15
     },
     {
-      "batch_number": 6,
+      "batch_number": 8,
       "bilayers": [
-        "MoTe2_TaS2_3R",
-        "MoTe2_TaS2_2H",
-        "MoTe2_TaSe2_3R",
         "MoTe2_TaSe2_2H",
-        "MoTe2_GaN_3R",
-        "MoTe2_GaN_2H",
+        "MoTe2_BN_TM_TX",
+        "MoTe2_BN_TM_H",
+        "MoTe2_GaN_TM_TX",
+        "MoTe2_GaN_TM_H",
         "WS2_WSe2_3R",
         "WS2_WSe2_2H",
         "WS2_WTe2_3R",
@@ -151,18 +192,20 @@
         "WS2_NbS2_2H",
         "WS2_NbSe2_3R",
         "WS2_NbSe2_2H",
-        "WS2_TaS2_3R"
+        "WS2_TaS2_3R",
+        "WS2_TaS2_2H"
       ],
       "count": 15
     },
     {
-      "batch_number": 7,
+      "batch_number": 9,
       "bilayers": [
-        "WS2_TaS2_2H",
         "WS2_TaSe2_3R",
         "WS2_TaSe2_2H",
-        "WS2_GaN_3R",
-        "WS2_GaN_2H",
+        "WS2_BN_TM_TX",
+        "WS2_BN_TM_H",
+        "WS2_GaN_TM_TX",
+        "WS2_GaN_TM_H",
         "WSe2_WTe2_3R",
         "WSe2_WTe2_2H",
         "WSe2_NbS2_3R",
@@ -171,16 +214,18 @@
         "WSe2_NbSe2_2H",
         "WSe2_TaS2_3R",
         "WSe2_TaS2_2H",
-        "WSe2_TaSe2_3R",
-        "WSe2_TaSe2_2H"
+        "WSe2_TaSe2_3R"
       ],
       "count": 15
     },
     {
-      "batch_number": 8,
+      "batch_number": 10,
       "bilayers": [
-        "WSe2_GaN_3R",
-        "WSe2_GaN_2H",
+        "WSe2_TaSe2_2H",
+        "WSe2_BN_TM_TX",
+        "WSe2_BN_TM_H",
+        "WSe2_GaN_TM_TX",
+        "WSe2_GaN_TM_H",
         "WTe2_NbS2_3R",
         "WTe2_NbS2_2H",
         "WTe2_NbSe2_3R",
@@ -189,40 +234,58 @@
         "WTe2_TaS2_2H",
         "WTe2_TaSe2_3R",
         "WTe2_TaSe2_2H",
-        "WTe2_GaN_3R",
-        "WTe2_GaN_2H",
-        "NbS2_NbSe2_3R",
-        "NbS2_NbSe2_2H",
-        "NbS2_TaS2_3R"
+        "WTe2_BN_TM_TX",
+        "WTe2_BN_TM_H"
       ],
       "count": 15
     },
     {
-      "batch_number": 9,
+      "batch_number": 11,
       "bilayers": [
+        "WTe2_GaN_TM_TX",
+        "WTe2_GaN_TM_H",
+        "NbS2_NbSe2_3R",
+        "NbS2_NbSe2_2H",
+        "NbS2_TaS2_3R",
         "NbS2_TaS2_2H",
         "NbS2_TaSe2_3R",
         "NbS2_TaSe2_2H",
-        "NbS2_GaN_3R",
-        "NbS2_GaN_2H",
+        "NbS2_BN_TM_TX",
+        "NbS2_BN_TM_H",
+        "NbS2_GaN_TM_TX",
+        "NbS2_GaN_TM_H",
         "NbSe2_TaS2_3R",
         "NbSe2_TaS2_2H",
-        "NbSe2_TaSe2_3R",
-        "NbSe2_TaSe2_2H",
-        "NbSe2_GaN_3R",
-        "NbSe2_GaN_2H",
-        "TaS2_TaSe2_3R",
-        "TaS2_TaSe2_2H",
-        "TaS2_GaN_3R",
-        "TaS2_GaN_2H"
+        "NbSe2_TaSe2_3R"
       ],
       "count": 15
     },
     {
-      "batch_number": 10,
+      "batch_number": 12,
       "bilayers": [
-        "TaSe2_GaN_3R",
-        "TaSe2_GaN_2H"
+        "NbSe2_TaSe2_2H",
+        "NbSe2_BN_TM_TX",
+        "NbSe2_BN_TM_H",
+        "NbSe2_GaN_TM_TX",
+        "NbSe2_GaN_TM_H",
+        "TaS2_TaSe2_3R",
+        "TaS2_TaSe2_2H",
+        "TaS2_BN_TM_TX",
+        "TaS2_BN_TM_H",
+        "TaS2_GaN_TM_TX",
+        "TaS2_GaN_TM_H",
+        "TaSe2_BN_TM_TX",
+        "TaSe2_BN_TM_H",
+        "TaSe2_GaN_TM_TX",
+        "TaSe2_GaN_TM_H"
+      ],
+      "count": 15
+    },
+    {
+      "batch_number": 13,
+      "bilayers": [
+        "BN_GaN_AA_prime",
+        "BN_GaN_AB"
       ],
       "count": 2
     }

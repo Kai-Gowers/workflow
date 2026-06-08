@@ -4,7 +4,7 @@ Create bilayer training examples for VASP relaxation calculations.
 
 This script generates complete bilayer training examples by:
 1. Selecting a bilayer combination (from bilayer_combinations.txt or randomly)
-2. Generating POSCAR file for that bilayer with specified stacking (3R or 2H)
+2. Generating POSCAR file for that bilayer with family-appropriate stacking
 3. Generating POTCAR file from POSCAR elements
 4. Copying and customizing INCAR, KPOINTS, and batch script templates
 
@@ -16,7 +16,7 @@ import shutil
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent / "monolayer"))
 from generate_potcar import generate_potcar
-from generate_bilayer_poscar import generate_bilayer_poscar
+from generate_bilayer_poscar import generate_bilayer_poscar, parse_bilayer_name
 
 
 def customize_incar(template_path, output_path, material_name):
@@ -146,12 +146,7 @@ def create_bilayer_example(
             raise ValueError(f"Example directory already exists: {base_dir / example_name}")
     
     # Extract stacking from bilayer name
-    if '_3R' in bilayer_name:
-        stacking = '3R'
-    elif '_2H' in bilayer_name:
-        stacking = '2H'
-    else:
-        stacking = '3R'  # default
+    _, _, stacking = parse_bilayer_name(bilayer_name)
     
     # Create directory with bilayer name
     example_dir = base_dir / example_name

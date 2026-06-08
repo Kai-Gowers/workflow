@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
-Generate POSCAR files for bilayer structures with 3R (0-degree) or 2H (180-degree) stacking.
+Generate POSCAR files for bilayer structures with family-appropriate stacking.
 
+Stacking labels depend on pair type (TMD/TMD, honeycomb/honeycomb, TMD/honeycomb).
 By default, layers are taken from relaxed monolayer CONTCAR files in monolayer_examples.
 Use ``use_relaxed_monolayers=False`` (CLI: ``--use-templates``) for ideal template geometry.
 """
@@ -37,6 +38,8 @@ try:
     MP_HELPERS_AVAILABLE = True
 except ImportError:
     MP_HELPERS_AVAILABLE = False
+
+from structural_families import validate_stacking, STACKING_SUFFIXES
 
 try:
     sys.path.insert(0, str(MONOLAYER_DIR))
@@ -138,8 +141,10 @@ def _flip_frac_180(x, y):
     return ((1/3 - x) % 1.0, (1/3 - y) % 1.0)
 
 
-def _stack_bilayer_3R(coords1, species1, coords2, species2, c, hetero=False, dz=None):
-    """Apply 3R stacking to pre-built layer fractional coordinates (unchanged semantics)."""
+def _stack_bilayer_shift(
+    coords1, species1, coords2, species2, c, dx=1/3, dy=1/3, hetero=False, dz=None
+):
+    """Apply a rigid in-plane fractional shift (dx, dy) to layer 2, with vertical separation."""
     if dz is None:
         dz = DZ_BILAYER
     dz_frac = dz / c
@@ -150,14 +155,22 @@ def _stack_bilayer_3R(coords1, species1, coords2, species2, c, hetero=False, dz=
         z2_target_center = z1_center + dz_frac
         z_shift = z2_target_center - z2_center
 
-        # Rigid 3R shift on layer 2 (preserve each layer's in-plane registry).
         coords2_out = [
-            [*_shift_frac(c[0], c[1]), c[2] + z_shift] for c in coords2
+            [*_shift_frac(c[0], c[1], dx, dy), c[2] + z_shift] for c in coords2
         ]
         return coords1 + coords2_out, species1 + species2
 
-    coords2_out = [[*_shift_frac(c[0], c[1]), c[2] + dz_frac] for c in coords1]
+    coords2_out = [
+        [*_shift_frac(c[0], c[1], dx, dy), c[2] + dz_frac] for c in coords1
+    ]
     return coords1 + coords2_out, species1 + species1
+
+
+def _stack_bilayer_3R(coords1, species1, coords2, species2, c, hetero=False, dz=None):
+    """Apply 3R stacking to pre-built layer fractional coordinates (unchanged semantics)."""
+    return _stack_bilayer_shift(
+        coords1, species1, coords2, species2, c, dx=1/3, dy=1/3, hetero=hetero, dz=dz
+    )
 
 
 def _stack_bilayer_2H(coords1, species1, coords2, species2, c, dz=None):
@@ -171,6 +184,51 @@ def _stack_bilayer_2H(coords1, species1, coords2, species2, c, dz=None):
     z_shift = z2_target_center - z2_center
     coords2_out = [[*_flip_frac_180(c[0], c[1]), c[2] + z_shift] for c in coords2]
     return coords1 + coords2_out, species1 + species2
+
+
+def _stack_bilayer_identity(coords1, species1, coords2, species2, c, hetero=False, dz=None):
+    """Apply identity in-plane stacking (AA, TM_TX): vertical offset only."""
+    if dz is None:
+        dz = DZ_BILAYER
+    dz_frac = dz / c
+
+    if hetero:
+        z1_center = sum(c[2] for c in coords1) / len(coords1)
+        z2_center = sum(c[2] for c in coords2) / len(coords2)
+        z2_target_center = z1_center + dz_frac
+        z_shift = z2_target_center - z2_center
+        coords2_out = [[c[0], c[1], c[2] + z_shift] for c in coords2]
+        return coords1 + coords2_out, species1 + species2
+
+    coords2_out = [[c[0], c[1], c[2] + dz_frac] for c in coords1]
+    return coords1 + coords2_out, species1 + species1
+
+
+def apply_bilayer_stacking(
+    stacking, coords1, species1, coords2, species2, c, hetero=False, dz=None
+):
+    """Dispatch stacking label to the appropriate layer-2 transform."""
+    if stacking in ("3R", "TM_H"):
+        return _stack_bilayer_shift(
+            coords1, species1, coords2, species2, c,
+            dx=1/3, dy=1/3, hetero=hetero, dz=dz,
+        )
+    if stacking == "AB":
+        # Homobilayer Bernal: (+1/3, +1/3).  Heterobilayer honeycombs share the same
+        # cation-at-origin registry, so (+1/3, +1/3) eclipses cations on anions;
+        # (-1/3, -1/3) places layer-2 anion over layer-1 cation and cation over hollow.
+        dx, dy = (-1/3, -1/3) if hetero else (1/3, 1/3)
+        return _stack_bilayer_shift(
+            coords1, species1, coords2, species2, c,
+            dx=dx, dy=dy, hetero=hetero, dz=dz,
+        )
+    if stacking in ("2H", "AA_prime"):
+        return _stack_bilayer_2H(coords1, species1, coords2, species2, c, dz=dz)
+    if stacking in ("AA", "TM_TX"):
+        return _stack_bilayer_identity(
+            coords1, species1, coords2, species2, c, hetero=hetero, dz=dz
+        )
+    raise ValueError(f"Unknown stacking type: {stacking}")
 
 
 def get_bilayer_coords_3R(a, c, dMX, mat1, mat2=None, dz=None):
@@ -199,30 +257,51 @@ def get_bilayer_coords_2H(a, c, dMX, mat1, mat2=None, dz=None):
     return _stack_bilayer_2H(coords1, species1, coords2, species2, c, dz=dz)
 
 
+def get_bilayer_coords(a, c, dMX, mat1, mat2, stacking, dz=None):
+    """Get fractional coordinates for any supported stacking label."""
+    coords1, species1 = get_monolayer_coords(a, c, dMX, mat1)
+    hetero = mat1 != mat2
+    if hetero:
+        coords2, species2 = get_monolayer_coords(a, c, dMX, mat2)
+    else:
+        coords2, species2 = coords1, species1
+    return apply_bilayer_stacking(
+        stacking, coords1, species1, coords2, species2, c, hetero=hetero, dz=dz
+    )
+
+
+def _parse_material_pair(materials):
+    """Parse material1_material2 prefix from a bilayer name."""
+    import re
+
+    match = re.match(
+        r"^(graphene|[A-Z][a-z]?[A-Z]?[0-9]?)_(graphene|[A-Z][a-z]?[A-Z]?[0-9]?)$",
+        materials,
+    )
+    if match:
+        return match.group(1), match.group(2)
+    mat1, mat2 = materials.split("_", 1)
+    return mat1, mat2
+
+
 def parse_bilayer_name(bilayer_name):
     """
     Parse bilayer name to extract materials and stacking type.
     """
-    if '_bilayer_' in bilayer_name:
-        base_material = bilayer_name.split('_bilayer_')[0]
-        stacking = bilayer_name.split('_bilayer_')[1]
+    if "_bilayer_" in bilayer_name:
+        base_material, stacking = bilayer_name.rsplit("_bilayer_", 1)
+        if stacking not in STACKING_SUFFIXES:
+            raise ValueError(f"Unknown stacking suffix in bilayer name: {bilayer_name}")
         return base_material, base_material, stacking
-    else:
-        parts = bilayer_name.rsplit('_', 1)
-        if len(parts) == 2:
-            stacking = parts[1]
-            materials = parts[0]
-            if '_' in materials:
-                import re
-                match = re.match(r'^([A-Z][a-z]?[A-Z]?[0-9]?)_([A-Z][a-z]?[A-Z]?[0-9]?)$', materials)
-                if match:
-                    return match.group(1), match.group(2), stacking
-                mat1, mat2 = materials.split('_', 1)
-                return mat1, mat2, stacking
-            else:
-                raise ValueError(f"Could not parse heterostructure name: {bilayer_name}")
-        else:
-            raise ValueError(f"Could not parse bilayer name: {bilayer_name}")
+
+    for suffix in STACKING_SUFFIXES:
+        token = f"_{suffix}"
+        if bilayer_name.endswith(token):
+            materials = bilayer_name[: -len(token)]
+            mat1, mat2 = _parse_material_pair(materials)
+            return mat1, mat2, suffix
+
+    raise ValueError(f"Could not parse bilayer name: {bilayer_name}")
 
 
 def get_material_elements(material_name):
@@ -294,28 +373,24 @@ def _hexagonal_lattice_matrix(a, c):
     ])
 
 
-def _frac_to_cart(lattice_matrix, frac_coords):
-    """Fractional to Cartesian using VASP/POSCAR convention (lattice vectors = rows).
-
-    r = f1 * a1 + f2 * a2 + f3 * a3  =>  cart = frac @ lattice_matrix
-    """
-    lat = np.asarray(lattice_matrix)
-    cart = []
-    for fc in frac_coords:
-        cart.append(list(np.dot(np.asarray(fc), lat)))
-    return cart
+def _wrap_frac_xy(x, y):
+    """Wrap in-plane fractional coordinates to [0, 1)."""
+    return x % 1.0, y % 1.0
 
 
 def _write_bilayer_poscar(a, c, coords, species, output_path, comment=None):
-    """Write bilayer POSCAR with species-grouped blocks (phonopy/VASP compatible)."""
+    """Write bilayer POSCAR in Direct coordinates (fractional, species-grouped)."""
     PHONOPY_DIR = Path(__file__).parent.parent.parent / "phonopy"
     if str(PHONOPY_DIR) not in sys.path:
         sys.path.insert(0, str(PHONOPY_DIR))
     from poscar_utils import PoscarData, sort_by_species, write_poscar
 
     lattice_matrix = _hexagonal_lattice_matrix(a, c)
-    cart_coords = _frac_to_cart(lattice_matrix, coords)
-    sorted_symbols, sorted_positions, _, _ = sort_by_species(species, cart_coords)
+    direct_coords = []
+    for fc in coords:
+        x, y = _wrap_frac_xy(fc[0], fc[1])
+        direct_coords.append([x, y, fc[2]])
+    sorted_symbols, sorted_positions, _, _ = sort_by_species(species, direct_coords)
     if comment is None:
         comment = "Bilayer structure"
     poscar_data = PoscarData(
@@ -324,7 +399,7 @@ def _write_bilayer_poscar(a, c, coords, species, output_path, comment=None):
         lattice=lattice_matrix.tolist(),
         symbols=sorted_symbols,
         positions=sorted_positions,
-        coord_type="Cartesian",
+        coord_type="Direct",
     )
     write_poscar(poscar_data, output_path)
     return Structure(Lattice(lattice_matrix), species, coords)
@@ -343,8 +418,8 @@ def _generate_bilayer_from_relaxed_monolayers(
     """Build bilayer from relaxed monolayer CONTCAR Direct coordinates.
 
     Workflow: read fractional coords from each CONTCAR, apply stacking in fractional
-    space (3R: +1/3, +1/3 on layer 2), then convert to Cartesian with the shared
-    supercell lattice ``A_super`` (not the parent monolayer lattice).
+    space (rigid shifts/flips with modulo-1 wrapping in-plane), and write the POSCAR
+    under a Direct header without Cartesian conversion.
     """
     from relaxed_monolayer import (
         default_monolayer_examples_dir,
@@ -357,26 +432,14 @@ def _generate_bilayer_from_relaxed_monolayers(
     struct1 = load_relaxed_monolayer(mat1, mono_dir)
     a1 = hexagonal_lattice_a(struct1)
 
-    both_single = (
-        get_material_structure_type(mat1) == "single_element"
-        and get_material_structure_type(mat2) == "single_element"
-    )
-    if stacking == "2H" and both_single:
-        raise ValueError(
-            "2H stacking is not defined for single-element bilayers. Use 3R."
-        )
+    validate_stacking(mat1, mat2, stacking)
 
     if mat1 == mat2:
         a = a1
         coords1, species1, _ = layer_in_vacuum_cell(struct1, vacuum, in_plane_a=a)
-        if stacking == "3R":
-            coords, species = _stack_bilayer_3R(
-                coords1, species1, coords1, species1, vacuum, hetero=False, dz=dz
-            )
-        else:
-            coords, species = _stack_bilayer_2H(
-                coords1, species1, coords1, species1, vacuum, dz=dz
-            )
+        coords, species = apply_bilayer_stacking(
+            stacking, coords1, species1, coords1, species1, vacuum, hetero=False, dz=dz
+        )
     else:
         struct2 = load_relaxed_monolayer(mat2, mono_dir)
         a2 = hexagonal_lattice_a(struct2)
@@ -388,14 +451,9 @@ def _generate_bilayer_from_relaxed_monolayers(
             a = (a1 + a2) / 2
         coords1, species1, _ = layer_in_vacuum_cell(struct1, vacuum, in_plane_a=a)
         coords2, species2, _ = layer_in_vacuum_cell(struct2, vacuum, in_plane_a=a)
-        if stacking == "3R":
-            coords, species = _stack_bilayer_3R(
-                coords1, species1, coords2, species2, vacuum, hetero=True, dz=dz
-            )
-        else:
-            coords, species = _stack_bilayer_2H(
-                coords1, species1, coords2, species2, vacuum, dz=dz
-            )
+        coords, species = apply_bilayer_stacking(
+            stacking, coords1, species1, coords2, species2, vacuum, hetero=True, dz=dz
+        )
 
     comment = f"Bilayer {mat1}/{mat2} {stacking} (relaxed monolayers)"
     structure = _write_bilayer_poscar(a, vacuum, coords, species, output_path, comment=comment)
@@ -481,29 +539,11 @@ def _generate_bilayer_poscar_template(
     mat1, mat2, stacking, output_path, a, c, dz, dMX, source="fallback"
 ):
     """Template-based bilayer generation from resolved lattice parameters."""
+    validate_stacking(mat1, mat2, stacking)
     elem1 = get_material_elements(mat1)
     elem2 = get_material_elements(mat2)
 
-    both_single = (
-        get_material_structure_type(mat1) == 'single_element'
-        and get_material_structure_type(mat2) == 'single_element'
-    )
-    if stacking == '2H' and both_single:
-        raise ValueError(
-            "2H stacking is not defined for single-element bilayers (e.g. graphene, phosphorene). "
-            "Use 3R only for single-element materials."
-        )
-
-    if stacking == '3R':
-        coords, species = get_bilayer_coords_3R(
-            a, c, dMX, elem1, elem2 if mat1 != mat2 else None, dz=dz
-        )
-    elif stacking == '2H':
-        coords, species = get_bilayer_coords_2H(
-            a, c, dMX, elem1, elem2 if mat1 != mat2 else None, dz=dz
-        )
-    else:
-        raise ValueError(f"Unknown stacking type: {stacking}. Use '3R' or '2H'")
+    coords, species = get_bilayer_coords(a, c, dMX, elem1, elem2, stacking, dz=dz)
 
     structure = _write_bilayer_poscar(a, c, coords, species, output_path)
     return structure, {"source": source, "a": a, "c": c, "dz": dz, "dMX": dMX}
@@ -541,6 +581,7 @@ def generate_bilayer_poscar(
         If provided, filled with generation metadata (e.g. ``poscar_method``, ``a``, ``dz``).
     """
     mat1, mat2, stacking = parse_bilayer_name(bilayer_name)
+    validate_stacking(mat1, mat2, stacking)
     output_path = Path(output_dir) / filename
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -633,15 +674,18 @@ def main():
 Examples:
   # Generate POSCAR for MoS2 bilayer with 3R stacking
   python3 generate_bilayer_poscar.py MoS2_bilayer_3R -o output_dir
-  
-  # Generate POSCAR for MoS2_WS2 heterostructure with 2H stacking
-  python3 generate_bilayer_poscar.py MoS2_WS2_2H -o output_dir
+
+  # Generate POSCAR for BN bilayer with AB stacking
+  python3 generate_bilayer_poscar.py BN_bilayer_AB -o output_dir
+
+  # Generate POSCAR for MoS2/GaN heterostructure with TM_TX stacking
+  python3 generate_bilayer_poscar.py MoS2_GaN_TM_TX -o output_dir
         """
     )
     parser.add_argument(
         "bilayer_name",
         type=str,
-        help="Bilayer name (e.g., 'MoS2_bilayer_3R' or 'MoS2_WS2_2H')"
+        help="Bilayer name (e.g., 'MoS2_bilayer_3R', 'BN_bilayer_AB', 'MoS2_GaN_TM_TX')"
     )
     parser.add_argument(
         "-o", "--output-dir",
