@@ -1,12 +1,12 @@
 {
-  "created": "/home/gowers/workflow",
+  "created": "/home/gowers/workflow/scripts/batch_management",
   "monolayer_batch_size": 50,
   "bilayer_batch_size": 15,
-  "symmetry_filter": null,
+  "symmetry_filter": "hexagonal_P63mmc",
   "total_monolayers": 13,
-  "total_bilayers": 182,
+  "total_bilayers": 138,
   "total_monolayer_batches": 1,
-  "total_bilayer_batches": 13,
+  "total_bilayer_batches": 10,
   "monolayer_batches": [
     {
       "batch_number": 1,
@@ -64,44 +64,16 @@
         "BN_bilayer_AB",
         "GaN_bilayer_AA_prime",
         "GaN_bilayer_AB",
-        "graphene_MoS2_TM_TX",
-        "graphene_MoS2_TM_H",
-        "graphene_MoSe2_TM_TX",
-        "graphene_MoSe2_TM_H"
+        "graphene_BN_AA_prime",
+        "graphene_BN_AB",
+        "MoS2_MoSe2_3R",
+        "MoS2_MoSe2_2H"
       ],
       "count": 15
     },
     {
       "batch_number": 3,
       "bilayers": [
-        "graphene_MoTe2_TM_TX",
-        "graphene_MoTe2_TM_H",
-        "graphene_WS2_TM_TX",
-        "graphene_WS2_TM_H",
-        "graphene_WSe2_TM_TX",
-        "graphene_WSe2_TM_H",
-        "graphene_WTe2_TM_TX",
-        "graphene_WTe2_TM_H",
-        "graphene_NbS2_TM_TX",
-        "graphene_NbS2_TM_H",
-        "graphene_NbSe2_TM_TX",
-        "graphene_NbSe2_TM_H",
-        "graphene_TaS2_TM_TX",
-        "graphene_TaS2_TM_H",
-        "graphene_TaSe2_TM_TX"
-      ],
-      "count": 15
-    },
-    {
-      "batch_number": 4,
-      "bilayers": [
-        "graphene_TaSe2_TM_H",
-        "graphene_BN_AA_prime",
-        "graphene_BN_AB",
-        "graphene_GaN_AA_prime",
-        "graphene_GaN_AB",
-        "MoS2_MoSe2_3R",
-        "MoS2_MoSe2_2H",
         "MoS2_MoTe2_3R",
         "MoS2_MoTe2_2H",
         "MoS2_WS2_3R",
@@ -109,34 +81,26 @@
         "MoS2_WSe2_3R",
         "MoS2_WSe2_2H",
         "MoS2_WTe2_3R",
-        "MoS2_WTe2_2H"
-      ],
-      "count": 15
-    },
-    {
-      "batch_number": 5,
-      "bilayers": [
+        "MoS2_WTe2_2H",
         "MoS2_NbS2_3R",
         "MoS2_NbS2_2H",
         "MoS2_NbSe2_3R",
         "MoS2_NbSe2_2H",
         "MoS2_TaS2_3R",
         "MoS2_TaS2_2H",
-        "MoS2_TaSe2_3R",
-        "MoS2_TaSe2_2H",
-        "MoS2_BN_TM_TX",
-        "MoS2_BN_TM_H",
-        "MoS2_GaN_TM_TX",
-        "MoS2_GaN_TM_H",
-        "MoSe2_MoTe2_3R",
-        "MoSe2_MoTe2_2H",
-        "MoSe2_WS2_3R"
+        "MoS2_TaSe2_3R"
       ],
       "count": 15
     },
     {
-      "batch_number": 6,
+      "batch_number": 4,
       "bilayers": [
+        "MoS2_TaSe2_2H",
+        "MoS2_GaN_TM_TX",
+        "MoS2_GaN_TM_H",
+        "MoSe2_MoTe2_3R",
+        "MoSe2_MoTe2_2H",
+        "MoSe2_WS2_3R",
         "MoSe2_WS2_2H",
         "MoSe2_WSe2_3R",
         "MoSe2_WSe2_2H",
@@ -145,19 +109,17 @@
         "MoSe2_NbS2_3R",
         "MoSe2_NbS2_2H",
         "MoSe2_NbSe2_3R",
-        "MoSe2_NbSe2_2H",
-        "MoSe2_TaS2_3R",
-        "MoSe2_TaS2_2H",
-        "MoSe2_TaSe2_3R",
-        "MoSe2_TaSe2_2H",
-        "MoSe2_BN_TM_TX",
-        "MoSe2_BN_TM_H"
+        "MoSe2_NbSe2_2H"
       ],
       "count": 15
     },
     {
-      "batch_number": 7,
+      "batch_number": 5,
       "bilayers": [
+        "MoSe2_TaS2_3R",
+        "MoSe2_TaS2_2H",
+        "MoSe2_TaSe2_3R",
+        "MoSe2_TaSe2_2H",
         "MoSe2_GaN_TM_TX",
         "MoSe2_GaN_TM_H",
         "MoTe2_WS2_3R",
@@ -168,20 +130,18 @@
         "MoTe2_WTe2_2H",
         "MoTe2_NbS2_3R",
         "MoTe2_NbS2_2H",
-        "MoTe2_NbSe2_3R",
-        "MoTe2_NbSe2_2H",
-        "MoTe2_TaS2_3R",
-        "MoTe2_TaS2_2H",
-        "MoTe2_TaSe2_3R"
+        "MoTe2_NbSe2_3R"
       ],
       "count": 15
     },
     {
-      "batch_number": 8,
+      "batch_number": 6,
       "bilayers": [
+        "MoTe2_NbSe2_2H",
+        "MoTe2_TaS2_3R",
+        "MoTe2_TaS2_2H",
+        "MoTe2_TaSe2_3R",
         "MoTe2_TaSe2_2H",
-        "MoTe2_BN_TM_TX",
-        "MoTe2_BN_TM_H",
         "MoTe2_GaN_TM_TX",
         "MoTe2_GaN_TM_H",
         "WS2_WSe2_3R",
@@ -191,19 +151,17 @@
         "WS2_NbS2_3R",
         "WS2_NbS2_2H",
         "WS2_NbSe2_3R",
-        "WS2_NbSe2_2H",
-        "WS2_TaS2_3R",
-        "WS2_TaS2_2H"
+        "WS2_NbSe2_2H"
       ],
       "count": 15
     },
     {
-      "batch_number": 9,
+      "batch_number": 7,
       "bilayers": [
+        "WS2_TaS2_3R",
+        "WS2_TaS2_2H",
         "WS2_TaSe2_3R",
         "WS2_TaSe2_2H",
-        "WS2_BN_TM_TX",
-        "WS2_BN_TM_H",
         "WS2_GaN_TM_TX",
         "WS2_GaN_TM_H",
         "WSe2_WTe2_3R",
@@ -219,11 +177,9 @@
       "count": 15
     },
     {
-      "batch_number": 10,
+      "batch_number": 8,
       "bilayers": [
         "WSe2_TaSe2_2H",
-        "WSe2_BN_TM_TX",
-        "WSe2_BN_TM_H",
         "WSe2_GaN_TM_TX",
         "WSe2_GaN_TM_H",
         "WTe2_NbS2_3R",
@@ -234,60 +190,42 @@
         "WTe2_TaS2_2H",
         "WTe2_TaSe2_3R",
         "WTe2_TaSe2_2H",
-        "WTe2_BN_TM_TX",
-        "WTe2_BN_TM_H"
+        "WTe2_GaN_TM_TX",
+        "WTe2_GaN_TM_H",
+        "NbS2_NbSe2_3R",
+        "NbS2_NbSe2_2H"
       ],
       "count": 15
     },
     {
-      "batch_number": 11,
+      "batch_number": 9,
       "bilayers": [
-        "WTe2_GaN_TM_TX",
-        "WTe2_GaN_TM_H",
-        "NbS2_NbSe2_3R",
-        "NbS2_NbSe2_2H",
         "NbS2_TaS2_3R",
         "NbS2_TaS2_2H",
         "NbS2_TaSe2_3R",
         "NbS2_TaSe2_2H",
-        "NbS2_BN_TM_TX",
-        "NbS2_BN_TM_H",
         "NbS2_GaN_TM_TX",
         "NbS2_GaN_TM_H",
         "NbSe2_TaS2_3R",
         "NbSe2_TaS2_2H",
-        "NbSe2_TaSe2_3R"
-      ],
-      "count": 15
-    },
-    {
-      "batch_number": 12,
-      "bilayers": [
+        "NbSe2_TaSe2_3R",
         "NbSe2_TaSe2_2H",
-        "NbSe2_BN_TM_TX",
-        "NbSe2_BN_TM_H",
         "NbSe2_GaN_TM_TX",
         "NbSe2_GaN_TM_H",
         "TaS2_TaSe2_3R",
         "TaS2_TaSe2_2H",
-        "TaS2_BN_TM_TX",
-        "TaS2_BN_TM_H",
-        "TaS2_GaN_TM_TX",
-        "TaS2_GaN_TM_H",
-        "TaSe2_BN_TM_TX",
-        "TaSe2_BN_TM_H",
-        "TaSe2_GaN_TM_TX",
-        "TaSe2_GaN_TM_H"
+        "TaS2_GaN_TM_TX"
       ],
       "count": 15
     },
     {
-      "batch_number": 13,
+      "batch_number": 10,
       "bilayers": [
-        "BN_GaN_AA_prime",
-        "BN_GaN_AB"
+        "TaS2_GaN_TM_H",
+        "TaSe2_GaN_TM_TX",
+        "TaSe2_GaN_TM_H"
       ],
-      "count": 2
+      "count": 3
     }
   ]
 }

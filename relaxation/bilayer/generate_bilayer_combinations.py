@@ -106,15 +106,9 @@ def are_materials_compatible(mat1, mat2, api_key=None, tolerance=0.20, verbose=F
         print("  Set MP_API_KEY environment variable", file=sys.stderr)
         return False
     
-    if api_key is None:
-        if _get_api_key:
-            api_key = _get_api_key()
-    
-    if api_key is None:
-        print(f"Warning: No API key found. Cannot check compatibility for {mat1}-{mat2}", file=sys.stderr)
-        print("  Set MP_API_KEY environment variable", file=sys.stderr)
-        return False
-    
+    if api_key is None and _get_api_key:
+        api_key = _get_api_key()
+
     return _are_compatible_mp(
         mat1, mat2, api_key, tolerance, verbose, lattice_constants=lattice_constants
     )
@@ -174,19 +168,21 @@ def generate_bilayer_combinations(materials, include_homostructures=True, includ
     if only_compatible and include_heterostructures and _get_all_lattice_constants:
         if api_key is None and _get_api_key:
             api_key = _get_api_key()
-        
-        if api_key:
-            if verbose:
-                print(f"Fetching lattice constants for {len(materials)} materials from Materials Project API...")
-            lattice_constants = _get_all_lattice_constants(materials, api_key, verbose=verbose)
-            
-            # Report materials that couldn't be found
-            missing = [mat for mat, a in lattice_constants.items() if a is None]
-            if missing:
-                print(f"Warning: Could not retrieve lattice constants for {len(missing)} materials: {', '.join(missing)}", file=sys.stderr)
-        else:
-            print("Warning: No API key found. Cannot check compatibility.", file=sys.stderr)
-            print("  Set MP_API_KEY environment variable to enable compatibility checking.", file=sys.stderr)
+
+        if verbose:
+            source = "Materials Project API" if api_key else "local cache"
+            print(f"Fetching lattice constants for {len(materials)} materials from {source}...")
+        lattice_constants = _get_all_lattice_constants(materials, api_key, verbose=verbose)
+
+        missing = [mat for mat, a in lattice_constants.items() if a is None]
+        if missing:
+            print(
+                f"Warning: Could not retrieve lattice constants for {len(missing)} materials: "
+                f"{', '.join(missing)}",
+                file=sys.stderr,
+            )
+        elif api_key is None and verbose:
+            print("  (no MP_API_KEY; used mp_lattice_params_cache.json)")
     
     if include_homostructures:
         # Homostructures: same material (always compatible)
@@ -338,9 +334,10 @@ def generate_bilayer_list(
         api_key = _get_api_key()
     
     if only_compatible and api_key is None:
-        print("Warning: No API key found. Cannot check compatibility.", file=sys.stderr)
-        print("  Set MP_API_KEY environment variable to enable compatibility checking.", file=sys.stderr)
-        print("  Proceeding without compatibility filtering...", file=sys.stderr)
+        print(
+            "Note: No MP_API_KEY; using cached lattice constants for compatibility filtering.",
+            file=sys.stderr,
+        )
     
     # Generate combinations
     bilayer_combos = generate_bilayer_combinations(
