@@ -187,7 +187,7 @@ def _stack_bilayer_2H(coords1, species1, coords2, species2, c, dz=None):
 
 
 def _stack_bilayer_identity(coords1, species1, coords2, species2, c, hetero=False, dz=None):
-    """Apply identity in-plane stacking (AA, TM_TX): vertical offset only."""
+    """Apply identity in-plane stacking: vertical offset only."""
     if dz is None:
         dz = DZ_BILAYER
     dz_frac = dz / c
@@ -208,26 +208,33 @@ def apply_bilayer_stacking(
     stacking, coords1, species1, coords2, species2, c, hetero=False, dz=None
 ):
     """Dispatch stacking label to the appropriate layer-2 transform."""
-    if stacking in ("3R", "TM_H"):
+    if stacking == "3R":
         return _stack_bilayer_shift(
             coords1, species1, coords2, species2, c,
             dx=1/3, dy=1/3, hetero=hetero, dz=dz,
         )
     if stacking == "AB":
-        # Homobilayer Bernal: (+1/3, +1/3).  Heterobilayer honeycombs share the same
-        # cation-at-origin registry, so (+1/3, +1/3) eclipses cations on anions;
-        # (-1/3, -1/3) places layer-2 anion over layer-1 cation and cation over hollow.
-        dx, dy = (-1/3, -1/3) if hetero else (1/3, 1/3)
         return _stack_bilayer_shift(
             coords1, species1, coords2, species2, c,
-            dx=dx, dy=dy, hetero=hetero, dz=dz,
+            dx=1/3, dy=1/3, hetero=hetero, dz=dz,
         )
-    if stacking in ("2H", "AA_prime"):
+    if stacking == "BA":
+        return _stack_bilayer_shift(
+            coords1, species1, coords2, species2, c,
+            dx=2/3, dy=2/3, hetero=hetero, dz=dz,
+        )
+    if stacking == "TM_H":
+        return _stack_bilayer_shift(
+            coords1, species1, coords2, species2, c,
+            dx=1/3, dy=1/3, hetero=hetero, dz=dz,
+        )
+    if stacking == "TM_H2":
+        return _stack_bilayer_shift(
+            coords1, species1, coords2, species2, c,
+            dx=2/3, dy=2/3, hetero=hetero, dz=dz,
+        )
+    if stacking == "2H":
         return _stack_bilayer_2H(coords1, species1, coords2, species2, c, dz=dz)
-    if stacking in ("AA", "TM_TX"):
-        return _stack_bilayer_identity(
-            coords1, species1, coords2, species2, c, hetero=hetero, dz=dz
-        )
     raise ValueError(f"Unknown stacking type: {stacking}")
 
 
@@ -678,14 +685,14 @@ Examples:
   # Generate POSCAR for BN bilayer with AB stacking
   python3 generate_bilayer_poscar.py BN_bilayer_AB -o output_dir
 
-  # Generate POSCAR for MoS2/GaN heterostructure with TM_TX stacking
-  python3 generate_bilayer_poscar.py MoS2_GaN_TM_TX -o output_dir
+  # Generate POSCAR for MoS2/GaN heterostructure with TM_H stacking
+  python3 generate_bilayer_poscar.py MoS2_GaN_TM_H -o output_dir
         """
     )
     parser.add_argument(
         "bilayer_name",
         type=str,
-        help="Bilayer name (e.g., 'MoS2_bilayer_3R', 'BN_bilayer_AB', 'MoS2_GaN_TM_TX')"
+        help="Bilayer name (e.g., 'MoS2_bilayer_3R', 'BN_bilayer_AB', 'MoS2_GaN_TM_H')"
     )
     parser.add_argument(
         "-o", "--output-dir",

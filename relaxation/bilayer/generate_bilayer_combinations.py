@@ -7,8 +7,8 @@ and assigns exactly two physically meaningful stacking configurations per pair b
 structural family:
 
   - TMD / TMD: 3R, 2H
-  - Honeycomb / Honeycomb (graphene, BN, GaN): AA_prime/AA, AB
-  - TMD / Honeycomb: TM_TX, TM_H
+  - Honeycomb / Honeycomb (graphene, BN, GaN): AB, BA
+  - TMD / Honeycomb: TM_H, TM_H2
 
 Compatibility checking is based on lattice constant matching from The Materials Project API.
 Materials are considered compatible if their lattice constants are within 20% of each other.
@@ -51,7 +51,7 @@ _are_compatible_mp, _get_all_lattice_constants, _get_api_key, _filter_materials 
 
 # Structural family classification for stacking
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "common"))
-from structural_families import get_allowed_stackings, format_stacking_label, validate_stacking, STACKING_SUFFIXES
+from structural_families import get_allowed_stackings, validate_stacking, STACKING_SUFFIXES
 
 
 def are_materials_compatible(mat1, mat2, api_key=None, tolerance=0.20, verbose=False, lattice_constants=None):
@@ -228,7 +228,7 @@ def format_bilayer_name(mat1, mat2, stacking):
     mat2 : str
         Second material name
     stacking : str
-        Stacking type (e.g. '3R', '2H', 'AA', 'AB', 'TM_TX', 'TM_H')
+        Stacking type (e.g. '3R', '2H', 'AB', 'BA', 'TM_H', 'TM_H2')
     
     Returns:
     --------
@@ -359,8 +359,7 @@ def generate_bilayer_list(
     bilayer_list = []
     for mat1, mat2 in bilayer_combos:
         for stacking in get_allowed_stackings(mat1, mat2):
-            label = format_stacking_label(mat1, mat2, stacking)
-            bilayer_list.append(format_bilayer_name(mat1, mat2, label))
+            bilayer_list.append(format_bilayer_name(mat1, mat2, stacking))
 
     print(
         f"Total bilayer configurations: {len(bilayer_list)} "
@@ -378,23 +377,21 @@ def generate_bilayer_list(
         f.write("# Format: material1_material2_stacking or material_bilayer_stacking\n")
         f.write("# Stacking by pair type:\n")
         f.write("#   TMD/TMD: 3R, 2H\n")
-        f.write("#   Honeycomb/Honeycomb: AA_prime (AA for graphene homo), AB\n")
-        f.write("#   TMD/Honeycomb: TM_TX, TM_H\n")
+        f.write("#   Honeycomb/Honeycomb: AB, BA\n")
+        f.write("#   TMD/Honeycomb: TM_H, TM_H2\n")
         f.write("# Generated systematically from materials list\n\n")
 
         f.write("# Homostructures (same material)\n")
         for mat1, mat2 in bilayer_combos:
             if mat1 == mat2:
                 for stacking in get_allowed_stackings(mat1, mat2):
-                    label = format_stacking_label(mat1, mat2, stacking)
-                    f.write(f"{format_bilayer_name(mat1, mat2, label)}\n")
+                    f.write(f"{format_bilayer_name(mat1, mat2, stacking)}\n")
 
         f.write("\n# Heterostructures (different materials)\n")
         for mat1, mat2 in bilayer_combos:
             if mat1 != mat2:
                 for stacking in get_allowed_stackings(mat1, mat2):
-                    label = format_stacking_label(mat1, mat2, stacking)
-                    f.write(f"{format_bilayer_name(mat1, mat2, label)}\n")
+                    f.write(f"{format_bilayer_name(mat1, mat2, stacking)}\n")
     
     print(f"Bilayer list written to: {output_file}")
     
