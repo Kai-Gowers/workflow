@@ -3,9 +3,14 @@
 Generate systematic bilayer combinations from materials list.
 
 This script creates all possible bilayer combinations (homostructures and heterostructures)
-and generates a list with both 3R (0-degree) and 2H (180-degree) stacking versions.
+and assigns exactly two physically meaningful stacking configurations per pair based on
+structural family:
 
-Compatibility checking is now based on lattice constant matching from The Materials Project API.
+  - TMD / TMD: 3R, 2H
+  - Honeycomb / Honeycomb (graphene, BN, GaN): AA_prime/AA, AB
+  - TMD / Honeycomb: TM_TX, TM_H
+
+Compatibility checking is based on lattice constant matching from The Materials Project API.
 Materials are considered compatible if their lattice constants are within 20% of each other.
 """
 
@@ -44,15 +49,9 @@ def _import_mp_api_functions():
 # Try to import Materials Project API functions
 _are_compatible_mp, _get_all_lattice_constants, _get_api_key, _filter_materials = _import_mp_api_functions()
 
-# Single-element 2D materials: only 3R stacking is defined (no 2H)
-SINGLE_ELEMENT_MATERIALS = frozenset([
-    'graphene', 'phosphorene', 'silicene', 'germanene', 'stanene'
-])
-
-
-def is_single_element_material(material_name):
-    """Return True if the material is single-element (only 3R stacking, no 2H)."""
-    return material_name in SINGLE_ELEMENT_MATERIALS
+# Structural family classification for stacking
+sys.path.insert(0, str(Path(__file__).parent.parent.parent / "common"))
+from structural_families import get_allowed_stackings, format_stacking_label, validate_stacking, STACKING_SUFFIXES
 
 
 def are_materials_compatible(mat1, mat2, api_key=None, tolerance=0.20, verbose=False, lattice_constants=None):
@@ -107,15 +106,9 @@ def are_materials_compatible(mat1, mat2, api_key=None, tolerance=0.20, verbose=F
         print("  Set MP_API_KEY environment variable", file=sys.stderr)
         return False
     
-    if api_key is None:
-        if _get_api_key:
-            api_key = _get_api_key()
-    
-    if api_key is None:
-        print(f"Warning: No API key found. Cannot check compatibility for {mat1}-{mat2}", file=sys.stderr)
-        print("  Set MP_API_KEY environment variable", file=sys.stderr)
-        return False
-    
+    if api_key is None and _get_api_key:
+        api_key = _get_api_key()
+
     return _are_compatible_mp(
         mat1, mat2, api_key, tolerance, verbose, lattice_constants=lattice_constants
     )
@@ -175,19 +168,21 @@ def generate_bilayer_combinations(materials, include_homostructures=True, includ
     if only_compatible and include_heterostructures and _get_all_lattice_constants:
         if api_key is None and _get_api_key:
             api_key = _get_api_key()
-        
-        if api_key:
-            if verbose:
-                print(f"Fetching lattice constants for {len(materials)} materials from Materials Project API...")
-            lattice_constants = _get_all_lattice_constants(materials, api_key, verbose=verbose)
-            
-            # Report materials that couldn't be found
-            missing = [mat for mat, a in lattice_constants.items() if a is None]
-            if missing:
-                print(f"Warning: Could not retrieve lattice constants for {len(missing)} materials: {', '.join(missing)}", file=sys.stderr)
-        else:
-            print("Warning: No API key found. Cannot check compatibility.", file=sys.stderr)
-            print("  Set MP_API_KEY environment variable to enable compatibility checking.", file=sys.stderr)
+
+        if verbose:
+            source = "Materials Project API" if api_key else "local cache"
+            print(f"Fetching lattice constants for {len(materials)} materials from {source}...")
+        lattice_constants = _get_all_lattice_constants(materials, api_key, verbose=verbose)
+
+        missing = [mat for mat, a in lattice_constants.items() if a is None]
+        if missing:
+            print(
+                f"Warning: Could not retrieve lattice constants for {len(missing)} materials: "
+                f"{', '.join(missing)}",
+                file=sys.stderr,
+            )
+        elif api_key is None and verbose:
+            print("  (no MP_API_KEY; used mp_lattice_params_cache.json)")
     
     if include_homostructures:
         # Homostructures: same material (always compatible)
@@ -233,7 +228,7 @@ def format_bilayer_name(mat1, mat2, stacking):
     mat2 : str
         Second material name
     stacking : str
-        Stacking type: '3R' or '2H'
+        Stacking type (e.g. '3R', '2H', 'AA', 'AB', 'TM_TX', 'TM_H')
     
     Returns:
     --------
@@ -288,7 +283,7 @@ def generate_bilayer_list(
     require_p63mmc=True,
 ):
     """
-    Generate complete list of bilayer combinations with both stacking types.
+    Generate complete list of bilayer combinations with family-appropriate stacking types.
     
     Parameters:
     -----------
@@ -339,9 +334,10 @@ def generate_bilayer_list(
         api_key = _get_api_key()
     
     if only_compatible and api_key is None:
-        print("Warning: No API key found. Cannot check compatibility.", file=sys.stderr)
-        print("  Set MP_API_KEY environment variable to enable compatibility checking.", file=sys.stderr)
-        print("  Proceeding without compatibility filtering...", file=sys.stderr)
+        print(
+            "Note: No MP_API_KEY; using cached lattice constants for compatibility filtering.",
+            file=sys.stderr,
+        )
     
     # Generate combinations
     bilayer_combos = generate_bilayer_combinations(
@@ -359,16 +355,17 @@ def generate_bilayer_list(
     else:
         print(f"Generated {len(bilayer_combos)} bilayer combinations (all combinations)")
     
-    # Create list with stacking types: single-element only 3R; multi-element 3R and 2H
+    # Create list with two stacking configurations per pair (family-dependent)
     bilayer_list = []
     for mat1, mat2 in bilayer_combos:
-        bilayer_list.append(format_bilayer_name(mat1, mat2, '3R'))
-        # 2H only for multi-element materials (single-element has no 2H)
-        if not (is_single_element_material(mat1) and is_single_element_material(mat2)):
-            bilayer_list.append(format_bilayer_name(mat1, mat2, '2H'))
-    
-    n_2h = sum(1 for n in bilayer_list if n.endswith('_2H'))
-    print(f"Total bilayer configurations: {len(bilayer_list)} ({len(bilayer_combos)} combinations; 3R for all, 2H for multi-element only)")
+        for stacking in get_allowed_stackings(mat1, mat2):
+            label = format_stacking_label(mat1, mat2, stacking)
+            bilayer_list.append(format_bilayer_name(mat1, mat2, label))
+
+    print(
+        f"Total bilayer configurations: {len(bilayer_list)} "
+        f"({len(bilayer_combos)} pairs × 2 stackings)"
+    )
     
     # Write to file
     if output_file is None:
@@ -379,23 +376,25 @@ def generate_bilayer_list(
     with open(output_file, 'w') as f:
         f.write("# Bilayer Combinations\n")
         f.write("# Format: material1_material2_stacking or material_bilayer_stacking\n")
-        f.write("# Stacking: 3R (0-degree twist) or 2H (180-degree twist)\n")
+        f.write("# Stacking by pair type:\n")
+        f.write("#   TMD/TMD: 3R, 2H\n")
+        f.write("#   Honeycomb/Honeycomb: AA_prime (AA for graphene homo), AB\n")
+        f.write("#   TMD/Honeycomb: TM_TX, TM_H\n")
         f.write("# Generated systematically from materials list\n\n")
-        
-        # Group by combination type (single-element: 3R only; multi-element: 3R and 2H)
+
         f.write("# Homostructures (same material)\n")
         for mat1, mat2 in bilayer_combos:
             if mat1 == mat2:
-                f.write(f"{format_bilayer_name(mat1, mat2, '3R')}\n")
-                if not (is_single_element_material(mat1) and is_single_element_material(mat2)):
-                    f.write(f"{format_bilayer_name(mat1, mat2, '2H')}\n")
-        
+                for stacking in get_allowed_stackings(mat1, mat2):
+                    label = format_stacking_label(mat1, mat2, stacking)
+                    f.write(f"{format_bilayer_name(mat1, mat2, label)}\n")
+
         f.write("\n# Heterostructures (different materials)\n")
         for mat1, mat2 in bilayer_combos:
             if mat1 != mat2:
-                f.write(f"{format_bilayer_name(mat1, mat2, '3R')}\n")
-                if not (is_single_element_material(mat1) and is_single_element_material(mat2)):
-                    f.write(f"{format_bilayer_name(mat1, mat2, '2H')}\n")
+                for stacking in get_allowed_stackings(mat1, mat2):
+                    label = format_stacking_label(mat1, mat2, stacking)
+                    f.write(f"{format_bilayer_name(mat1, mat2, label)}\n")
     
     print(f"Bilayer list written to: {output_file}")
     

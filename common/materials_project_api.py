@@ -305,6 +305,10 @@ def get_material_symmetry(
             material_id=entry.get("material_id"),
         )
 
+    params_sym = _symmetry_from_params_cache(material_name)
+    if params_sym is not None:
+        return params_sym
+
     if not MP_API_AVAILABLE:
         return _symmetry_result(material_name, source="missing", reason="mp_api_not_available")
 

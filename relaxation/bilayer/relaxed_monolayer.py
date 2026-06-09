@@ -3,7 +3,6 @@
 
 from __future__ import annotations
 
-import math
 from pathlib import Path
 from typing import List, Optional, Tuple
 
@@ -16,14 +15,6 @@ except ImportError as exc:
         "pymatgen is required for relaxed monolayer loading. "
         "Install with: pip install pymatgen"
     ) from exc
-
-
-def _hexagonal_lattice_matrix(a: float, c: float) -> np.ndarray:
-    return np.array([
-        [a, 0.0, 0.0],
-        [a / 2.0, a * math.sqrt(3) / 2.0, 0.0],
-        [0.0, 0.0, c],
-    ])
 
 
 def default_monolayer_examples_dir() -> Path:
@@ -83,9 +74,8 @@ def layer_in_vacuum_cell(
     Fractional (Direct) coordinates for a layer in the bilayer supercell.
 
     Reads the pristine fractional coordinates from the relaxed monolayer (CONTCAR
-    Direct positions via ``structure.frac_coords``). In-plane fractional ``(x, y)``
-    are kept unchanged; Cartesian positions are formed later with ``frac @ A_super``
-    in ``generate_bilayer_poscar._frac_to_cart``.
+    Direct positions via ``structure.frac_coords``). Coordinates remain in fractional
+    space through stacking and POSCAR output.
 
     Parameters
     ----------

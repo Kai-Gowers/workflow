@@ -10,10 +10,10 @@ AMIN = 0.01
 NELM = 200
 
 # Ionic relaxation (quasi-Newton, fixed cell)
-NSW = 600
+NSW = 400
 IBRION = 1
 ISIF = 2 # Gemini suggested 4
-EDIFFG = -1E-4
+EDIFFG = -1E-6
 
 # DFT-D3(BJ) van der Waals correction
 IVDW = 12

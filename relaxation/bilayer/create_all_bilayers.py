@@ -3,7 +3,7 @@
 Systematically create all bilayer training examples from bilayer_combinations.txt.
 
 This script reads the bilayer combinations list and creates training examples
-for each bilayer with both 3R and 2H stacking.
+for each bilayer with its two family-appropriate stacking configurations.
 """
 
 from pathlib import Path
