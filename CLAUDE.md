@@ -55,6 +55,25 @@ python3 scripts/batch_management/submit_batch.py 1         # Submit batch 1
 python3 scripts/batch_management/report_symmetry_eligibility.py
 ```
 
+## Batch Workflow (in order)
+
+Run these three steps in sequence to go from relaxed structures to final band structures:
+
+**Step 1 — Submit relaxation jobs:**
+```bash
+python3 scripts/batch_management/submit_batch.py --<monolayer/bilayer> <batch_number>
+```
+
+**Step 2 — Create displacements and submit staticpoint calculations:**
+```bash
+python3 phonopy/submit_batch.py --<monolayer/bilayer> --batch <batch_number>
+```
+
+**Step 3 — Post-process into band structures (output goes to `FINAL_RESULTS/`):**
+```bash
+python3 phonopy/postprocess_batch.py --<monolayer/bilayer> --batch <batch_number>
+```
+
 **Cleanup:**
 ```bash
 python3 scripts/maintenance/cleanup_all.py                 # Remove all generated dirs
