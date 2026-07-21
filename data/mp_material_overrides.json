@@ -7,6 +7,38 @@
       "dMX": 1.6712636406701298,
       "material_id": "mp-2207",
       "note": "Tuned in-plane a; dMX from MP mp-2207"
+    },
+    "BN": {
+      "a": 2.5099,
+      "c": 20.0,
+      "dz": 6.5,
+      "dMX": 0.0,
+      "material_id": "mp-629015",
+      "note": "DFT cell-relaxed (ISIF=4) in-plane a; corrects +0.3% residual strain vs raw MP template, fixed the Gamma-point phonon dip (-0.36 -> -0.03 THz)"
+    },
+    "MoSe2": {
+      "a": 3.283583,
+      "c": 20.0,
+      "dz": 6.5,
+      "dMX": 1.676526,
+      "material_id": "mp-1634",
+      "note": "DFT cell-relaxed (ISIF=4) a and dMX; corrects residual strain vs raw MP template, fixed the Gamma-point phonon dip (-0.226 -> -0.078 THz, now STABLE)"
+    },
+    "MoTe2": {
+      "a": 3.502959,
+      "c": 20.0,
+      "dz": 6.5,
+      "dMX": 1.818646,
+      "material_id": "mp-602",
+      "note": "DFT cell-relaxed (ISIF=4) a and dMX; corrects residual strain vs raw MP template, fixed the Gamma-point phonon dip (-0.402 -> 0.000 THz, now STABLE)"
+    },
+    "WTe2": {
+      "a": 3.509815,
+      "c": 20.0,
+      "dz": 6.5,
+      "dMX": 1.825654,
+      "material_id": "mp-1019322",
+      "note": "DFT cell-relaxed (ISIF=4) a and dMX; corrects residual strain vs raw MP template, improved the Gamma-point phonon dip (-0.274 -> -0.237 THz) but still borderline as of static k-mesh 7x7x1 -- denser k-mesh test in progress"
     }
   }
 }

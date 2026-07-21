@@ -80,7 +80,7 @@ def parse_atom_names_from_poscar(poscar_path: Path) -> List[str]:
 
 def write_band_conf(staticpoint_dir: Path,
                     atom_names: List[str],
-                    dim: str = "3 3 1") -> Path:
+                    dim: str = "4 4 1") -> Path:
     """Write band.conf into staticpoint_dir and return its path."""
     if not atom_names:
         atom_line = "# ATOM_NAME could not be detected automatically\n"
@@ -92,6 +92,7 @@ def write_band_conf(staticpoint_dir: Path,
         f"DIM = {dim}\n"
         "BAND = 0 0 0  0.6667 0.3333 0  0.5 0 0  0 0 0\n"
         "BAND_LABELS = Γ K M Γ\n"
+        "FC_SYMMETRY = .TRUE.\n"
     )
 
     band_conf = staticpoint_dir / "band.conf"
@@ -106,7 +107,7 @@ def run_phonopy_force_sets(staticpoint_dir: Path,
         print(f"  ✗ No vasprun.xml files found in disp-* directories")
         return False
 
-    cmd = ["phonopy", "--vasp", "-f"] + [str(v) for v in vaspruns]
+    cmd = ["phonopy-init", "--vasp", "-f"] + [str(v) for v in vaspruns]
     print(f"  Running: {' '.join(cmd)}")
 
     try:
@@ -135,8 +136,8 @@ def run_phonopy_force_sets(staticpoint_dir: Path,
 
 def run_phonopy_band(staticpoint_dir: Path,
                      band_conf: Path) -> bool:
-    """Run phonopy -p band.conf --save in staticpoint_dir."""
-    cmd = ["phonopy", "-p", str(band_conf.name), "--save"]
+    """Run phonopy -p -s --writefc --config band.conf in staticpoint_dir (phonopy v4+)."""
+    cmd = ["phonopy", "-p", "-s", "--writefc", "--config", str(band_conf.name)]
     print(f"  Running: {' '.join(cmd)}")
 
     try:
@@ -147,14 +148,14 @@ def run_phonopy_band(staticpoint_dir: Path,
             capture_output=True,
             text=True,
         )
-        print("  ✓ Generated band.pdf, band.yaml, FORCE_CONSTANTS (using FORCE_SETS)")
+        print("  ✓ Generated band.pdf, band.yaml, FORCE_CONSTANTS, and phonopy.yaml")
         return True
     except FileNotFoundError:
         print("  ✗ phonopy command not found (is it in your PATH?)",
               file=sys.stderr)
         return False
     except subprocess.CalledProcessError as e:  # noqa: BLE001
-        print("  ✗ Error running phonopy -p band.conf --save",
+        print("  ✗ Error running phonopy -p -s --writefc --config band.conf",
               file=sys.stderr)
         if e.stdout:
             print(e.stdout, file=sys.stderr)
@@ -182,7 +183,7 @@ def copy_final_results(staticpoint_dir: Path,
     target = final_root / name
     target.mkdir(exist_ok=True)
 
-    files = ["band.pdf", "band.yaml", "FORCE_SETS"]
+    files = ["band.pdf", "band.yaml", "phonopy.yaml", "FORCE_SETS", "POSCAR", "FORCE_CONSTANTS"]
     missing = []
     for fname in files:
         src = staticpoint_dir / fname
@@ -196,13 +197,13 @@ def copy_final_results(staticpoint_dir: Path,
         print(f"  ✗ Missing files in {staticpoint_dir}: {', '.join(missing)}")
         return False, target
 
-    print(f"  ✓ Copied band.pdf, band.yaml, FORCE_SETS → {target}")
+    print(f"  ✓ Copied band.pdf, band.yaml, phonopy.yaml, FORCE_SETS, POSCAR, FORCE_CONSTANTS → {target}")
     return True, target
 
 
 def process_staticpoint_dir(staticpoint_dir: Path,
                             kind: str,
-                            dim: str = "3 3 1") -> dict:
+                            dim: str = "4 4 1") -> dict:
     """Process a single staticpoint directory end-to-end."""
     print(f"\n{'=' * 60}")
     print(f"Processing {kind} staticpoint: {staticpoint_dir.name}")
@@ -284,8 +285,8 @@ Examples:
     parser.add_argument(
         "--dim",
         type=str,
-        default="3 3 1",
-        help='DIM value for band.conf (default: "3 3 1")',
+        default="4 4 1",
+        help='DIM value for band.conf (default: "4 4 1")',
     )
 
     args = parser.parse_args()

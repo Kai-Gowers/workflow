@@ -84,7 +84,7 @@ def _filter_by_symmetry_manifest(names: list[str], *, is_bilayer: bool = False) 
 
 
 def submit_monolayer_batch(batch_number: int,
-                           supercell_dim: str = "3 3 1",
+                           supercell_dim: str = "4 4 1",
                            submit: bool = True,
                            dry_run: bool = False):
     """Run phonopy pipeline for all monolayers in the given batch."""
@@ -143,7 +143,7 @@ def submit_monolayer_batch(batch_number: int,
 
 
 def submit_bilayer_batch(batch_number: int,
-                         supercell_dim: str = "3 3 1",
+                         supercell_dim: str = "4 4 1",
                          submit: bool = True,
                          dry_run: bool = False):
     """Run phonopy pipeline for all bilayers in the given batch."""
@@ -238,8 +238,8 @@ Examples:
     parser.add_argument(
         "--dim",
         type=str,
-        default="3 3 1",
-        help='Supercell dimensions for phonopy (default: "3 3 1")',
+        default="4 4 1",
+        help='Supercell dimensions for phonopy (default: "4 4 1")',
     )
     parser.add_argument(
         "--no-submit",

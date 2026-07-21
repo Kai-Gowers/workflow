@@ -1,5 +1,5 @@
 PREC = Accurate
-ENCUT = 520
+ENCUT = 520 # For graphene increase to 800
 EDIFF = 1E-6
 ISMEAR = 0
 SIGMA = 0.05
@@ -12,16 +12,15 @@ NELM = 200
 NSW = 400
 IBRION = 1
 ISIF = 2 # Gemini suggested 4
-EDIFFG = -1E-5
+EDIFFG = -1E-7
 
 # DFT-D3(BJ) van der Waals correction
 IVDW = 12
 
-# CPU parallelization (6 nodes x 44 cores = 264 ranks)
-# 6 k-points -> KPAR=6 (one k-point per group, 44 ranks each)
-# NCORE=4 -> NPAR=11
-KPAR = 6
-NCORE = 4
- 
+# CPU parallelization (2 nodes x 44 cores = 88 ranks)
+# KPAR=4 -> 22 ranks/group, NCORE=2 -> NPAR=11 (same per-band depth as before)
+KPAR = 4
+NCORE = 2
+
 LWAVE = .FALSE.
 LCHARG = .FALSE.

@@ -74,6 +74,11 @@ python3 phonopy/submit_batch.py --<monolayer/bilayer> --batch <batch_number>
 python3 phonopy/postprocess_batch.py --<monolayer/bilayer> --batch <batch_number>
 ```
 
+**Step 4 — Convert to Nequix training format:**
+```bash
+python3 scripts/convert_to_nequix.py --output nequix_dataset.aselmdb
+```
+
 **Cleanup:**
 ```bash
 python3 scripts/maintenance/cleanup_all.py                 # Remove all generated dirs

@@ -57,7 +57,7 @@ def _import_postprocess():
 
 
 def postprocess_monolayer_batch(batch_number: int,
-                                dim: str = "3 3 1"):
+                                dim: str = "4 4 1"):
     """Post-process phonopy results for all monolayers in the given batch."""
     batches = _load_batches()
     mono_batches = batches.get("monolayer_batches", [])
@@ -109,7 +109,7 @@ def postprocess_monolayer_batch(batch_number: int,
 
 
 def postprocess_bilayer_batch(batch_number: int,
-                              dim: str = "3 3 1"):
+                              dim: str = "4 4 1"):
     """Post-process phonopy results for all bilayers in the given batch."""
     batches = _load_batches()
     bi_batches = batches.get("bilayer_batches", [])
@@ -194,8 +194,8 @@ Examples:
     parser.add_argument(
         "--dim",
         type=str,
-        default="3 3 1",
-        help='DIM value for band.conf (default: "3 3 1")',
+        default="4 4 1",
+        help='DIM value for band.conf (default: "4 4 1")',
     )
 
     args = parser.parse_args()

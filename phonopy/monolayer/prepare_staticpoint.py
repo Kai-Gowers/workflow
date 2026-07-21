@@ -8,7 +8,7 @@ This script:
 3. Copies CONTCAR → POSCAR
 4. Copies POTCAR from the original example; KPOINTS from staticpoint_templates if present, else from the relaxed example
 5. Uses INCAR and bat from staticpoint_templates (with customized SYSTEM line)
-6. Generates phonopy displacements using phonopy --dim="3 3 1" -d -c POSCAR
+6. Generates phonopy displacements using phonopy --dim="4 4 1" -d -c POSCAR
 """
 
 from pathlib import Path
@@ -59,7 +59,7 @@ def customize_incar(template_path, output_path, material_name):
         f.writelines(customized_lines)
 
 
-def generate_phonopy_displacements(work_dir, supercell_dim="3 3 1"):
+def generate_phonopy_displacements(work_dir, supercell_dim="4 4 1"):
     """
     Generate phonopy displacements in the given directory.
     
@@ -68,7 +68,7 @@ def generate_phonopy_displacements(work_dir, supercell_dim="3 3 1"):
     work_dir : Path
         Working directory containing POSCAR
     supercell_dim : str
-        Supercell dimensions (default: "3 3 1")
+        Supercell dimensions (default: "4 4 1")
     
     Returns:
     --------
@@ -108,7 +108,7 @@ def generate_phonopy_displacements(work_dir, supercell_dim="3 3 1"):
         return False
 
 
-def prepare_staticpoint(relaxed_example_path, output_dir=None, base_dir=None, supercell_dim="3 3 1", generate_displacements=True):
+def prepare_staticpoint(relaxed_example_path, output_dir=None, base_dir=None, supercell_dim="4 4 1", generate_displacements=True):
     """
     Prepare a static-point calculation directory from a relaxed monolayer example.
     
@@ -241,8 +241,8 @@ def main():
     parser.add_argument(
         '--dim',
         type=str,
-        default="3 3 1",
-        help='Supercell dimensions for phonopy (default: "3 3 1")'
+        default="4 4 1",
+        help='Supercell dimensions for phonopy (default: "4 4 1")'
     )
     parser.add_argument(
         '--no-displacements',

@@ -106,7 +106,7 @@ setup_bilayer_displacements = bi_setup.setup_and_submit_displacements
 # Per-example pipelines
 #
 
-def process_monolayer(example_path, supercell_dim="3 3 1",
+def process_monolayer(example_path, supercell_dim="4 4 1",
                       submit=True, dry_run=False):
     """
     Process a single monolayer example: prepare staticpoint and set up displacements.
@@ -117,7 +117,7 @@ def process_monolayer(example_path, supercell_dim="3 3 1",
         Path or name of relaxed monolayer example (e.g. 'MoS2' or
         'monolayer_examples/MoS2')
     supercell_dim : str
-        Supercell dimensions for phonopy (default: "3 3 1")
+        Supercell dimensions for phonopy (default: "4 4 1")
     submit : bool
         Whether to submit jobs for displacements
     dry_run : bool
@@ -168,7 +168,7 @@ def process_monolayer(example_path, supercell_dim="3 3 1",
         return {"success": False, "error": str(e)}
 
 
-def process_bilayer(example_path, supercell_dim="3 3 1",
+def process_bilayer(example_path, supercell_dim="4 4 1",
                     submit=True, dry_run=False):
     """
     Process a single bilayer example: prepare staticpoint and set up displacements.
@@ -179,7 +179,7 @@ def process_bilayer(example_path, supercell_dim="3 3 1",
         Path or name of relaxed bilayer example (e.g. 'MoS2_TaTe2_3R' or
         'bilayer_examples/MoS2_TaTe2_3R')
     supercell_dim : str
-        Supercell dimensions for phonopy (default: "3 3 1")
+        Supercell dimensions for phonopy (default: "4 4 1")
     submit : bool
         Whether to submit jobs for displacements
     dry_run : bool
@@ -234,7 +234,7 @@ def process_bilayer(example_path, supercell_dim="3 3 1",
 # Batch helpers
 #
 
-def process_all_monolayers(supercell_dim="3 3 1",
+def process_all_monolayers(supercell_dim="4 4 1",
                            submit=True, dry_run=False):
     """Process all monolayer examples in ../monolayer_examples."""
     base_examples_dir = ROOT.parent / "monolayer_examples"
@@ -265,7 +265,7 @@ def process_all_monolayers(supercell_dim="3 3 1",
     return results
 
 
-def process_all_bilayers(supercell_dim="3 3 1",
+def process_all_bilayers(supercell_dim="4 4 1",
                          submit=True, dry_run=False):
     """Process all bilayer examples in ../bilayer_examples."""
     base_examples_dir = ROOT.parent / "bilayer_examples"
@@ -362,8 +362,8 @@ Examples:
     parser.add_argument(
         "--dim",
         type=str,
-        default="3 3 1",
-        help='Supercell dimensions for phonopy (default: "3 3 1")',
+        default="4 4 1",
+        help='Supercell dimensions for phonopy (default: "4 4 1")',
     )
     parser.add_argument(
         "--no-submit",

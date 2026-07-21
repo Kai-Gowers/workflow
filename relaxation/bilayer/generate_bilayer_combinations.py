@@ -11,7 +11,7 @@ structural family:
   - TMD / Honeycomb: TM_H, TM_H2
 
 Compatibility checking is based on lattice constant matching from The Materials Project API.
-Materials are considered compatible if their lattice constants are within 20% of each other.
+Materials are considered compatible if their lattice constants are within 10% of each other.
 """
 
 import sys
@@ -54,12 +54,12 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent / "common"))
 from structural_families import get_allowed_stackings, validate_stacking, STACKING_SUFFIXES
 
 
-def are_materials_compatible(mat1, mat2, api_key=None, tolerance=0.20, verbose=False, lattice_constants=None):
+def are_materials_compatible(mat1, mat2, api_key=None, tolerance=0.10, verbose=False, lattice_constants=None):
     """
     Check if two materials are compatible for bilayer stacking based on lattice constants.
     
     Uses The Materials Project API to retrieve lattice constants and checks if they
-    are within the specified tolerance (default 20%).
+    are within the specified tolerance (default 10%).
     
     Parameters:
     -----------
@@ -70,7 +70,7 @@ def are_materials_compatible(mat1, mat2, api_key=None, tolerance=0.20, verbose=F
     api_key : str, optional
         Materials Project API key (if None, tries to get from environment)
     tolerance : float
-        Maximum relative difference in lattice constants (default: 0.20 = 20%)
+        Maximum relative difference in lattice constants (default: 0.10 = 10%)
     verbose : bool
         Print detailed information
     
@@ -135,7 +135,7 @@ def load_materials(materials_file=None):
 
 
 def generate_bilayer_combinations(materials, include_homostructures=True, include_heterostructures=True, 
-                                   only_compatible=True, api_key=None, tolerance=0.20, verbose=False):
+                                   only_compatible=True, api_key=None, tolerance=0.10, verbose=False):
     """
     Generate all bilayer combinations, optionally filtering for compatible lattice constants.
     
@@ -149,11 +149,11 @@ def generate_bilayer_combinations(materials, include_homostructures=True, includ
         Include different-material bilayers (default: True)
     only_compatible : bool
         Only include heterostructures with compatible lattice constants (default: True)
-        Compatible means lattice constants are within tolerance (default: 20%)
+        Compatible means lattice constants are within tolerance (default: 10%)
     api_key : str, optional
         Materials Project API key (if None, tries to get from environment)
     tolerance : float
-        Maximum relative difference in lattice constants (default: 0.20 = 20%)
+        Maximum relative difference in lattice constants (default: 0.10 = 10%)
     verbose : bool
         Print detailed information about compatibility checks
     
@@ -278,7 +278,7 @@ def generate_bilayer_list(
     output_file=None,
     only_compatible=True,
     api_key=None,
-    tolerance=0.20,
+    tolerance=0.10,
     verbose=False,
     require_p63mmc=True,
 ):
@@ -293,11 +293,11 @@ def generate_bilayer_list(
         Path where bilayer list will be written (default: bilayer_combinations.txt)
     only_compatible : bool
         Only include heterostructures with compatible lattice constants (default: True)
-        Compatible means lattice constants are within tolerance (default: 20%)
+        Compatible means lattice constants are within tolerance (default: 10%)
     api_key : str, optional
         Materials Project API key (if None, tries to get from environment)
     tolerance : float
-        Maximum relative difference in lattice constants (default: 0.20 = 20%)
+        Maximum relative difference in lattice constants (default: 0.10 = 10%)
     verbose : bool
         Print detailed information about compatibility checks
     
@@ -447,8 +447,8 @@ Examples:
     parser.add_argument(
         "--tolerance",
         type=float,
-        default=0.20,
-        help="Maximum relative difference in lattice constants for compatibility (default: 0.20 = 20%%)"
+        default=0.10,
+        help="Maximum relative difference in lattice constants for compatibility (default: 0.10 = 10%%)"
     )
     parser.add_argument(
         "--api-key",
