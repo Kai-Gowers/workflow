@@ -56,10 +56,12 @@ BILAYER_OVERRIDES_FILE = BILAYER_DATA_DIR / "bilayer_lattice_overrides.json"
 
 
 def _load_bilayer_overrides():
-    """Load per-bilayer lattice-constant overrides, keyed by bilayer example name
-    (e.g. 'MoS2_bilayer_3R'). Used to correct residual in-plane strain left by the
-    default relaxed-monolayer-derived 'a' when a bilayer's own ISIF=2 relaxation
-    shows large residual stress at that lattice constant."""
+    """Load per-bilayer lattice-constant overrides, keyed by bilayer example name:
+    'mat_bilayer_stacking' for homobilayers (e.g. 'MoS2_bilayer_3R'), or
+    'mat1_mat2_stacking' for heterobilayers (e.g. 'MoS2_WSe2_3R'). Used to correct
+    residual in-plane strain left by the default relaxed-monolayer-derived 'a' when
+    a bilayer's own ISIF=2 relaxation shows large residual stress at that lattice
+    constant."""
     if not BILAYER_OVERRIDES_FILE.exists():
         return {}
     try:
@@ -477,7 +479,12 @@ def _generate_bilayer_from_relaxed_monolayers(
     else:
         struct2 = load_relaxed_monolayer(mat2, mono_dir)
         a2 = hexagonal_lattice_a(struct2)
-        if anchor == 1:
+        bilayer_overrides = _load_bilayer_overrides()
+        override = bilayer_overrides.get(f"{mat1}_{mat2}_{stacking}")
+        if isinstance(override, dict) and "a" in override:
+            a = float(override["a"])
+            a_source = "bilayer_lattice_override"
+        elif anchor == 1:
             a = a1
         elif anchor == 2:
             a = a2
