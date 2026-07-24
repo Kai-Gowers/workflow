@@ -1,0 +1,16 @@
+{
+  "bilayers": {
+    "MoS2_bilayer_3R": {
+      "a": 3.153986,
+      "note": "DFT ISIF=4 residual-strain correction (fixed-volume, shape+ion relax from the ISIF=2 CONTCAR); corrects large residual in-plane stress (-20.4 kB) at the monolayer-derived lattice constant, fixed the imaginary phonon dip (-0.32 THz, off-Gamma). Averaged in-plane 'a' over the last 50 of 400 ionic steps (plateaued, std<0.0004 A). Rerun ISIF=2 relaxation at this constant converged to -0.72 kB residual stress and a clean 5x5x1 phonon band."
+    },
+    "WSe2_bilayer_3R": {
+      "a": 3.287329,
+      "note": "DFT ISIF=4 residual-strain correction; corrects large residual in-plane stress (-14.6 kB) at the monolayer-derived lattice constant, fixed the imaginary phonon dip (-0.56 THz). Averaged in-plane 'a' over the last 50 of 400 ionic steps (plateaued, std<0.0002 A). Rerun ISIF=2 relaxation at this constant converged (166 steps) to -1.09 kB residual stress and a clean 5x5x1 phonon band."
+    },
+    "WSe2_bilayer_2H": {
+      "a": 3.285609,
+      "note": "DFT ISIF=4 residual-strain correction; corrects large residual in-plane stress (-15.3 kB) at the monolayer-derived lattice constant, fixed the imaginary phonon dip (-0.69 THz). Averaged in-plane 'a' over the last 50 of 400 ionic steps (plateaued, std<0.00004 A). Rerun ISIF=2 relaxation at this constant converged (221 steps) to -1.36 kB residual stress and a clean 5x5x1 phonon band."
+    }
+  }
+}

@@ -9,6 +9,7 @@ Use ``use_relaxed_monolayers=False`` (CLI: ``--use-templates``) for ideal templa
 
 import sys
 import math
+import json
 import numpy as np
 from pathlib import Path
 
@@ -49,6 +50,25 @@ except ImportError:
     VALIDATION_AVAILABLE = False
 
 VACUUM = 20.0
+
+BILAYER_DATA_DIR = Path(__file__).parent.parent.parent / "data"
+BILAYER_OVERRIDES_FILE = BILAYER_DATA_DIR / "bilayer_lattice_overrides.json"
+
+
+def _load_bilayer_overrides():
+    """Load per-bilayer lattice-constant overrides, keyed by bilayer example name
+    (e.g. 'MoS2_bilayer_3R'). Used to correct residual in-plane strain left by the
+    default relaxed-monolayer-derived 'a' when a bilayer's own ISIF=2 relaxation
+    shows large residual stress at that lattice constant."""
+    if not BILAYER_OVERRIDES_FILE.exists():
+        return {}
+    try:
+        with open(BILAYER_OVERRIDES_FILE) as f:
+            data = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return {}
+    bilayers = data.get("bilayers", {})
+    return bilayers if isinstance(bilayers, dict) else {}
 
 # Material structure type classification
 MATERIAL_STRUCTURE_TYPES = {
@@ -441,8 +461,15 @@ def _generate_bilayer_from_relaxed_monolayers(
 
     validate_stacking(mat1, mat2, stacking)
 
+    a_source = "relaxed_monolayer"
     if mat1 == mat2:
-        a = a1
+        bilayer_overrides = _load_bilayer_overrides()
+        override = bilayer_overrides.get(f"{mat1}_bilayer_{stacking}")
+        if isinstance(override, dict) and "a" in override:
+            a = float(override["a"])
+            a_source = "bilayer_lattice_override"
+        else:
+            a = a1
         coords1, species1, _ = layer_in_vacuum_cell(struct1, vacuum, in_plane_a=a)
         coords, species = apply_bilayer_stacking(
             stacking, coords1, species1, coords1, species1, vacuum, hetero=False, dz=dz
@@ -465,7 +492,7 @@ def _generate_bilayer_from_relaxed_monolayers(
     comment = f"Bilayer {mat1}/{mat2} {stacking} (relaxed monolayers)"
     structure = _write_bilayer_poscar(a, vacuum, coords, species, output_path, comment=comment)
     return structure, {
-        "source": "relaxed_monolayer",
+        "source": a_source,
         "a": a,
         "c": vacuum,
         "dz": dz,
