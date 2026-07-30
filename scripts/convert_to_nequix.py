@@ -24,7 +24,6 @@ from phonopy.harmonic.force_constants import compact_fc_to_full_fc
 
 
 ROOT = Path(__file__).parent.parent
-FINAL_RESULTS = ROOT / "FINAL_RESULTS"
 
 # Bilayer names contain an underscore-separated stacking suffix (3R, 2H, AB, BA, TM_H, TM_H2)
 _STACKING = {"3R", "2H", "AB", "BA", "TM_H", "TM_H2"}
@@ -85,9 +84,16 @@ def main() -> None:
         epilog="""
 Examples:
   python3 scripts/convert_to_nequix.py
+  python3 scripts/convert_to_nequix.py --source FINAL_RESULTS_HEALTHY --output data/healthy.aselmdb
   python3 scripts/convert_to_nequix.py --monolayer --output data/monolayers.aselmdb
   python3 scripts/convert_to_nequix.py --bilayer --output data/bilayers.aselmdb
 """,
+    )
+    parser.add_argument(
+        "--source",
+        type=Path,
+        default=ROOT / "FINAL_RESULTS",
+        help="Directory of per-material subdirectories to convert (default: workflow/FINAL_RESULTS)",
     )
     parser.add_argument(
         "--output",
@@ -99,11 +105,12 @@ Examples:
     parser.add_argument("--bilayer", action="store_true", help="Include bilayers only")
     args = parser.parse_args()
 
-    if not FINAL_RESULTS.exists():
-        print(f"Error: FINAL_RESULTS directory not found at {FINAL_RESULTS}", file=sys.stderr)
+    final_results = args.source
+    if not final_results.exists():
+        print(f"Error: source directory not found at {final_results}", file=sys.stderr)
         sys.exit(1)
 
-    dirs = sorted(d for d in FINAL_RESULTS.iterdir() if d.is_dir())
+    dirs = sorted(d for d in final_results.iterdir() if d.is_dir())
 
     if args.monolayer and not args.bilayer:
         dirs = [d for d in dirs if not is_bilayer(d.name)]
