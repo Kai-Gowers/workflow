@@ -39,6 +39,38 @@
       "dMX": 1.825654,
       "material_id": "mp-1019322",
       "note": "DFT cell-relaxed (ISIF=4) a and dMX; corrects residual strain vs raw MP template, improved the Gamma-point phonon dip (-0.274 -> -0.237 THz) but still borderline as of static k-mesh 7x7x1 -- denser k-mesh test in progress"
+    },
+    "ZrS2": {
+      "a": 3.541990,
+      "c": 20.0,
+      "dz": 6.5,
+      "dMX": 1.575482,
+      "material_id": null,
+      "note": "DFT cell-relaxed (ISIF=4) a and dMX; no MP cache/API entry available (local LATTICE_PARAMS fallback was the pre-fix template, -17.9 kB residual stress). ISIF=4 job hung twice (2789604, 2791613) before formally converging, but a and dMX agreed to 0.007% across both independent runs and stress had already plateaued near zero -- treated as converged per established plateau-check policy rather than risk a third hang."
+    },
+    "silicene": {
+      "a": 3.831317460531495,
+      "c": 20.0,
+      "dz": 6.5,
+      "dMX": 0.486363737598502,
+      "material_id": "mp-165",
+      "note": "DFT cell-relaxed (ISIF=2, from a symmetry-broken buckled seed); a and dMX (inter-sublattice buckling amplitude) match the converged, phonon-stable structure. Corrects the flat-honeycomb template bug (both atoms at identical z, MP's own entry treated as artificially symmetric) that caused pervasive imaginary phonon modes; fully STABLE on a dense 40x40x1 mesh after this buckling correction + a hiphive rotational-sum-rule fit."
+    },
+    "germanene": {
+      "a": 4.003104042790352,
+      "c": 20.0,
+      "dz": 6.5,
+      "dMX": 0.708750594191386,
+      "material_id": "mp-1091415",
+      "note": "DFT cell-relaxed (ISIF=2, from a symmetry-broken buckled seed); a and dMX (inter-sublattice buckling amplitude) match the converged, phonon-stable structure. Corrects the flat-honeycomb template bug (both atoms at identical z, MP's own entry treated as artificially symmetric) that caused pervasive imaginary phonon modes; fully STABLE on a dense 40x40x1 mesh after this buckling correction + a hiphive rotational-sum-rule fit."
+    },
+    "stanene": {
+      "a": 4.7,
+      "c": 20.0,
+      "dz": 6.5,
+      "dMX": 0.840474008564908,
+      "material_id": "mp-117",
+      "note": "DFT cell-relaxed value; MP's own cached a (4.645673) was never actually used historically because this material's spacegroup_symbol is null in mp_lattice_params_cache.json, so pre-fix generation silently fell through to the local LATTICE_PARAMS fallback constant (4.70) instead -- this override makes that the explicit, intentional value rather than an accidental fallback. dMX is the inter-sublattice buckling amplitude, needed for the same flat-honeycomb reason as silicene/germanene. Buckling correction alone made this fully STABLE on a dense 40x40x1 mesh, no further hiphive correction needed."
     }
   }
 }

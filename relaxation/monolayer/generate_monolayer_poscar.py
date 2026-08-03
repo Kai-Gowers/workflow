@@ -42,9 +42,9 @@ LATTICE_PARAMS = {
     # Single element 2D materials
     'graphene': (2.46, 20.0, 0.0),
     'phosphorene': (3.32, 20.0, 0.0),  # a=3.32, b=4.58
-    'silicene': (3.86, 20.0, 0.0),
-    'germanene': (4.02, 20.0, 0.0),
-    'stanene': (4.70, 20.0, 0.0),
+    'silicene': (3.86, 20.0, 0.4864),
+    'germanene': (4.02, 20.0, 0.7088),
+    'stanene': (4.70, 20.0, 0.8405),
     
     # TMDs - typical lattice parameter ~3.2-3.3 Angstrom, dMX ~1.58
     'MoS2': (3.16, 20.0, 1.58),
@@ -149,10 +149,10 @@ def get_binary_monolayer_coords(a, c, dMX, mat):
     return coords, species
 
 
-def get_single_element_coords(a, c, mat):
+def get_single_element_coords(a, c, mat, dMX=0.0):
     """Get fractional coordinates for single element 2D materials"""
     z_center = 0.5
-    
+
     if mat[0] == 'C':  # graphene
         # Honeycomb structure
         coords = [
@@ -168,13 +168,17 @@ def get_single_element_coords(a, c, mat):
         ]
         species = ['P', 'P']
     else:
-        # Other single elements - use honeycomb
+        # Other single-element honeycombs (Si, Ge, Sn, ...) are only dynamically
+        # stable when buckled -- a flat (dMX=0) seed can't spontaneously break
+        # the mirror symmetry during relaxation, so the offset must be baked
+        # into the template itself.
+        dMX_frac = dMX / c
         coords = [
-            [0, 0, z_center],
-            [1/3, 1/3, z_center],
+            [0, 0, z_center + dMX_frac / 2],
+            [1/3, 1/3, z_center - dMX_frac / 2],
         ]
         species = [mat[0], mat[0]]
-    
+
     return coords, species
 
 
@@ -435,7 +439,7 @@ def _build_single_material_template(material_name, a, c, dMX):
             mat = ['Ge']
         else:
             mat = ['Sn']
-        coords, species = get_single_element_coords(a, c, mat)
+        coords, species = get_single_element_coords(a, c, mat, dMX)
 
     elif material_name in ['BN', 'GaN', 'InSe', 'GaSe']:
         if material_name == 'BN':

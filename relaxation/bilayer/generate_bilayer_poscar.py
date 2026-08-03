@@ -140,7 +140,7 @@ def get_monolayer_coords(a, c, dMX, mat):
     Get monolayer coordinates, automatically selecting the right function based on material type.
     """
     if len(mat) == 1:
-        return get_single_element_coords(a, c, mat)
+        return get_single_element_coords(a, c, mat, dMX)
     if len(mat) == 2:
         if mat == ['B', 'N'] or mat[0] in ['Ga', 'In']:
             return get_binary_monolayer_coords(a, c, dMX, mat)
@@ -163,28 +163,35 @@ def _flip_frac_180(x, y):
     return ((1/3 - x) % 1.0, (1/3 - y) % 1.0)
 
 
+def _layer_z_extent(coords):
+    """Min/max fractional z spanned by a layer (equal for a flat layer)."""
+    zs = [c[2] for c in coords]
+    return min(zs), max(zs)
+
+
+def _interlayer_z_shift(coords1, coords2, c, dz):
+    """Fractional z-shift so layer 2's lowest atom sits `dz` (Angstrom) above layer 1's
+    highest atom -- a physical surface-to-surface gap that's correct for both flat and
+    buckled layers (a same-atom or center-of-mass offset instead silently shrinks the
+    gap by the buckling amplitude)."""
+    if dz is None:
+        dz = DZ_BILAYER
+    dz_frac = dz / c
+    _, z1_max = _layer_z_extent(coords1)
+    z2_min, _ = _layer_z_extent(coords2)
+    return (z1_max + dz_frac) - z2_min
+
+
 def _stack_bilayer_shift(
     coords1, species1, coords2, species2, c, dx=1/3, dy=1/3, hetero=False, dz=None
 ):
     """Apply a rigid in-plane fractional shift (dx, dy) to layer 2, with vertical separation."""
-    if dz is None:
-        dz = DZ_BILAYER
-    dz_frac = dz / c
-
-    if hetero:
-        z1_center = sum(c[2] for c in coords1) / len(coords1)
-        z2_center = sum(c[2] for c in coords2) / len(coords2)
-        z2_target_center = z1_center + dz_frac
-        z_shift = z2_target_center - z2_center
-
-        coords2_out = [
-            [*_shift_frac(c[0], c[1], dx, dy), c[2] + z_shift] for c in coords2
-        ]
-        return coords1 + coords2_out, species1 + species2
-
+    z_shift = _interlayer_z_shift(coords1, coords2, c, dz)
     coords2_out = [
-        [*_shift_frac(c[0], c[1], dx, dy), c[2] + dz_frac] for c in coords1
+        [*_shift_frac(c[0], c[1], dx, dy), c[2] + z_shift] for c in coords2
     ]
+    if hetero:
+        return coords1 + coords2_out, species1 + species2
     return coords1 + coords2_out, species1 + species1
 
 
@@ -197,32 +204,17 @@ def _stack_bilayer_3R(coords1, species1, coords2, species2, c, hetero=False, dz=
 
 def _stack_bilayer_2H(coords1, species1, coords2, species2, c, dz=None):
     """Apply 2H stacking to pre-built layer fractional coordinates (unchanged semantics)."""
-    if dz is None:
-        dz = DZ_BILAYER
-    dz_frac = dz / c
-    z1_center = sum(c[2] for c in coords1) / len(coords1)
-    z2_center = sum(c[2] for c in coords2) / len(coords2)
-    z2_target_center = z1_center + dz_frac
-    z_shift = z2_target_center - z2_center
+    z_shift = _interlayer_z_shift(coords1, coords2, c, dz)
     coords2_out = [[*_flip_frac_180(c[0], c[1]), c[2] + z_shift] for c in coords2]
     return coords1 + coords2_out, species1 + species2
 
 
 def _stack_bilayer_identity(coords1, species1, coords2, species2, c, hetero=False, dz=None):
     """Apply identity in-plane stacking: vertical offset only."""
-    if dz is None:
-        dz = DZ_BILAYER
-    dz_frac = dz / c
-
+    z_shift = _interlayer_z_shift(coords1, coords2, c, dz)
+    coords2_out = [[c[0], c[1], c[2] + z_shift] for c in coords2]
     if hetero:
-        z1_center = sum(c[2] for c in coords1) / len(coords1)
-        z2_center = sum(c[2] for c in coords2) / len(coords2)
-        z2_target_center = z1_center + dz_frac
-        z_shift = z2_target_center - z2_center
-        coords2_out = [[c[0], c[1], c[2] + z_shift] for c in coords2]
         return coords1 + coords2_out, species1 + species2
-
-    coords2_out = [[c[0], c[1], c[2] + dz_frac] for c in coords1]
     return coords1 + coords2_out, species1 + species1
 
 

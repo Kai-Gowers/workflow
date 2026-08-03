@@ -4,7 +4,7 @@ Structural family classification for bilayer stacking.
 Each material belongs to one of three families:
   - TMD (tri-layer sandwiches)
   - binary_honeycomb (BN, GaN)
-  - single_element_honeycomb (graphene)
+  - single_element_honeycomb (graphene, silicene, germanene, stanene)
 
 Pair type determines which two stacking configurations are allowed.
 """
@@ -18,7 +18,7 @@ TMD_MATERIALS = frozenset([
 
 BINARY_HONEYCOMB = frozenset(["BN", "GaN"])
 
-SINGLE_ELEMENT_HONEYCOMB = frozenset(["graphene"])
+SINGLE_ELEMENT_HONEYCOMB = frozenset(["graphene", "silicene", "germanene", "stanene"])
 
 HONEYCOMB_MATERIALS = BINARY_HONEYCOMB | SINGLE_ELEMENT_HONEYCOMB
 
