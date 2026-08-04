@@ -76,8 +76,12 @@ python3 phonopy/postprocess_batch.py --<monolayer/bilayer> --batch <batch_number
 
 **Step 4 — Convert to Nequix training format:**
 ```bash
-python3 scripts/convert_to_nequix.py --output nequix_dataset.aselmdb
+python3 scripts/convert_to_nequix.py \
+    --output nequix_datasets/vN_<material-count>materials/dataset.aselmdb
 ```
+Each version directory is a permanent, immutable snapshot — never regenerate into an
+existing version dir. The script auto-writes a `materials.txt` manifest alongside
+`dataset.aselmdb` listing every material included. See `nequix_datasets/README.md`.
 
 **Cleanup:**
 ```bash

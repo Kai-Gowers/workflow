@@ -82,11 +82,18 @@ def main() -> None:
         description="Convert FINAL_RESULTS to a Nequix PFT training database.",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
+Each run writes a materials.txt manifest alongside --output, listing every
+material included. To keep past dataset versions instead of overwriting them,
+give each run its own directory under nequix_datasets/ named vN_<count>materials
+(no dates — see nequix_datasets/README.md for version history), e.g.:
+
 Examples:
-  python3 scripts/convert_to_nequix.py
-  python3 scripts/convert_to_nequix.py --source FINAL_RESULTS_HEALTHY --output data/healthy.aselmdb
-  python3 scripts/convert_to_nequix.py --monolayer --output data/monolayers.aselmdb
-  python3 scripts/convert_to_nequix.py --bilayer --output data/bilayers.aselmdb
+  python3 scripts/convert_to_nequix.py --source FINAL_RESULTS_HEALTHY \\
+      --output nequix_datasets/v1_46materials/dataset.aselmdb
+  python3 scripts/convert_to_nequix.py \\
+      --output nequix_datasets/v2_54materials/dataset.aselmdb
+  python3 scripts/convert_to_nequix.py --monolayer \\
+      --output nequix_datasets/v2_monolayers_only/dataset.aselmdb
 """,
     )
     parser.add_argument(
@@ -99,7 +106,8 @@ Examples:
         "--output",
         type=Path,
         default=ROOT / "nequix_dataset.aselmdb",
-        help="Output .aselmdb path (default: workflow/nequix_dataset.aselmdb)",
+        help="Output .aselmdb path (default: workflow/nequix_dataset.aselmdb; "
+        "prefer nequix_datasets/vN_.../dataset.aselmdb to keep past versions)",
     )
     parser.add_argument("--monolayer", action="store_true", help="Include monolayers only")
     parser.add_argument("--bilayer", action="store_true", help="Include bilayers only")
@@ -121,10 +129,12 @@ Examples:
         print("No materials found to convert.")
         sys.exit(1)
 
+    args.output.parent.mkdir(parents=True, exist_ok=True)
     if args.output.exists():
         args.output.unlink()
 
     converted, skipped = 0, []
+    included = []
 
     with ase.db.connect(str(args.output)) as db:
         for d in dirs:
@@ -132,9 +142,20 @@ Examples:
             if err is None:
                 print(f"  ✓ {d.name}")
                 converted += 1
+                included.append(d.name)
             else:
                 print(f"  ✗ {d.name}: {err}")
                 skipped.append((d.name, err))
+
+    manifest_path = args.output.parent / "materials.txt"
+    with open(manifest_path, "w") as f:
+        f.write(f"# Nequix dataset — {len(included)} materials\n")
+        f.write(f"# Source: {final_results}\n")
+        f.write(f"# Generated: python3 {' '.join(sys.argv)}\n")
+        f.write(f"# Count: {len(included)}\n\n")
+        for name in sorted(included):
+            f.write(f"{name}\n")
+    print(f"Wrote material manifest → {manifest_path}")
 
     print(f"\nConverted {converted}/{len(dirs)} materials → {args.output}")
     if skipped:
