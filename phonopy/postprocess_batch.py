@@ -2,7 +2,7 @@
 """
 Post-process phonopy results for a specific relaxation batch.
 
-This mirrors the relaxation batches defined in workflow/data/batches.json.
+This mirrors the relaxation batches defined in workflow/data/batches/.
 For each material/bilayer in the selected batch, this script:
 
   - Locates the corresponding phonopy staticpoint directory
@@ -27,25 +27,14 @@ Usage examples:
 from __future__ import annotations
 
 import argparse
-import json
 import sys
 from pathlib import Path
 
 
 WORKFLOW_ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(WORKFLOW_ROOT / "common"))
 
-
-def _load_batches(batch_file: str = "batches.json") -> dict:
-    """Load batch information from workflow/data/batches.json."""
-    batch_path = WORKFLOW_ROOT / "data" / batch_file
-    if not batch_path.exists():
-        raise FileNotFoundError(
-            f"Batch file not found: {batch_path}. "
-            "Run scripts/batch_management/create_batches.py first."
-        )
-
-    with open(batch_path, "r") as f:
-        return json.load(f)
+from batches import load_batch
 
 
 def _import_postprocess():
@@ -59,22 +48,7 @@ def _import_postprocess():
 def postprocess_monolayer_batch(batch_number: int,
                                 dim: str = "4 4 1"):
     """Post-process phonopy results for all monolayers in the given batch."""
-    batches = _load_batches()
-    mono_batches = batches.get("monolayer_batches", [])
-    total_batches = batches.get("total_monolayer_batches", len(mono_batches))
-
-    batch = None
-    for b in mono_batches:
-        if b.get("batch_number") == batch_number:
-            batch = b
-            break
-
-    if batch is None:
-        raise ValueError(
-            f"Monolayer batch {batch_number} not found. "
-            f"Available batches: 1-{total_batches}"
-        )
-
+    batch = load_batch("monolayer", batch_number)
     materials = list(batch.get("materials", []))
     if not materials:
         print(f"Warning: Monolayer batch {batch_number} has no materials", file=sys.stderr)
@@ -111,22 +85,7 @@ def postprocess_monolayer_batch(batch_number: int,
 def postprocess_bilayer_batch(batch_number: int,
                               dim: str = "4 4 1"):
     """Post-process phonopy results for all bilayers in the given batch."""
-    batches = _load_batches()
-    bi_batches = batches.get("bilayer_batches", [])
-    total_batches = batches.get("total_bilayer_batches", len(bi_batches))
-
-    batch = None
-    for b in bi_batches:
-        if b.get("batch_number") == batch_number:
-            batch = b
-            break
-
-    if batch is None:
-        raise ValueError(
-            f"Bilayer batch {batch_number} not found. "
-            f"Available batches: 1-{total_batches}"
-        )
-
+    batch = load_batch("bilayer", batch_number)
     bilayers = list(batch.get("bilayers", []))
     if not bilayers:
         print(f"Warning: Bilayer batch {batch_number} has no bilayers", file=sys.stderr)
@@ -177,12 +136,12 @@ Examples:
     parser.add_argument(
         "--monolayer",
         action="store_true",
-        help="Post-process monolayer batch (monolayer_batches in data/batches.json)",
+        help="Post-process monolayer batch (data/batches/monolayer_batch_<N>.json)",
     )
     parser.add_argument(
         "--bilayer",
         action="store_true",
-        help="Post-process bilayer batch (bilayer_batches in data/batches.json)",
+        help="Post-process bilayer batch (data/batches/bilayer_batch_<N>.json)",
     )
     parser.add_argument(
         "--batch",

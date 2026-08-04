@@ -61,7 +61,7 @@ Use `--bilayer` instead of `--monolayer` for bilayer batches. Add `--dry-run` / 
 
 ### Symmetry filter
 
-Batch lists in `data/batches.json` are built from materials with hexagonal **P6₃/mmc** symmetry (Materials Project). Regenerate after editing `common/materials_list.txt`:
+Batch lists in `data/batches/` are built from materials with hexagonal **P6₃/mmc** symmetry (Materials Project). Regenerate after editing `common/materials_list.txt`:
 
 ```bash
 python3 scripts/batch_management/report_symmetry_eligibility.py
@@ -85,7 +85,7 @@ workflow/
 │   ├── batch_management/    # Batches, eligibility, SLURM submit
 │   ├── maintenance/         # Cleanup, job listing
 │   └── convert_to_nequix.py
-├── data/                    # batches.json, job_registry.json, MP caches
+├── data/                    # batches/ (one file per batch), job_registry.json, MP caches
 ├── FINAL_RESULTS/           # Per-material band.pdf, FORCE_CONSTANTS, …
 ├── monolayer_examples/      # Generated (gitignored)
 ├── bilayer_examples/        # Generated (gitignored)
@@ -101,7 +101,7 @@ Master list: `common/materials_list.txt` (graphene, TMDs, BN, plus OOD test set)
 
 `common/structural_families.py` classifies families (TMD, binary honeycomb, single-element) and defines valid bilayer stackings: `3R`, `2H`, `AB`, `BA`, `TM_H`, `TM_H2`.
 
-Current batches (`data/batches.json`): ~13 monolayers (1 batch) and ~138 bilayers (10 batches).
+Current batches (`data/batches/`): one file per batch, e.g. `monolayer_batch_1.json`, `bilayer_batch_1.json`.
 
 ## Key modules
 

@@ -3,58 +3,45 @@
 Cancel SLURM jobs and delete directories for a specific batch.
 
 This script:
-1. Loads batch information from batches.json
+1. Loads batch information from data/batches/
 2. Cancels any running SLURM jobs for the batch
 3. Deletes the example directories for the batch
 """
 
 import sys
-import json
 import subprocess
-import os
 import shutil
 from pathlib import Path
+
+workflow_root = Path(__file__).parent.parent.parent
+sys.path.insert(0, str(workflow_root / "common"))
+sys.path.insert(0, str(workflow_root / "scripts" / "maintenance"))
+
+from batches import load_batch, items_key
+import job_tracking
 
 
 def get_batch_bilayers(batch_number, batch_type='bilayer'):
     """
-    Get list of bilayer names from a specific batch.
-    
+    Get list of bilayer/material names from a specific batch.
+
     Parameters:
     -----------
     batch_number : int
         Batch number to retrieve
     batch_type : str
         'bilayer' or 'monolayer'
-    
+
     Returns:
     --------
     list : List of bilayer/material names
     """
-    workflow_root = Path(__file__).parent.parent.parent
-    batches_file = workflow_root / "data" / "batches.json"
-    
-    if not batches_file.exists():
-        print(f"Error: batches.json not found at {batches_file}", file=sys.stderr)
+    try:
+        batch = load_batch(batch_type, batch_number)
+    except (FileNotFoundError, ValueError) as e:
+        print(f"Error: {e}", file=sys.stderr)
         return []
-    
-    with open(batches_file, 'r') as f:
-        batches_data = json.load(f)
-    
-    batch_key = f"{batch_type}_batches"
-    if batch_key not in batches_data:
-        print(f"Error: {batch_key} not found in batches.json", file=sys.stderr)
-        return []
-    
-    for batch in batches_data[batch_key]:
-        if batch['batch_number'] == batch_number:
-            if batch_type == 'bilayer':
-                return batch.get('bilayers', [])
-            else:
-                return batch.get('materials', [])
-    
-    print(f"Error: Batch {batch_number} not found for {batch_type}", file=sys.stderr)
-    return []
+    return batch.get(items_key(batch_type), [])
 
 
 def cancel_jobs_for_directories(directories, dry_run=False):
@@ -73,31 +60,21 @@ def cancel_jobs_for_directories(directories, dry_run=False):
     int : Number of jobs cancelled
     """
     cancelled = 0
-    
+
+    # job_id -> directory, built once from slurm-<jobid>.out files (see
+    # scripts/maintenance/job_tracking.py) rather than the old vasp_<id>.out
+    # filename pattern, which never matched actual SLURM output filenames.
+    slurm_index = job_tracking.build_slurm_output_index()
+    job_ids_by_dir = {}
+    for job_id, path in slurm_index.items():
+        job_ids_by_dir.setdefault(path.resolve(), []).append(job_id)
+
     for directory in directories:
         if not directory.exists():
             continue
-        
-        # Find job IDs from .out files
-        job_ids = []
-        for out_file in directory.glob("*.out"):
-            try:
-                # Try to extract from filename (vasp_12345.out)
-                if 'vasp_' in out_file.name:
-                    job_id = out_file.name.split('_')[1].split('.')[0]
-                    job_ids.append(job_id)
-                
-                # Also check file content
-                with open(out_file, 'r') as f:
-                    content = f.read(500)
-                    if 'Submitted batch job' in content:
-                        import re
-                        match = re.search(r'Submitted batch job (\d+)', content)
-                        if match:
-                            job_ids.append(match.group(1))
-            except:
-                pass
-        
+
+        job_ids = job_ids_by_dir.get(directory.resolve(), [])
+
         # Cancel jobs
         for job_id in set(job_ids):  # Remove duplicates
             if dry_run:

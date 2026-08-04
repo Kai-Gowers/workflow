@@ -15,49 +15,11 @@ from pathlib import Path
 import shutil
 import sys
 sys.path.insert(0, str(Path(__file__).parent.parent / "monolayer"))
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "common"))
+from incar_utils import customize_incar
+from cli_helpers import add_mp_args
 from generate_potcar import generate_potcar
 from generate_bilayer_poscar import generate_bilayer_poscar, parse_bilayer_name
-
-
-def customize_incar(template_path, output_path, material_name):
-    """
-    Copy INCAR template and customize it for the specific material.
-    
-    Parameters:
-    -----------
-    template_path : Path
-        Path to INCAR template file
-    output_path : Path
-        Path where customized INCAR will be written
-    material_name : str
-        Material name to use in SYSTEM line
-    """
-    with open(template_path, 'r') as f:
-        lines = f.readlines()
-    
-    # Customize the INCAR
-    customized_lines = []
-    system_found = False
-    
-    for line in lines:
-        # Update SYSTEM line with material name (replace first occurrence, skip duplicates)
-        stripped = line.strip()
-        if stripped.startswith('SYSTEM'):
-            if not system_found:
-                # First SYSTEM line: use material name
-                customized_lines.append(f"SYSTEM = {material_name} relaxation\n")
-                system_found = True
-            # Skip duplicate SYSTEM lines
-        else:
-            customized_lines.append(line)
-    
-    # If no SYSTEM line found, add one at the beginning
-    if not system_found:
-        customized_lines.insert(0, f"SYSTEM = {material_name} relaxation\n")
-    
-    # Write customized INCAR
-    with open(output_path, 'w') as f:
-        f.writelines(customized_lines)
 
 
 def find_unique_bilayer_name(bilayer_name, base_dir=None):
@@ -201,7 +163,7 @@ def create_bilayer_example(
             customize_incar(
                 template_path=template_dir / "INCAR",
                 output_path=example_dir / "INCAR",
-                material_name=bilayer_name
+                name=bilayer_name
             )
             copied_files.append("INCAR")
     except Exception as e:
@@ -272,32 +234,7 @@ Examples:
         action="store_true",
         help="Skip POTCAR generation"
     )
-    parser.add_argument(
-        "--no-mp",
-        action="store_true",
-        help="Disable Materials Project structure lookup for bilayer POSCAR generation",
-    )
-    parser.add_argument(
-        "--mp-api-key",
-        type=str,
-        default=None,
-        help="Materials Project API key (default: MP_API_KEY environment variable)",
-    )
-    parser.add_argument(
-        "--mp-refresh",
-        action="store_true",
-        help="Refresh MP cache entries for queried materials",
-    )
-    parser.add_argument(
-        "--mp-verbose",
-        action="store_true",
-        help="Print MP selection/fallback details",
-    )
-    parser.add_argument(
-        "--strict-validation",
-        action="store_true",
-        help="Fail bilayer creation if MP/geometry validation fails",
-    )
+    add_mp_args(parser)
     parser.add_argument(
         "--anchor",
         type=int,

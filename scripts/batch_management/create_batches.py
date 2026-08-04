@@ -3,12 +3,11 @@
 Create hard-coded batches of monolayers and bilayers for manual sequential submission.
 
 This script divides all materials and bilayer combinations into batches and saves
-the batch information to a JSON file. You can then use submit_batch.py to submit
-batches one at a time.
+each batch as its own file under data/batches/. You can then use submit_batch.py to
+submit batches one at a time.
 """
 
 import sys
-import json
 from pathlib import Path
 
 # Add workflow directories to path
@@ -19,34 +18,33 @@ sys.path.insert(0, str(workflow_root / "common"))
 
 from generate_bilayer_combinations import load_bilayer_combinations, load_materials
 from materials_project_api import filter_materials, get_api_key
+from batches import write_batch
 
 
 def create_batches(
     monolayer_batch_size=50,
     bilayer_batch_size=50,
-    output_file="batches.json",
     require_p63mmc=True,
     api_key=None,
     verbose=False,
 ):
     """
-    Create batches of monolayers and bilayers.
-    
+    Create batches of monolayers and bilayers, writing one file per batch to
+    data/batches/.
+
     Parameters:
     -----------
     monolayer_batch_size : int
         Number of monolayers per batch
     bilayer_batch_size : int
         Number of bilayers per batch
-    output_file : str
-        Output JSON file to save batch information
-    
+
     Returns:
     --------
-    dict : Batch information
+    dict : Batch information (same summary shape as before, for print_batch_summary)
     """
     workflow_root = Path(__file__).parent.parent.parent
-    
+
     # Load all materials
     materials_file = workflow_root / "common" / "materials_list.txt"
     materials = load_materials(materials_file)
@@ -73,22 +71,32 @@ def create_batches(
     for i in range(0, len(materials), monolayer_batch_size):
         batch = materials[i:i + monolayer_batch_size]
         monolayer_batches.append({
+            'kind': 'monolayer',
             'batch_number': len(monolayer_batches) + 1,
             'materials': batch,
             'count': len(batch)
         })
-    
+
     # Create bilayer batches
     bilayer_batches = []
     for i in range(0, len(bilayers), bilayer_batch_size):
         batch = bilayers[i:i + bilayer_batch_size]
         bilayer_batches.append({
+            'kind': 'bilayer',
             'batch_number': len(bilayer_batches) + 1,
             'bilayers': batch,
             'count': len(batch)
         })
-    
-    # Create batch information structure
+
+    # Write one file per batch to data/batches/
+    written_paths = []
+    for batch in monolayer_batches:
+        written_paths.append(write_batch("monolayer", batch))
+    for batch in bilayer_batches:
+        written_paths.append(write_batch("bilayer", batch))
+
+    # Batch information structure, kept for print_batch_summary() and as a
+    # return value -- not written to disk (each batch already wrote itself).
     batch_info = {
         'created': str(Path.cwd()),
         'monolayer_batch_size': monolayer_batch_size,
@@ -101,14 +109,7 @@ def create_batches(
         'monolayer_batches': monolayer_batches,
         'bilayer_batches': bilayer_batches
     }
-    
-    # Save to JSON file
-    data_dir = workflow_root / "data"
-    data_dir.mkdir(exist_ok=True)
-    output_path = data_dir / output_file
-    with open(output_path, 'w') as f:
-        json.dump(batch_info, f, indent=2)
-    
+
     print(f"\n{'='*60}")
     print("Batch Information Created")
     print(f"{'='*60}")
@@ -116,9 +117,9 @@ def create_batches(
     print(f"  Batches: {len(monolayer_batches)} batches of ~{monolayer_batch_size}")
     print(f"\nBilayers: {len(bilayers)} total")
     print(f"  Batches: {len(bilayer_batches)} batches of ~{bilayer_batch_size}")
-    print(f"\nBatch information saved to: {output_path}")
+    print(f"\nWrote {len(written_paths)} batch file(s) to: {workflow_root / 'data' / 'batches'}")
     print(f"{'='*60}\n")
-    
+
     return batch_info
 
 
@@ -157,9 +158,6 @@ Examples:
   
   # Create batches with custom sizes
   python3 create_batches.py --monolayer-size 30 --bilayer-size 40
-  
-  # Create batches and save to custom file
-  python3 create_batches.py --output my_batches.json
         """
     )
     parser.add_argument(
@@ -173,12 +171,6 @@ Examples:
         type=int,
         default=50,
         help="Number of bilayers per batch (default: 50)"
-    )
-    parser.add_argument(
-        "-o", "--output",
-        type=str,
-        default="batches.json",
-        help="Output JSON file (default: batches.json)"
     )
     parser.add_argument(
         "--summary",
@@ -210,7 +202,6 @@ Examples:
     batch_info = create_batches(
         monolayer_batch_size=args.monolayer_size,
         bilayer_batch_size=args.bilayer_size,
-        output_file=args.output,
         require_p63mmc=args.require_p63mmc,
         verbose=args.verbose,
     )

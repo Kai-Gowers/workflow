@@ -14,7 +14,7 @@ Pipeline per example:
 This script can operate:
 - On a single example
 - On all examples of a given type
-- On a specific relaxation batch (using data/batches.json)
+- On a specific relaxation batch (using data/batches/)
 """
 
 from pathlib import Path
@@ -95,27 +95,40 @@ bi_setup = _load_module(
     ROOT / "bilayer" / "setup_displacements.py",
 )
 
-# Extract functions
-prepare_monolayer_staticpoint = mono_prep.prepare_staticpoint
-setup_monolayer_displacements = mono_setup.setup_and_submit_displacements
-prepare_bilayer_staticpoint = bi_prep.prepare_staticpoint
-setup_bilayer_displacements = bi_setup.setup_and_submit_displacements
+# Per-kind pipeline pieces (prepare_fn, setup_fn, examples_dirname), keyed by kind.
+_KIND_CONFIG = {
+    "monolayer": {
+        "prepare_fn": mono_prep.prepare_staticpoint,
+        "setup_fn": mono_setup.setup_and_submit_displacements,
+        "examples_dirname": "monolayer_examples",
+    },
+    "bilayer": {
+        "prepare_fn": bi_prep.prepare_staticpoint,
+        "setup_fn": bi_setup.setup_and_submit_displacements,
+        "examples_dirname": "bilayer_examples",
+    },
+}
 
 
 #
 # Per-example pipelines
 #
 
-def process_monolayer(example_path, supercell_dim="4 4 1",
+def _process_example(kind, example_path, supercell_dim="4 4 1",
                       submit=True, dry_run=False):
     """
-    Process a single monolayer example: prepare staticpoint and set up displacements.
+    Process a single monolayer or bilayer example: prepare staticpoint and set
+    up displacements. Shared by process_monolayer/process_bilayer, which are
+    kept as separate public functions (same name/signature as before) since
+    scripts/submit_batch.py resolves them by name via dynamic import.
 
     Parameters
     ----------
+    kind : str
+        "monolayer" or "bilayer"
     example_path : str or Path
-        Path or name of relaxed monolayer example (e.g. 'MoS2' or
-        'monolayer_examples/MoS2')
+        Path or name of the relaxed example (e.g. 'MoS2' or 'monolayer_examples/MoS2';
+        'MoS2_TaTe2_3R' or 'bilayer_examples/MoS2_TaTe2_3R')
     supercell_dim : str
         Supercell dimensions for phonopy (default: "4 4 1")
     submit : bool
@@ -123,17 +136,19 @@ def process_monolayer(example_path, supercell_dim="4 4 1",
     dry_run : bool
         If True, only print actions without executing
     """
+    config = _KIND_CONFIG[kind]
+
     print(f"\n{'=' * 60}")
-    print(f"Processing monolayer: {example_path}")
+    print(f"Processing {kind}: {example_path}")
     print(f"{'=' * 60}\n")
 
     # Step 1: prepare staticpoint (let module use its own default base_dir)
     print("Step 1: Preparing static-point calculation...")
     try:
-        resolved_example = _resolve_relaxed_example(example_path, kind="monolayer")
-        prep_result = prepare_monolayer_staticpoint(
+        resolved_example = _resolve_relaxed_example(example_path, kind=kind)
+        prep_result = config["prepare_fn"](
             resolved_example,
-            base_dir=None,              # use default phonopy_monolayer_examples
+            base_dir=None,              # use the module's own default phonopy_*_examples
             supercell_dim=supercell_dim,
             generate_displacements=True,
         )
@@ -146,7 +161,7 @@ def process_monolayer(example_path, supercell_dim="4 4 1",
     # Step 2: set up displacement folders and optionally submit
     print("Step 2: Setting up displacement calculations...")
     try:
-        disp_result = setup_monolayer_displacements(
+        disp_result = config["setup_fn"](
             staticpoint_dir,
             submit=submit,
             dry_run=dry_run,
@@ -157,7 +172,7 @@ def process_monolayer(example_path, supercell_dim="4 4 1",
 
         return {
             "success": True,
-            "type": "monolayer",
+            "type": kind,
             "staticpoint_dir": staticpoint_dir,
             "displacements_setup": disp_result["displacements_setup"],
             "jobs_submitted": disp_result["jobs_submitted"],
@@ -168,132 +183,63 @@ def process_monolayer(example_path, supercell_dim="4 4 1",
         return {"success": False, "error": str(e)}
 
 
-def process_bilayer(example_path, supercell_dim="4 4 1",
-                    submit=True, dry_run=False):
-    """
-    Process a single bilayer example: prepare staticpoint and set up displacements.
+def process_monolayer(example_path, supercell_dim="4 4 1", submit=True, dry_run=False):
+    """Process a single monolayer example: prepare staticpoint and set up displacements."""
+    return _process_example("monolayer", example_path, supercell_dim=supercell_dim,
+                             submit=submit, dry_run=dry_run)
 
-    Parameters
-    ----------
-    example_path : str or Path
-        Path or name of relaxed bilayer example (e.g. 'MoS2_TaTe2_3R' or
-        'bilayer_examples/MoS2_TaTe2_3R')
-    supercell_dim : str
-        Supercell dimensions for phonopy (default: "4 4 1")
-    submit : bool
-        Whether to submit jobs for displacements
-    dry_run : bool
-        If True, only print actions without executing
-    """
-    print(f"\n{'=' * 60}")
-    print(f"Processing bilayer: {example_path}")
-    print(f"{'=' * 60}\n")
 
-    # Step 1: prepare staticpoint (let module use its own default base_dir)
-    print("Step 1: Preparing static-point calculation...")
-    try:
-        resolved_example = _resolve_relaxed_example(example_path, kind="bilayer")
-        prep_result = prepare_bilayer_staticpoint(
-            resolved_example,
-            base_dir=None,              # use default phonopy_bilayer_examples
-            supercell_dim=supercell_dim,
-            generate_displacements=True,
-        )
-        staticpoint_dir = prep_result["output_dir"]
-        print(f"  ✓ Created static-point directory: {staticpoint_dir}\n")
-    except Exception as e:  # noqa: BLE001
-        print(f"  ✗ Error preparing staticpoint: {e}\n", file=sys.stderr)
-        return {"success": False, "error": str(e)}
-
-    # Step 2: set up displacement folders and optionally submit
-    print("Step 2: Setting up displacement calculations...")
-    try:
-        disp_result = setup_bilayer_displacements(
-            staticpoint_dir,
-            submit=submit,
-            dry_run=dry_run,
-        )
-        print(f"  ✓ Set up {disp_result['displacements_setup']} displacement(s)")
-        if disp_result["jobs_submitted"] > 0:
-            print(f"  ✓ Submitted {disp_result['jobs_submitted']} job(s)\n")
-
-        return {
-            "success": True,
-            "type": "bilayer",
-            "staticpoint_dir": staticpoint_dir,
-            "displacements_setup": disp_result["displacements_setup"],
-            "jobs_submitted": disp_result["jobs_submitted"],
-            "job_ids": disp_result["job_ids"],
-        }
-    except Exception as e:  # noqa: BLE001
-        print(f"  ✗ Error setting up displacements: {e}\n", file=sys.stderr)
-        return {"success": False, "error": str(e)}
+def process_bilayer(example_path, supercell_dim="4 4 1", submit=True, dry_run=False):
+    """Process a single bilayer example: prepare staticpoint and set up displacements."""
+    return _process_example("bilayer", example_path, supercell_dim=supercell_dim,
+                             submit=submit, dry_run=dry_run)
 
 
 #
 # Batch helpers
 #
 
-def process_all_monolayers(supercell_dim="4 4 1",
-                           submit=True, dry_run=False):
+def _process_all(kind, process_fn, supercell_dim="4 4 1", submit=True, dry_run=False):
+    """Process all examples of a given kind in ../<kind>_examples."""
+    examples_dirname = _KIND_CONFIG[kind]["examples_dirname"]
+    base_examples_dir = ROOT.parent / examples_dirname
+    if not base_examples_dir.exists():
+        print(
+            f"Error: {kind.capitalize()} examples directory not found: {base_examples_dir}",
+            file=sys.stderr,
+        )
+        return []
+
+    examples = [d for d in base_examples_dir.iterdir() if d.is_dir()]
+    if not examples:
+        print(f"No {kind} examples found in {base_examples_dir}")
+        return []
+
+    print(f"Found {len(examples)} {kind} example(s)\n")
+
+    results = []
+    for example_dir in sorted(examples):
+        result = process_fn(
+            example_dir,
+            supercell_dim=supercell_dim,
+            submit=submit,
+            dry_run=dry_run,
+        )
+        results.append(result)
+
+    return results
+
+
+def process_all_monolayers(supercell_dim="4 4 1", submit=True, dry_run=False):
     """Process all monolayer examples in ../monolayer_examples."""
-    base_examples_dir = ROOT.parent / "monolayer_examples"
-    if not base_examples_dir.exists():
-        print(
-            f"Error: Monolayer examples directory not found: {base_examples_dir}",
-            file=sys.stderr,
-        )
-        return []
-
-    examples = [d for d in base_examples_dir.iterdir() if d.is_dir()]
-    if not examples:
-        print(f"No monolayer examples found in {base_examples_dir}")
-        return []
-
-    print(f"Found {len(examples)} monolayer example(s)\n")
-
-    results = []
-    for example_dir in sorted(examples):
-        result = process_monolayer(
-            example_dir,
-            supercell_dim=supercell_dim,
-            submit=submit,
-            dry_run=dry_run,
-        )
-        results.append(result)
-
-    return results
+    return _process_all("monolayer", process_monolayer, supercell_dim=supercell_dim,
+                         submit=submit, dry_run=dry_run)
 
 
-def process_all_bilayers(supercell_dim="4 4 1",
-                         submit=True, dry_run=False):
+def process_all_bilayers(supercell_dim="4 4 1", submit=True, dry_run=False):
     """Process all bilayer examples in ../bilayer_examples."""
-    base_examples_dir = ROOT.parent / "bilayer_examples"
-    if not base_examples_dir.exists():
-        print(
-            f"Error: Bilayer examples directory not found: {base_examples_dir}",
-            file=sys.stderr,
-        )
-        return []
-
-    examples = [d for d in base_examples_dir.iterdir() if d.is_dir()]
-    if not examples:
-        print(f"No bilayer examples found in {base_examples_dir}")
-        return []
-
-    print(f"Found {len(examples)} bilayer example(s)\n")
-
-    results = []
-    for example_dir in sorted(examples):
-        result = process_bilayer(
-            example_dir,
-            supercell_dim=supercell_dim,
-            submit=submit,
-            dry_run=dry_run,
-        )
-        results.append(result)
-
-    return results
+    return _process_all("bilayer", process_bilayer, supercell_dim=supercell_dim,
+                         submit=submit, dry_run=dry_run)
 
 
 #

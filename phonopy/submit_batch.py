@@ -2,7 +2,7 @@
 """
 Submit phonopy static-point/displacement jobs for a specific relaxation batch.
 
-This mirrors the relaxation batches defined in data/batches.json, but instead
+This mirrors the relaxation batches defined in data/batches/, but instead
 of creating/relaxing structures, it:
 
   - Takes the corresponding relaxed examples in monolayer_examples/ or
@@ -26,7 +26,6 @@ Typical usage:
 from __future__ import annotations
 
 import argparse
-import json
 import sys
 from pathlib import Path
 
@@ -34,18 +33,7 @@ from pathlib import Path
 WORKFLOW_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(WORKFLOW_ROOT / "common"))
 
-
-def _load_batches(batch_file: str = "batches.json") -> dict:
-    """Load batch information from workflow/data/batches.json."""
-    batch_path = WORKFLOW_ROOT / "data" / batch_file
-    if not batch_path.exists():
-        raise FileNotFoundError(
-            f"Batch file not found: {batch_path}. "
-            "Run scripts/batch_management/create_batches.py first."
-        )
-
-    with open(batch_path, "r") as f:
-        return json.load(f)
+from batches import load_batch
 
 
 def _import_phonopy_prepare():
@@ -88,22 +76,7 @@ def submit_monolayer_batch(batch_number: int,
                            submit: bool = True,
                            dry_run: bool = False):
     """Run phonopy pipeline for all monolayers in the given batch."""
-    batches = _load_batches()
-    mono_batches = batches.get("monolayer_batches", [])
-    total_batches = batches.get("total_monolayer_batches", len(mono_batches))
-
-    batch = None
-    for b in mono_batches:
-        if b.get("batch_number") == batch_number:
-            batch = b
-            break
-
-    if batch is None:
-        raise ValueError(
-            f"Monolayer batch {batch_number} not found. "
-            f"Available batches: 1-{total_batches}"
-        )
-
+    batch = load_batch("monolayer", batch_number)
     materials = _filter_by_symmetry_manifest(list(batch.get("materials", [])))
     if not materials:
         print(f"Warning: Monolayer batch {batch_number} has no materials", file=sys.stderr)
@@ -147,22 +120,7 @@ def submit_bilayer_batch(batch_number: int,
                          submit: bool = True,
                          dry_run: bool = False):
     """Run phonopy pipeline for all bilayers in the given batch."""
-    batches = _load_batches()
-    bi_batches = batches.get("bilayer_batches", [])
-    total_batches = batches.get("total_bilayer_batches", len(bi_batches))
-
-    batch = None
-    for b in bi_batches:
-        if b.get("batch_number") == batch_number:
-            batch = b
-            break
-
-    if batch is None:
-        raise ValueError(
-            f"Bilayer batch {batch_number} not found. "
-            f"Available batches: 1-{total_batches}"
-        )
-
+    batch = load_batch("bilayer", batch_number)
     bilayers = _filter_by_symmetry_manifest(list(batch.get("bilayers", [])), is_bilayer=True)
     if not bilayers:
         print(f"Warning: Bilayer batch {batch_number} has no bilayers", file=sys.stderr)
@@ -221,12 +179,12 @@ Examples:
     parser.add_argument(
         "--monolayer",
         action="store_true",
-        help="Process monolayer batch (uses monolayer_batches in data/batches.json)",
+        help="Process monolayer batch (data/batches/monolayer_batch_<N>.json)",
     )
     parser.add_argument(
         "--bilayer",
         action="store_true",
-        help="Process bilayer batch (uses bilayer_batches in data/batches.json)",
+        help="Process bilayer batch (data/batches/bilayer_batch_<N>.json)",
     )
     parser.add_argument(
         "--batch",

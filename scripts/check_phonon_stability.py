@@ -9,14 +9,16 @@ Usage:
 """
 import argparse
 import glob
-import json
+import sys
 from pathlib import Path
 
 import yaml
 
 WORKFLOW_ROOT = Path(__file__).resolve().parent.parent
 FINAL_RESULTS = WORKFLOW_ROOT / "FINAL_RESULTS"
-BATCHES_FILE  = WORKFLOW_ROOT / "data" / "batches.json"
+sys.path.insert(0, str(WORKFLOW_ROOT / "common"))
+
+from batches import load_batch
 
 STABLE_THRESHOLD    = -0.10   # THz — fully stable
 BORDERLINE_THRESHOLD = -0.50  # THz — small Γ acoustic dip, acceptable
@@ -39,16 +41,11 @@ def parse_band_yaml(path):
 
 
 def get_batch_materials(batch_num, kind="bilayer"):
-    if not BATCHES_FILE.exists():
+    try:
+        batch = load_batch(kind, batch_num)
+    except (FileNotFoundError, ValueError):
         return None
-    batches = json.loads(BATCHES_FILE.read_text())
-    key = f"{kind}_batches"
-    for b in batches.get(key, []):
-        if b["batch_number"] == batch_num:
-            if kind == "bilayer":
-                return b["bilayers"]
-            return b["materials"]
-    return None
+    return batch["bilayers"] if kind == "bilayer" else batch["materials"]
 
 
 def main():
@@ -64,7 +61,7 @@ def main():
     if args.batch is not None:
         names = get_batch_materials(args.batch, "bilayer")
         if names is None:
-            print(f"Batch {args.batch} not found in batches.json")
+            print(f"Batch {args.batch} not found in data/batches/")
             return
         target = set(names)
         all_yamls = [p for p in all_yamls if p.parent.name in target]

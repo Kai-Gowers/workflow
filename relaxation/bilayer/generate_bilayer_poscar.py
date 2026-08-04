@@ -41,6 +41,7 @@ except ImportError:
     MP_HELPERS_AVAILABLE = False
 
 from structural_families import validate_stacking, STACKING_SUFFIXES
+from cli_helpers import add_mp_args
 
 try:
     sys.path.insert(0, str(MONOLAYER_DIR))
@@ -71,69 +72,6 @@ def _load_bilayer_overrides():
         return {}
     bilayers = data.get("bilayers", {})
     return bilayers if isinstance(bilayers, dict) else {}
-
-# Material structure type classification
-MATERIAL_STRUCTURE_TYPES = {
-    # Single element 2D materials (2 atoms per unit cell)
-    'single_element': ['graphene', 'phosphorene', 'silicene', 'germanene', 'stanene'],
-    
-    # TMDs (3 atoms per unit cell: metal + 2 chalcogens)
-    'tmd': ['MoS2', 'MoSe2', 'MoTe2', 'WS2', 'WSe2', 'WTe2', 'NbS2', 'NbSe2', 'NbTe2',
-            'TaS2', 'TaSe2', 'TaTe2', 'ReS2', 'ReSe2', 'SnS2', 'SnSe2', 'TiS2', 'TiSe2',
-            'ZrS2', 'ZrSe2', 'HfS2', 'HfSe2'],
-    
-    # Binary compounds (2 atoms per unit cell)
-    'binary': ['BN', 'GaN', 'InSe', 'GaSe'],
-    
-    # Ternary / alloy monolayers
-    'ternary': ['MoSSe', 'WSSe', 'MoWSe2', 'MoWTe2'],
-}
-
-
-def get_material_structure_type(material_name):
-    """
-    Get the structure type of a material.
-    
-    Parameters:
-    -----------
-    material_name : str
-        Material name
-    
-    Returns:
-    --------
-    str : Structure type ('single_element', 'tmd', 'binary', or None)
-    """
-    for struct_type, materials in MATERIAL_STRUCTURE_TYPES.items():
-        if material_name in materials:
-            return struct_type
-    return None
-
-
-def are_materials_compatible(mat1, mat2):
-    """
-    Check if two materials have compatible structures for stacking.
-    
-    Parameters:
-    -----------
-    mat1 : str
-        First material name
-    mat2 : str
-        Second material name
-    
-    Returns:
-    --------
-    bool : True if materials can be stacked together
-    """
-    type1 = get_material_structure_type(mat1)
-    type2 = get_material_structure_type(mat2)
-    
-    # Both must have known structure types
-    if type1 is None or type2 is None:
-        return False
-    
-    # Materials must have the same structure type
-    return type1 == type2
-
 
 def get_monolayer_coords(a, c, dMX, mat):
     """
@@ -195,13 +133,6 @@ def _stack_bilayer_shift(
     return coords1 + coords2_out, species1 + species1
 
 
-def _stack_bilayer_3R(coords1, species1, coords2, species2, c, hetero=False, dz=None):
-    """Apply 3R stacking to pre-built layer fractional coordinates (unchanged semantics)."""
-    return _stack_bilayer_shift(
-        coords1, species1, coords2, species2, c, dx=1/3, dy=1/3, hetero=hetero, dz=dz
-    )
-
-
 def _stack_bilayer_2H(coords1, species1, coords2, species2, c, dz=None):
     """Apply 2H stacking to pre-built layer fractional coordinates (unchanged semantics)."""
     z_shift = _interlayer_z_shift(coords1, coords2, c, dz)
@@ -250,32 +181,6 @@ def apply_bilayer_stacking(
     if stacking == "2H":
         return _stack_bilayer_2H(coords1, species1, coords2, species2, c, dz=dz)
     raise ValueError(f"Unknown stacking type: {stacking}")
-
-
-def get_bilayer_coords_3R(a, c, dMX, mat1, mat2=None, dz=None):
-    """
-    Get fractional coordinates for 3R stacking: second layer shifted by (1/3, 1/3).
-    """
-    if mat2 is None:
-        mat2 = mat1
-    coords1, species1 = get_monolayer_coords(a, c, dMX, mat1)
-    if mat1 != mat2:
-        coords2, species2 = get_monolayer_coords(a, c, dMX, mat2)
-        return _stack_bilayer_3R(
-            coords1, species1, coords2, species2, c, hetero=True, dz=dz
-        )
-    return _stack_bilayer_3R(
-        coords1, species1, coords1, species1, c, hetero=False, dz=dz
-    )
-
-
-def get_bilayer_coords_2H(a, c, dMX, mat1, mat2=None, dz=None):
-    """Get fractional coordinates for 2H stacking."""
-    if mat2 is None:
-        mat2 = mat1
-    coords1, species1 = get_monolayer_coords(a, c, dMX, mat1)
-    coords2, species2 = get_monolayer_coords(a, c, dMX, mat2)
-    return _stack_bilayer_2H(coords1, species1, coords2, species2, c, dz=dz)
 
 
 def get_bilayer_coords(a, c, dMX, mat1, mat2, stacking, dz=None):
@@ -732,32 +637,7 @@ Examples:
         default="POSCAR",
         help="Output filename (default: POSCAR)"
     )
-    parser.add_argument(
-        "--no-mp",
-        action="store_true",
-        help="Disable Materials Project lookup and use template-only generation",
-    )
-    parser.add_argument(
-        "--mp-api-key",
-        type=str,
-        default=None,
-        help="Materials Project API key (default: MP_API_KEY environment variable)",
-    )
-    parser.add_argument(
-        "--mp-refresh",
-        action="store_true",
-        help="Refresh MP cache entries for queried materials",
-    )
-    parser.add_argument(
-        "--mp-verbose",
-        action="store_true",
-        help="Print MP selection/fallback details",
-    )
-    parser.add_argument(
-        "--strict-validation",
-        action="store_true",
-        help="Treat bilayer validation failures as hard errors",
-    )
+    add_mp_args(parser)
     parser.add_argument(
         "--anchor",
         type=int,

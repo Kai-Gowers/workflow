@@ -765,31 +765,6 @@ def _select_best_doc(material_name: str, docs):
     return None
 
 
-def normalize_structure_vacuum(structure, vacuum: float = 20.0):
-    """
-    Normalize structure to keep in-plane lattice and set c-axis vacuum.
-
-    Assumes 2D layers are oriented normal to z.
-    """
-    if not PYMATGEN_AVAILABLE:
-        return structure
-    s = structure.copy()
-    a_vec = s.lattice.matrix[0]
-    b_vec = s.lattice.matrix[1]
-    lattice = Lattice([a_vec, b_vec, [0.0, 0.0, float(vacuum)]])
-    s = Structure(
-        lattice=lattice,
-        species=s.species,
-        coords=s.cart_coords,
-        coords_are_cartesian=True,
-        to_unit_cell=True,
-    )
-    z_vals = [site.frac_coords[2] for site in s.sites]
-    z_center = 0.5 * (min(z_vals) + max(z_vals))
-    s.translate_sites(range(len(s)), [0.0, 0.0, 0.5 - z_center], frac_coords=True, to_unit_cell=True)
-    return s
-
-
 def get_monolayer_structure(
     material_name: str,
     api_key: Optional[str] = None,
@@ -915,84 +890,6 @@ def get_monolayer_structure(
     except Exception as e:  # noqa: BLE001
         meta["reason"] = f"query_error: {e}"
         return None, meta
-
-
-def write_structure_poscar(
-    structure,
-    output_path: Path,
-    vacuum: float = 20.0,
-) -> None:
-    """Normalize structure vacuum and write POSCAR."""
-    if not PYMATGEN_AVAILABLE:
-        raise RuntimeError("pymatgen is required to write MP-derived structures")
-    from pymatgen.io.vasp import Poscar
-
-    normalized = normalize_structure_vacuum(structure, vacuum=vacuum)
-    Poscar(normalized).write_file(str(output_path))
-
-
-def get_layer_lattice_info(structure) -> dict:
-    """
-    Compact lattice/geometry summary for a normalized monolayer layer.
-
-    Returns dict with keys: a, b, gamma, c, z_span, nsites.
-    """
-    if structure is None or not PYMATGEN_AVAILABLE:
-        return {}
-    lat = structure.lattice
-    z_vals = [site.frac_coords[2] for site in structure.sites]
-    z_span = max(z_vals) - min(z_vals) if z_vals else 0.0
-    return {
-        "a": float(lat.a),
-        "b": float(lat.b),
-        "gamma": float(lat.gamma),
-        "c": float(lat.c),
-        "z_span": float(z_span),
-        "nsites": len(structure),
-    }
-
-
-def structure_to_layer_fractional(structure, vacuum: float = 20.0):
-    """
-    Normalize MP structure and return fractional coords + species for bilayer stacking.
-
-    Returns (coords, species, lattice_info) or (None, None, {}) on failure.
-    """
-    if not PYMATGEN_AVAILABLE or structure is None:
-        return None, None, {}
-    normalized = normalize_structure_vacuum(structure, vacuum=vacuum)
-    coords = [list(site.frac_coords) for site in normalized]
-    species = [site.specie.symbol for site in normalized]
-    return coords, species, get_layer_lattice_info(normalized)
-
-
-def get_normalized_monolayer_layer(
-    material_name: str,
-    api_key: Optional[str] = None,
-    use_cache: bool = True,
-    refresh_cache: bool = False,
-    verbose: bool = False,
-    vacuum: float = 20.0,
-) -> Tuple[Optional[list], Optional[list], dict, dict]:
-    """
-    Fetch MP monolayer and return layer fractional data for bilayer assembly.
-
-    Returns (coords, species, lattice_info, metadata). coords/species are None on failure.
-    """
-    structure, meta = get_monolayer_structure(
-        material_name,
-        api_key=api_key,
-        use_cache=use_cache,
-        refresh_cache=refresh_cache,
-        verbose=verbose,
-    )
-    if structure is None:
-        return None, None, {}, meta
-    coords, species, lattice_info = structure_to_layer_fractional(structure, vacuum=vacuum)
-    if coords is None:
-        meta["reason"] = meta.get("reason") or "normalization_failed"
-        return None, None, {}, meta
-    return coords, species, lattice_info, meta
 
 
 def get_material_lattice_constant(material_name: str, api_key: Optional[str] = None) -> Optional[float]:

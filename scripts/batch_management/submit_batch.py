@@ -2,12 +2,11 @@
 """
 Submit a specific batch of monolayers or bilayers.
 
-This script reads batch information from batches.json and submits a specific batch.
+This script reads batch information from data/batches/ and submits a specific batch.
 You can submit batches sequentially as previous ones complete.
 """
 
 import sys
-import json
 from pathlib import Path
 
 # Add workflow directories to path
@@ -21,6 +20,8 @@ from submit_monolayer_job import submit_job as submit_monolayer_job
 from create_bilayer_example import create_bilayer_example
 from submit_bilayer_job import submit_bilayer_job
 from materials_project_api import load_symmetry_eligible_set, parse_bilayer_components
+from batches import load_batch, iter_batches
+from cli_helpers import add_mp_args
 
 
 def _skip_symmetry(name: str, eligible_set, is_bilayer: bool = False) -> bool:
@@ -33,17 +34,6 @@ def _skip_symmetry(name: str, eligible_set, is_bilayer: bool = False) -> bool:
             return False
         return not all(c in eligible_set for c in components)
     return name not in eligible_set
-
-
-def load_batches(batch_file="batches.json"):
-    """Load batch information from JSON file"""
-    workflow_root = Path(__file__).parent.parent.parent
-    batch_path = workflow_root / "data" / batch_file
-    if not batch_path.exists():
-        raise FileNotFoundError(f"Batch file not found: {batch_path}. Run create_batches.py first.")
-    
-    with open(batch_path, 'r') as f:
-        return json.load(f)
 
 
 def _print_job_id_summary(results, name_key):
@@ -63,7 +53,6 @@ def _print_job_id_summary(results, name_key):
 
 
 def submit_monolayer_batch(
-    batch_info,
     batch_number,
     create=True,
     generate_potcar=True,
@@ -80,8 +69,6 @@ def submit_monolayer_batch(
     
     Parameters:
     -----------
-    batch_info : dict
-        Batch information loaded from JSON
     batch_number : int
         Batch number to submit
     create : bool
@@ -92,21 +79,13 @@ def submit_monolayer_batch(
         Don't actually submit, just show what would be done
     verbose : bool
         Print verbose output
-    
+
     Returns:
     --------
     dict : Submission results
     """
-    # Find the batch
-    batch = None
-    for b in batch_info['monolayer_batches']:
-        if b['batch_number'] == batch_number:
-            batch = b
-            break
-    
-    if batch is None:
-        raise ValueError(f"Monolayer batch {batch_number} not found. Available batches: 1-{batch_info['total_monolayer_batches']}")
-    
+    batch = load_batch("monolayer", batch_number)
+
     print(f"\n{'='*60}")
     print(f"Submitting Monolayer Batch {batch_number}")
     print(f"{'='*60}")
@@ -232,7 +211,6 @@ def submit_monolayer_batch(
 
 
 def submit_bilayer_batch(
-    batch_info,
     batch_number,
     create=True,
     generate_potcar=True,
@@ -249,8 +227,6 @@ def submit_bilayer_batch(
     
     Parameters:
     -----------
-    batch_info : dict
-        Batch information loaded from JSON
     batch_number : int
         Batch number to submit
     create : bool
@@ -261,21 +237,13 @@ def submit_bilayer_batch(
         Don't actually submit, just show what would be done
     verbose : bool
         Print verbose output
-    
+
     Returns:
     --------
     dict : Submission results
     """
-    # Find the batch
-    batch = None
-    for b in batch_info['bilayer_batches']:
-        if b['batch_number'] == batch_number:
-            batch = b
-            break
-    
-    if batch is None:
-        raise ValueError(f"Bilayer batch {batch_number} not found. Available batches: 1-{batch_info['total_bilayer_batches']}")
-    
+    batch = load_batch("bilayer", batch_number)
+
     print(f"\n{'='*60}")
     print(f"Submitting Bilayer Batch {batch_number}")
     print(f"{'='*60}")
@@ -401,21 +369,22 @@ def submit_bilayer_batch(
     }
 
 
-def list_batches(batch_file="batches.json"):
+def list_batches():
     """List all available batches"""
-    batch_info = load_batches(batch_file)
-    
+    mono_batches = iter_batches("monolayer")
+    bi_batches = iter_batches("bilayer")
+
     print(f"\n{'='*60}")
     print("Available Batches")
     print(f"{'='*60}")
-    print(f"\nMonolayer Batches ({batch_info['total_monolayer_batches']} total):")
-    for batch in batch_info['monolayer_batches']:
+    print(f"\nMonolayer Batches ({len(mono_batches)} total):")
+    for batch in mono_batches:
         print(f"  Batch {batch['batch_number']}: {batch['count']} materials")
-    
-    print(f"\nBilayer Batches ({batch_info['total_bilayer_batches']} total):")
-    for batch in batch_info['bilayer_batches']:
+
+    print(f"\nBilayer Batches ({len(bi_batches)} total):")
+    for batch in bi_batches:
         print(f"  Batch {batch['batch_number']}: {batch['count']} bilayers")
-    
+
     print(f"{'='*60}\n")
 
 
@@ -457,12 +426,6 @@ Examples:
         help="Bilayer batch number to submit"
     )
     parser.add_argument(
-        "--batch-file",
-        type=str,
-        default="batches.json",
-        help="Batch file to use (default: batches.json)"
-    )
-    parser.add_argument(
         "--no-create",
         action="store_true",
         help="Don't create new examples, only submit existing ones"
@@ -487,53 +450,25 @@ Examples:
         action="store_true",
         help="List all available batches"
     )
-    parser.add_argument(
-        "--no-mp",
-        action="store_true",
-        help="Disable Materials Project structure lookup for monolayer POSCAR generation",
-    )
-    parser.add_argument(
-        "--mp-api-key",
-        type=str,
-        default=None,
-        help="Materials Project API key (default: MP_API_KEY environment variable)",
-    )
-    parser.add_argument(
-        "--mp-refresh",
-        action="store_true",
-        help="Refresh Materials Project structure cache during monolayer creation",
-    )
-    parser.add_argument(
-        "--mp-verbose",
-        action="store_true",
-        help="Print MP selection/fallback details during monolayer creation",
-    )
-    parser.add_argument(
-        "--strict-validation",
-        action="store_true",
-        help="Fail monolayer creation if MP structure validation fails",
-    )
+    add_mp_args(parser)
     
     args = parser.parse_args()
     
     if args.list:
-        list_batches(args.batch_file)
+        list_batches()
         return
-    
+
     if args.monolayer is None and args.bilayer is None:
         parser.print_help()
         print("\nError: Must specify either --monolayer or --bilayer, or use --list to see available batches", file=sys.stderr)
         sys.exit(1)
-    
+
     if args.monolayer is not None and args.bilayer is not None:
         print("Error: Cannot specify both --monolayer and --bilayer", file=sys.stderr)
         sys.exit(1)
-    
-    batch_info = load_batches(args.batch_file)
-    
+
     if args.monolayer is not None:
         submit_monolayer_batch(
-            batch_info,
             args.monolayer,
             create=not args.no_create,
             generate_potcar=not args.no_potcar,
@@ -547,7 +482,6 @@ Examples:
         )
     elif args.bilayer is not None:
         submit_bilayer_batch(
-            batch_info,
             args.bilayer,
             create=not args.no_create,
             generate_potcar=not args.no_potcar,

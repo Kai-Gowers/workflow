@@ -112,7 +112,7 @@ python3 scripts/maintenance/list_jobs.py                   # Show tracked SLURM 
 
 ### Data Files
 
-- **`data/batches.json`** — batch assignments (13 monolayers in 1 batch; 138 bilayers in 10 batches of ~15)
+- **`data/batches/`** — batch assignments, one JSON file per batch (`monolayer_batch_<N>.json`, `bilayer_batch_<N>.json`); add a new batch by dropping in a new file
 - **`data/job_registry.json`** — SLURM job tracking (IDs, timestamps, paths); modified frequently
 - **`data/symmetry_eligible_materials.json`** — materials passing the P6₃/mmc filter
 - **`data/mp_material_overrides.json`** — manual lattice param overrides for problematic MP entries

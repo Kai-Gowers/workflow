@@ -54,10 +54,6 @@ def is_honeycomb(material: str) -> bool:
     return material in HONEYCOMB_MATERIALS
 
 
-def is_tmd(material: str) -> bool:
-    return material in TMD_MATERIALS
-
-
 def get_pair_type(mat1: str, mat2: str) -> str:
     """Return pair type: tmd_tmd, honeycomb_honeycomb, or tmd_honeycomb."""
     f1 = get_structural_family(mat1)
@@ -73,8 +69,17 @@ def get_pair_type(mat1: str, mat2: str) -> str:
 
 
 def get_allowed_stackings(mat1: str, mat2: str) -> tuple[str, ...]:
-    """Return exactly two allowed stacking labels for a material pair."""
+    """Return the allowed stacking labels for a material pair.
+
+    Normally exactly two per pair type, except a homobilayer of a
+    single-element material (e.g. silicene_bilayer): every site carries the
+    same atom, so the AB and BA in-plane registries are related by the
+    material's own symmetry and are the same physical structure -- only
+    "AB" is emitted to avoid generating a duplicate.
+    """
     pair_type = get_pair_type(mat1, mat2)
+    if mat1 == mat2 and mat1 in SINGLE_ELEMENT_HONEYCOMB:
+        return ("AB",)
     return PAIR_STACKINGS[pair_type]
 
 

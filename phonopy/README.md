@@ -81,7 +81,7 @@ This script automatically:
 
 ## Batch symmetry filter (hexagonal P6₃/mmc)
 
-Relaxation and phonopy batch submission use [`data/batches.json`](../data/batches.json), which is built only from materials with **hexagonal** crystal system and space group **P6₃/mmc** (Materials Project metadata). Phosphorene, stanene, and several TMDs without an MP P6₃/mmc entry are excluded.
+Relaxation and phonopy batch submission use [`data/batches/`](../data/batches/) (one JSON file per batch), which is built only from materials with **hexagonal** crystal system and space group **P6₃/mmc** (Materials Project metadata). Phosphorene and several TMDs without an MP P6₃/mmc entry are excluded.
 
 Regenerate the manifest and batches after changing [`common/materials_list.txt`](../common/materials_list.txt):
 
@@ -89,7 +89,7 @@ Regenerate the manifest and batches after changing [`common/materials_list.txt`]
 # Report eligibility and write data/symmetry_eligible_materials.json
 python3 scripts/batch_management/report_symmetry_eligibility.py
 
-# Regenerate bilayer list and batches.json
+# Regenerate bilayer list and data/batches/
 python3 relaxation/bilayer/generate_bilayer_combinations.py --require-p63mmc
 python3 scripts/batch_management/create_batches.py --require-p63mmc --summary
 ```

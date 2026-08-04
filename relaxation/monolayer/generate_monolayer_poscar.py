@@ -33,6 +33,8 @@ try:
 except ImportError:
     VALIDATION_AVAILABLE = False
 
+from cli_helpers import add_mp_args
+
 # Lattice parameters for common 2D materials (in Angstrom)
 # Format: {material_name: (a, c, dMX)}
 # a: in-plane lattice constant
@@ -111,29 +113,6 @@ def get_tmd_monolayer_coords(a, c, dMX, mat):
     
     species = [mat[0], mat[1], mat[1]]
     return coords, species
-
-'''
-def get_binary_monolayer_coords(a, c, dMX, mat):
-    """Get fractional coordinates for binary monolayer (1:1 stoichiometry)."""
-    z_center = 0.5
-    if mat[0] == 'B' and mat[1] == 'N':
-        # Hexagonal BN - both atoms in same plane
-        coords = [
-            [0, 0, z_center],
-            [1/3, 1/3, z_center],
-        ]
-        species = ['B', 'N']
-    else:
-        # III-V / III-VI monolayers (GaN, InSe, GaSe): one cation, one anion
-        dMX_frac = dMX / c
-        coords = [
-            [0, 0, z_center + dMX_frac / 2],
-            [1/3, 1/3, z_center - dMX_frac / 2],
-        ]
-        species = [mat[0], mat[1]]
-    
-    return coords, species
-'''
 
 def get_binary_monolayer_coords(a, c, dMX, mat):
     """Get fractional coordinates for a stable flat binary monolayer."""
@@ -779,33 +758,8 @@ Examples:
         default=None,
         help="Output filename (default: 'POSCAR' for random mode, 'POSCAR_<material>' for batch mode)"
     )
-    parser.add_argument(
-        "--no-mp",
-        action="store_true",
-        help="Disable Materials Project lookup and use template-only generation",
-    )
-    parser.add_argument(
-        "--mp-api-key",
-        type=str,
-        default=None,
-        help="Materials Project API key (default: MP_API_KEY environment variable)",
-    )
-    parser.add_argument(
-        "--mp-refresh",
-        action="store_true",
-        help="Refresh MP cache entries for queried materials",
-    )
-    parser.add_argument(
-        "--mp-verbose",
-        action="store_true",
-        help="Print MP selection/fallback details",
-    )
-    parser.add_argument(
-        "--strict-validation",
-        action="store_true",
-        help="Treat MP structure validation failures as hard errors",
-    )
-    
+    add_mp_args(parser)
+
     args = parser.parse_args()
     
     # Random mode

@@ -11,51 +11,15 @@ This script generates complete training examples by:
 Each training example directory contains all files needed for VASP relaxation.
 """
 
+import sys
 from pathlib import Path
 import shutil
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "common"))
+from incar_utils import customize_incar  # noqa: E402
+from cli_helpers import add_mp_args  # noqa: E402
 from generate_monolayer_poscar import generate_random_poscar, generate_poscar, load_materials_list
 from generate_potcar import generate_potcar
-
-
-def customize_incar(template_path, output_path, material_name):
-    """
-    Copy INCAR template and customize it for the specific material.
-    
-    Parameters:
-    -----------
-    template_path : Path
-        Path to INCAR template file
-    output_path : Path
-        Path where customized INCAR will be written
-    material_name : str
-        Material name to use in SYSTEM line
-    """
-    with open(template_path, 'r') as f:
-        lines = f.readlines()
-    
-    # Customize the INCAR
-    customized_lines = []
-    system_found = False
-    
-    for line in lines:
-        # Update SYSTEM line with material name (replace first occurrence, skip duplicates)
-        stripped = line.strip()
-        if stripped.startswith('SYSTEM'):
-            if not system_found:
-                # First SYSTEM line: use material name
-                customized_lines.append(f"SYSTEM = {material_name} relaxation\n")
-                system_found = True
-            # Skip duplicate SYSTEM lines
-        else:
-            customized_lines.append(line)
-    
-    # If no SYSTEM line found, add one at the beginning
-    if not system_found:
-        customized_lines.insert(0, f"SYSTEM = {material_name} relaxation\n")
-    
-    # Write customized INCAR
-    with open(output_path, 'w') as f:
-        f.writelines(customized_lines)
 
 
 def find_unique_example_name(material_name, base_dir="monolayer_examples"):
@@ -224,7 +188,7 @@ def create_training_example(
             customize_incar(
                 template_path=template_dir / "INCAR",
                 output_path=example_dir / "INCAR",
-                material_name=material
+                name=material
             )
             copied_files.append("INCAR")
         
@@ -293,32 +257,7 @@ Examples:
         default=None,
         help="Specific example name to use (default: uses material name)"
     )
-    parser.add_argument(
-        "--no-mp",
-        action="store_true",
-        help="Disable Materials Project structure lookup",
-    )
-    parser.add_argument(
-        "--mp-api-key",
-        type=str,
-        default=None,
-        help="Materials Project API key (default: MP_API_KEY env var)",
-    )
-    parser.add_argument(
-        "--mp-refresh",
-        action="store_true",
-        help="Refresh MP structure cache",
-    )
-    parser.add_argument(
-        "--mp-verbose",
-        action="store_true",
-        help="Print MP source and fallback details",
-    )
-    parser.add_argument(
-        "--strict-validation",
-        action="store_true",
-        help="Fail if MP structure validation fails instead of falling back",
-    )
+    add_mp_args(parser)
     
     args = parser.parse_args()
     
