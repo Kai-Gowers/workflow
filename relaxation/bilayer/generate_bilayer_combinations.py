@@ -51,16 +51,22 @@ _are_compatible_mp, _get_all_lattice_constants, _get_api_key, _filter_materials 
 
 # Structural family classification for stacking
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "common"))
-from structural_families import get_allowed_stackings, validate_stacking, STACKING_SUFFIXES
+from structural_families import get_allowed_stackings, validate_stacking, STACKING_SUFFIXES, BUCKLED_HONEYCOMB
+
+# Buckled Xenes (silicene, germanene, stanene) are far more strain-sensitive
+# than TMD-TMD or flat-honeycomb pairs -- silicene_germanene went genuinely
+# phonon-unstable at only 4.5% mismatch, while TMD-TMD pairs are healthy up
+# to 7.4%. See feedback_xene_heterobilayer_strain_instability memory.
+BUCKLED_XENE_TOLERANCE = 0.03
 
 
 def are_materials_compatible(mat1, mat2, api_key=None, tolerance=0.10, verbose=False, lattice_constants=None):
     """
     Check if two materials are compatible for bilayer stacking based on lattice constants.
-    
+
     Uses The Materials Project API to retrieve lattice constants and checks if they
     are within the specified tolerance (default 10%).
-    
+
     Parameters:
     -----------
     mat1 : str
@@ -70,10 +76,13 @@ def are_materials_compatible(mat1, mat2, api_key=None, tolerance=0.10, verbose=F
     api_key : str, optional
         Materials Project API key (if None, tries to get from environment)
     tolerance : float
-        Maximum relative difference in lattice constants (default: 0.10 = 10%)
+        Maximum relative difference in lattice constants (default: 0.10 = 10%).
+        Automatically clamped to BUCKLED_XENE_TOLERANCE (3%) if either
+        material is a buckled Xene (silicene/germanene/stanene) -- pass an
+        explicit tighter tolerance to clamp further.
     verbose : bool
         Print detailed information
-    
+
     Returns:
     --------
     bool : True if materials are compatible
@@ -81,6 +90,15 @@ def are_materials_compatible(mat1, mat2, api_key=None, tolerance=0.10, verbose=F
     # Homostructures are always compatible
     if mat1 == mat2:
         return True
+
+    if mat1 in BUCKLED_HONEYCOMB or mat2 in BUCKLED_HONEYCOMB:
+        if tolerance > BUCKLED_XENE_TOLERANCE:
+            if verbose:
+                print(
+                    f"  {mat1}-{mat2}: clamping tolerance {tolerance:.0%} -> "
+                    f"{BUCKLED_XENE_TOLERANCE:.0%} (buckled Xene strain sensitivity)"
+                )
+            tolerance = BUCKLED_XENE_TOLERANCE
 
     # Use pre-fetched lattice constants when provided (same tolerance semantics, no extra API calls)
     if lattice_constants is not None:

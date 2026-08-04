@@ -15,12 +15,13 @@
     "BN",
     "silicene",
     "germanene",
-    "NbSe2"
+    "GaN",
+    "NbS2",
+    "TaS2",
+    "TaSe2",
+    "TiS2"
   ],
-  "excluded_materials": [
-    "stanene",
-    "ZrS2"
-  ],
+  "excluded_materials": [],
   "details": [
     {
       "material": "graphene",
@@ -123,34 +124,54 @@
       "reason": null
     },
     {
-      "material": "stanene",
-      "crystal_system": null,
-      "spacegroup_symbol": null,
-      "spacegroup_number": null,
-      "material_id": null,
-      "source": "missing",
-      "eligible": false,
-      "reason": "missing_api_key"
-    },
-    {
-      "material": "NbSe2",
+      "material": "GaN",
       "crystal_system": "Hexagonal",
       "spacegroup_symbol": "P6_3/mmc",
       "spacegroup_number": null,
-      "material_id": "mp-2207",
+      "material_id": "mp-1007824",
       "source": "params-cache",
       "eligible": true,
       "reason": null
     },
     {
-      "material": "ZrS2",
-      "crystal_system": null,
-      "spacegroup_symbol": null,
+      "material": "NbS2",
+      "crystal_system": "Hexagonal",
+      "spacegroup_symbol": "P6_3/mmc",
       "spacegroup_number": null,
-      "material_id": null,
-      "source": "missing",
-      "eligible": false,
-      "reason": "missing_api_key"
+      "material_id": "mp-10033",
+      "source": "params-cache",
+      "eligible": true,
+      "reason": null
+    },
+    {
+      "material": "TaS2",
+      "crystal_system": "Hexagonal",
+      "spacegroup_symbol": "P6_3/mmc",
+      "spacegroup_number": null,
+      "material_id": "mp-1984",
+      "source": "params-cache",
+      "eligible": true,
+      "reason": null
+    },
+    {
+      "material": "TaSe2",
+      "crystal_system": "Hexagonal",
+      "spacegroup_symbol": "P6_3/mmc",
+      "spacegroup_number": null,
+      "material_id": "mp-1019276",
+      "source": "params-cache",
+      "eligible": true,
+      "reason": null
+    },
+    {
+      "material": "TiS2",
+      "crystal_system": "Hexagonal",
+      "spacegroup_symbol": "P6_3/mmc",
+      "spacegroup_number": null,
+      "material_id": "mp-1077021",
+      "source": "params-cache",
+      "eligible": true,
+      "reason": null
     }
   ]
 }

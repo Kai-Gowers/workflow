@@ -22,6 +22,13 @@ SINGLE_ELEMENT_HONEYCOMB = frozenset(["graphene", "silicene", "germanene", "stan
 
 HONEYCOMB_MATERIALS = BINARY_HONEYCOMB | SINGLE_ELEMENT_HONEYCOMB
 
+# Low-buckled Xenes (nonzero out-of-plane dMX), unlike flat graphene/BN/GaN.
+# Their phonon stability is unusually strain-sensitive -- a mismatched
+# heterobilayer partner can destabilize an out-of-plane K-point flexural
+# mode well below the mismatch that TMD-TMD or flat-honeycomb pairs
+# tolerate. See feedback_xene_heterobilayer_strain_instability memory.
+BUCKLED_HONEYCOMB = frozenset(["silicene", "germanene", "stanene"])
+
 # Longest suffix first for parsing bilayer names
 STACKING_SUFFIXES = (
     "TM_H2",
