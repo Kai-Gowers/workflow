@@ -28,8 +28,10 @@ from generate_monolayer_poscar import (
     DZ_BILAYER,
     get_tmd_monolayer_coords,
     get_binary_monolayer_coords,
+    get_monochalcogenide_dimer_coords,
     get_single_element_coords,
     get_ternary_coords,
+    _load_overrides,
 )
 
 COMMON_DIR = Path(__file__).parent.parent.parent / "common"
@@ -80,8 +82,18 @@ def get_monolayer_coords(a, c, dMX, mat):
     if len(mat) == 1:
         return get_single_element_coords(a, c, mat, dMX)
     if len(mat) == 2:
-        if mat == ['B', 'N'] or mat[0] in ['Ga', 'In']:
+        if mat == ['B', 'N'] or mat == ['Ga', 'N']:
             return get_binary_monolayer_coords(a, c, dMX, mat)
+        if mat in (['Ga', 'Se'], ['In', 'Se']):
+            material_name = 'GaSe' if mat[0] == 'Ga' else 'InSe'
+            overrides = _load_overrides()
+            dMM = overrides.get(material_name, {}).get('dMM')
+            if dMM is None:
+                raise ValueError(
+                    f"{material_name} needs a 'dMM' (metal-metal dimer bond length) "
+                    f"entry in data/mp_material_overrides.json."
+                )
+            return get_monochalcogenide_dimer_coords(a, c, dMX, dMM, mat)
         return get_tmd_monolayer_coords(a, c, dMX, mat)
     if len(mat) == 3:
         return get_ternary_coords(a, c, dMX, mat)

@@ -14,6 +14,7 @@ TMD_MATERIALS = frozenset([
     "WS2", "WSe2", "WTe2",
     "NbS2", "NbSe2",
     "TaS2", "TaSe2",
+    "TiS2",
 ])
 
 BINARY_HONEYCOMB = frozenset(["BN", "GaN"])
@@ -29,6 +30,16 @@ HONEYCOMB_MATERIALS = BINARY_HONEYCOMB | SINGLE_ELEMENT_HONEYCOMB
 # tolerate. See feedback_xene_heterobilayer_strain_instability memory.
 BUCKLED_HONEYCOMB = frozenset(["silicene", "germanene", "stanene"])
 
+# Post-transition-metal monochalcogenides: a 4-atom X-M-M-X layer with a
+# vertically-bonded metal-metal dimer (see get_monochalcogenide_dimer_coords
+# in relaxation/monolayer/generate_monolayer_poscar.py) -- structurally
+# distinct from both the 3-atom TMD sandwich and the 2-atom flat honeycomb.
+# Monolayer-only for now; no bilayer stacking rules defined yet (deliberately
+# absent from PAIR_STACKINGS below, so get_pair_type raises rather than
+# silently applying a stacking scheme that hasn't been designed for this
+# family).
+MONOCHALCOGENIDE_DIMER = frozenset(["GaSe", "InSe"])
+
 # Longest suffix first for parsing bilayer names
 STACKING_SUFFIXES = (
     "TM_H2",
@@ -43,6 +54,13 @@ PAIR_STACKINGS = {
     "tmd_tmd": ("3R", "2H"),
     "honeycomb_honeycomb": ("AB", "BA"),
     "tmd_honeycomb": ("TM_H", "TM_H2"),
+    # Same registry-shift math as honeycomb_honeycomb/tmd_honeycomb
+    # respectively (apply_bilayer_stacking is family-agnostic) -- reusing
+    # the existing labels rather than minting new ones for an identical
+    # geometric operation.
+    "monochalcogenide_monochalcogenide": ("AB", "BA"),
+    "monochalcogenide_tmd": ("TM_H", "TM_H2"),
+    "monochalcogenide_honeycomb": ("TM_H", "TM_H2"),
 }
 
 
@@ -54,6 +72,8 @@ def get_structural_family(material: str) -> str:
         return "binary_honeycomb"
     if material in SINGLE_ELEMENT_HONEYCOMB:
         return "single_element_honeycomb"
+    if material in MONOCHALCOGENIDE_DIMER:
+        return "monochalcogenide_dimer"
     raise ValueError(f"Unknown material for structural family: {material!r}")
 
 
@@ -61,8 +81,14 @@ def is_honeycomb(material: str) -> bool:
     return material in HONEYCOMB_MATERIALS
 
 
+def is_monochalcogenide_dimer(material: str) -> bool:
+    return material in MONOCHALCOGENIDE_DIMER
+
+
 def get_pair_type(mat1: str, mat2: str) -> str:
-    """Return pair type: tmd_tmd, honeycomb_honeycomb, or tmd_honeycomb."""
+    """Return pair type: tmd_tmd, honeycomb_honeycomb, tmd_honeycomb,
+    monochalcogenide_monochalcogenide, monochalcogenide_tmd, or
+    monochalcogenide_honeycomb."""
     f1 = get_structural_family(mat1)
     f2 = get_structural_family(mat2)
 
@@ -72,6 +98,16 @@ def get_pair_type(mat1: str, mat2: str) -> str:
         return "honeycomb_honeycomb"
     if (f1 == "tmd" and is_honeycomb(mat2)) or (is_honeycomb(mat1) and f2 == "tmd"):
         return "tmd_honeycomb"
+    if is_monochalcogenide_dimer(mat1) and is_monochalcogenide_dimer(mat2):
+        return "monochalcogenide_monochalcogenide"
+    if (f1 == "tmd" and is_monochalcogenide_dimer(mat2)) or (
+        is_monochalcogenide_dimer(mat1) and f2 == "tmd"
+    ):
+        return "monochalcogenide_tmd"
+    if (is_honeycomb(mat1) and is_monochalcogenide_dimer(mat2)) or (
+        is_monochalcogenide_dimer(mat1) and is_honeycomb(mat2)
+    ):
+        return "monochalcogenide_honeycomb"
     raise ValueError(f"Incompatible pair: {mat1!r} / {mat2!r}")
 
 

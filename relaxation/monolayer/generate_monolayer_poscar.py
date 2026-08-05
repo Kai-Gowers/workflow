@@ -22,7 +22,7 @@ if str(COMMON_DIR) not in sys.path:
     sys.path.insert(0, str(COMMON_DIR))
 
 try:
-    from materials_project_api import get_material_lattice_params
+    from materials_project_api import get_material_lattice_params, _load_overrides
     MP_HELPERS_AVAILABLE = True
 except ImportError:
     MP_HELPERS_AVAILABLE = False
@@ -117,14 +117,39 @@ def get_tmd_monolayer_coords(a, c, dMX, mat):
 def get_binary_monolayer_coords(a, c, dMX, mat):
     """Get fractional coordinates for a stable flat binary monolayer."""
     z_center = 0.5
-    
+
     # All true 2D binary monolayers (BN, GaN, etc.) share the honeycomb lattice
     coords = [
         [0.0, 0.0, z_center],
-        [1/3, 1/3, z_center], 
+        [1/3, 1/3, z_center],
     ]
     species = [mat[0], mat[1]]
-    
+
+    return coords, species
+
+
+def get_monochalcogenide_dimer_coords(a, c, dMX, dMM, mat):
+    """Get fractional coordinates for a post-transition-metal monochalcogenide
+    (GaSe, InSe): a 4-atom X-M-M-X layer with a vertically-bonded metal-metal
+    dimer, NOT the 2-atom flat honeycomb get_binary_monolayer_coords builds.
+
+    mat = [metal, chalcogen]. dMX is the metal-chalcogen bond length, dMM is
+    the metal-metal dimer bond length -- both confirmed against the real MP
+    structure (mp-1943/mp-20485), see the GaSe/InSe entries in
+    data/mp_material_overrides.json.
+    """
+    dMX_frac = dMX / c
+    dMM_frac = dMM / c
+    z_center = 0.5
+
+    coords = [
+        [0.0, 0.0, z_center - dMM_frac / 2],  # Metal, bottom
+        [0.0, 0.0, z_center + dMM_frac / 2],  # Metal, top (dimer partner)
+        [1/3, 1/3, z_center - dMM_frac / 2 - dMX_frac],  # Chalcogen, bottom
+        [1/3, 1/3, z_center + dMM_frac / 2 + dMX_frac],  # Chalcogen, top
+    ]
+    species = [mat[0], mat[0], mat[1], mat[1]]
+
     return coords, species
 
 
@@ -420,16 +445,21 @@ def _build_single_material_template(material_name, a, c, dMX):
             mat = ['Sn']
         coords, species = get_single_element_coords(a, c, mat, dMX)
 
-    elif material_name in ['BN', 'GaN', 'InSe', 'GaSe']:
-        if material_name == 'BN':
-            mat = ['B', 'N']
-        elif material_name == 'GaN':
-            mat = ['Ga', 'N']
-        elif material_name == 'InSe':
-            mat = ['In', 'Se']
-        else:
-            mat = ['Ga', 'Se']
+    elif material_name in ['BN', 'GaN']:
+        mat = ['B', 'N'] if material_name == 'BN' else ['Ga', 'N']
         coords, species = get_binary_monolayer_coords(a, c, dMX, mat)
+
+    elif material_name in ['InSe', 'GaSe']:
+        mat = ['In', 'Se'] if material_name == 'InSe' else ['Ga', 'Se']
+        overrides = _load_overrides()
+        dMM = overrides.get(material_name, {}).get('dMM')
+        if dMM is None:
+            raise ValueError(
+                f"{material_name} needs a 'dMM' (metal-metal dimer bond length) entry "
+                f"in data/mp_material_overrides.json -- it cannot use the flat "
+                f"binary-honeycomb template."
+            )
+        coords, species = get_monochalcogenide_dimer_coords(a, c, dMX, dMM, mat)
 
     elif material_name in ['MoSSe', 'WSSe', 'MoWSe2', 'MoWTe2']:
         if material_name == 'MoSSe':

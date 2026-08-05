@@ -71,6 +71,24 @@
       "dMX": 0.840474008564908,
       "material_id": "mp-117",
       "note": "DFT cell-relaxed value; MP's own cached a (4.645673) was never actually used historically because this material's spacegroup_symbol is null in mp_lattice_params_cache.json, so pre-fix generation silently fell through to the local LATTICE_PARAMS fallback constant (4.70) instead -- this override makes that the explicit, intentional value rather than an accidental fallback. dMX is the inter-sublattice buckling amplitude, needed for the same flat-honeycomb reason as silicene/germanene. Buckling correction alone made this fully STABLE on a dense 40x40x1 mesh, no further hiphive correction needed."
+    },
+    "GaSe": {
+      "a": 3.7725747120102913,
+      "c": 20.0,
+      "dz": 6.5,
+      "dMX": 1.1569947788051635,
+      "dMM": 2.441104546499687,
+      "material_id": "mp-1943",
+      "note": "Post-transition-metal monochalcogenide: real structure is a 4-atom Se-Ga-Ga-Se dimer layer (Ga-Ga bonded vertically), not the 2-atom flat honeycomb the old get_binary_monolayer_coords dispatch (mat[0] in ['Ga','In']) was incorrectly using -- confirmed via live MP fetch of mp-1943's full 8-atom bulk structure (2 stacked layers), site-resolved by z-coordinate. dMX and dMM are both extracted directly from that structure (Se-Ga and Ga-Ga bond lengths respectively). Needs get_monochalcogenide_dimer_coords, not get_binary_monolayer_coords."
+    },
+    "InSe": {
+      "a": 4.041734167462343,
+      "c": 20.0,
+      "dz": 6.5,
+      "dMX": 1.2613187572655518,
+      "dMM": 2.799146043311728,
+      "material_id": "mp-20485",
+      "note": "Post-transition-metal monochalcogenide: real structure is a 4-atom Se-In-In-Se dimer layer (In-In bonded vertically), same fix as GaSe (see that entry's note) -- confirmed via live MP fetch of mp-20485's full 8-atom bulk structure. dMX and dMM extracted directly from that structure (In-Se and In-In bond lengths respectively)."
     }
   }
 }
