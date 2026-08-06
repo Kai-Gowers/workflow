@@ -31,6 +31,10 @@
     "MoSe2_WSe2_3R": {
       "a": 3.287164,
       "note": "DFT ISIF=4 residual-strain correction; corrects moderate residual in-plane stress (-5.13 kB external pressure) at the monolayer-derived lattice constant (3.301758 A). Averaged in-plane 'a' over the last 50 of 400 ionic steps (plateaued, std=0.00002 A). Rerun ISIF=2 relaxation at this constant converged (224 steps, below NSW limit) to -1.33 kB residual pressure. Phonopy re-verification of the phonon band at this geometry is pending (5x5x1 displacements not yet regenerated as of 2026-07-25)."
+    },
+    "MoS2_TiS2_2H": {
+      "a": 3.226823,
+      "note": "DFT ISIF=4 residual-strain correction (pilot for the batch 5/6 TiS2-cluster diagnosis, 2026-08-06); corrects large residual in-plane stress (-14.89 kB external pressure) at the monolayer-derived lattice constant (3.270195 A). Averaged in-plane 'a' over the last 50 of 400 ionic steps (NSW-limited, plateaued, std=0.0000083 A). Rerun ISIF=2 relaxation pending -- will confirm residual stress and phonon band at this geometry."
     }
   }
 }
