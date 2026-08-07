@@ -23,6 +23,7 @@ sys.path.insert(0, str(WORKFLOW_ROOT / "phonopy"))
 from poscar_utils import reorder_poscar_for_phonopy  # noqa: E402
 
 from incar_utils import customize_incar as _customize_incar
+from interlayer_check import check_bilayer_interlayer_gap
 
 
 def customize_incar(template_path, output_path, name):
@@ -136,6 +137,17 @@ def prepare_staticpoint(
     contcar = relaxed_example_path / "CONTCAR"
     if not contcar.exists():
         raise FileNotFoundError(f"CONTCAR not found in {relaxed_example_path}")
+
+    # Bilayers only: guard against the trapped-relaxation bug (see
+    # feedback_trapped_bilayer_relaxation_bug memory) -- VASP's own force
+    # convergence can be satisfied for some material families while the
+    # layers are still ~2-3x too far apart, which later trivially passes the
+    # phonon-stability check as two decoupled monolayers. Fail loudly here,
+    # before the expensive displacement + static-VASP phase, instead of
+    # silently promoting a decoupled pair to FINAL_RESULTS_HEALTHY.
+    if reorder_species:
+        gap = check_bilayer_interlayer_gap(contcar, name)
+        print(f"  Interlayer gap check passed ({gap:.3f} Å)")
 
     # Check that POTCAR exists (KPOINTS may come from static template)
     potcar = relaxed_example_path / "POTCAR"
