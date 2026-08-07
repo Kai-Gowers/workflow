@@ -19,26 +19,26 @@
     "MoSe2": {
       "a": 3.283583,
       "c": 20.0,
-      "dz": 6.5,
+      "dz": 3.036,
       "dMX": 1.676526,
       "material_id": "mp-1634",
-      "note": "DFT cell-relaxed (ISIF=4) a and dMX; corrects residual strain vs raw MP template, fixed the Gamma-point phonon dip (-0.226 -> -0.078 THz, now STABLE)"
+      "note": "DFT cell-relaxed (ISIF=4) a and dMX; corrects residual strain vs raw MP template, fixed the Gamma-point phonon dip (-0.226 -> -0.078 THz, now STABLE). dz corrected 2026-08-07 from useless 6.5 placeholder to the material's own already-known interlayer separation (mean of its correctly-relaxed 2H/3R homobilayer CONTCARs), so heterobilayer averaging (e.g. with TiS2) starts from a justified value instead of the workflow-wide trapped-relaxation-bug default -- see feedback_trapped_bilayer_relaxation_bug memory."
     },
     "MoTe2": {
       "a": 3.502959,
       "c": 20.0,
-      "dz": 6.5,
+      "dz": 3.228,
       "dMX": 1.818646,
       "material_id": "mp-602",
-      "note": "DFT cell-relaxed (ISIF=4) a and dMX; corrects residual strain vs raw MP template, fixed the Gamma-point phonon dip (-0.402 -> 0.000 THz, now STABLE)"
+      "note": "DFT cell-relaxed (ISIF=4) a and dMX; corrects residual strain vs raw MP template, fixed the Gamma-point phonon dip (-0.402 -> 0.000 THz, now STABLE). dz corrected 2026-08-07 from useless 6.5 placeholder to the material's own already-known interlayer separation (mean of its correctly-relaxed 2H/3R homobilayer CONTCARs) -- see feedback_trapped_bilayer_relaxation_bug memory."
     },
     "WTe2": {
       "a": 3.509815,
       "c": 20.0,
-      "dz": 6.5,
+      "dz": 3.246,
       "dMX": 1.825654,
       "material_id": "mp-1019322",
-      "note": "DFT cell-relaxed (ISIF=4) a and dMX; corrects residual strain vs raw MP template, improved the Gamma-point phonon dip (-0.274 -> -0.237 THz) but still borderline as of static k-mesh 7x7x1 -- denser k-mesh test in progress"
+      "note": "DFT cell-relaxed (ISIF=4) a and dMX; corrects residual strain vs raw MP template, improved the Gamma-point phonon dip (-0.274 -> -0.237 THz) but still borderline as of static k-mesh 7x7x1 -- denser k-mesh test in progress. dz corrected 2026-08-07 from useless 6.5 placeholder to the material's own already-known interlayer separation (mean of its correctly-relaxed 2H/3R homobilayer CONTCARs) -- see feedback_trapped_bilayer_relaxation_bug memory."
     },
     "ZrS2": {
       "a": 3.541990,
@@ -75,20 +75,35 @@
     "GaSe": {
       "a": 3.7725747120102913,
       "c": 20.0,
-      "dz": 6.5,
+      "dz": 3.546,
       "dMX": 1.1569947788051635,
       "dMM": 2.441104546499687,
       "material_id": "mp-1943",
-      "note": "Post-transition-metal monochalcogenide: real structure is a 4-atom Se-Ga-Ga-Se dimer layer (Ga-Ga bonded vertically), not the 2-atom flat honeycomb the old get_binary_monolayer_coords dispatch (mat[0] in ['Ga','In']) was incorrectly using -- confirmed via live MP fetch of mp-1943's full 8-atom bulk structure (2 stacked layers), site-resolved by z-coordinate. dMX and dMM are both extracted directly from that structure (Se-Ga and Ga-Ga bond lengths respectively). Needs get_monochalcogenide_dimer_coords, not get_binary_monolayer_coords."
+      "note": "Post-transition-metal monochalcogenide: real structure is a 4-atom Se-Ga-Ga-Se dimer layer (Ga-Ga bonded vertically), not the 2-atom flat honeycomb the old get_binary_monolayer_coords dispatch (mat[0] in ['Ga','In']) was incorrectly using -- confirmed via live MP fetch of mp-1943's full 8-atom bulk structure (2 stacked layers), site-resolved by z-coordinate. dMX and dMM are both extracted directly from that structure (Se-Ga and Ga-Ga bond lengths respectively). Needs get_monochalcogenide_dimer_coords, not get_binary_monolayer_coords. dz corrected 2026-08-07 from useless 6.5 placeholder to the mean interlayer separation of its own correctly-relaxed AB/BA homobilayers (these are genuinely dynamically unstable, but the relaxed geometry itself is correct) -- see feedback_trapped_bilayer_relaxation_bug memory."
     },
     "InSe": {
       "a": 4.041734167462343,
       "c": 20.0,
-      "dz": 6.5,
+      "dz": 2.972,
       "dMX": 1.2613187572655518,
       "dMM": 2.799146043311728,
       "material_id": "mp-20485",
-      "note": "Post-transition-metal monochalcogenide: real structure is a 4-atom Se-In-In-Se dimer layer (In-In bonded vertically), same fix as GaSe (see that entry's note) -- confirmed via live MP fetch of mp-20485's full 8-atom bulk structure. dMX and dMM extracted directly from that structure (In-Se and In-In bond lengths respectively)."
+      "note": "Post-transition-metal monochalcogenide: real structure is a 4-atom Se-In-In-Se dimer layer (In-In bonded vertically), same fix as GaSe (see that entry's note) -- confirmed via live MP fetch of mp-20485's full 8-atom bulk structure. dMX and dMM extracted directly from that structure (In-Se and In-In bond lengths respectively). dz corrected 2026-08-07 from useless 6.5 placeholder to the mean interlayer separation of its own correctly-relaxed AB/BA homobilayers -- see feedback_trapped_bilayer_relaxation_bug memory."
+    },
+    "MoS2": {
+      "dz": 2.918,
+      "material_id": "mp-2815",
+      "note": "dz-only override added 2026-08-07: this material's own homobilayer already relaxes correctly (no ISIF=4/a/dMX fix ever needed), so dz is the mean interlayer separation from its already-correctly-relaxed 2H/3R homobilayer CONTCARs, not a new measurement. Added so heterobilayer averaging (e.g. with TiS2) starts from a justified value instead of the workflow-wide 6.5 trapped-relaxation-bug default -- see feedback_trapped_bilayer_relaxation_bug memory."
+    },
+    "WS2": {
+      "dz": 2.932,
+      "material_id": "mp-224",
+      "note": "dz-only override added 2026-08-07: this material's own homobilayer already relaxes correctly, so dz is the mean interlayer separation from its already-correctly-relaxed 2H/3R homobilayer CONTCARs, not a new measurement -- see feedback_trapped_bilayer_relaxation_bug memory."
+    },
+    "WSe2": {
+      "dz": 3.052,
+      "material_id": "mp-1821",
+      "note": "dz-only override added 2026-08-07: this material's own homobilayer already relaxes correctly, so dz is the mean interlayer separation from its already-correctly-relaxed 2H/3R homobilayer CONTCARs, not a new measurement -- see feedback_trapped_bilayer_relaxation_bug memory."
     }
   }
 }

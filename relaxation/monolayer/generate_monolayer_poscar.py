@@ -85,8 +85,13 @@ LATTICE_PARAMS = {
     'MoWTe2': (3.52, 20.0, 1.58),
 }
 
-# Interlayer spacing for bilayers (in Angstrom)
-DZ_BILAYER = 6.5
+# Interlayer spacing for bilayers (in Angstrom). Last-resort fallback for
+# materials with no per-material dz override -- 3.5 matches the observed
+# range across every correctly-relaxed bilayer in this project (~2.9-5.0 A),
+# so it starts a relaxation inside the normal basin instead of the flat vdW
+# tail near 6.5 A that caused the trapped-relaxation bug (see
+# feedback_trapped_bilayer_relaxation_bug memory). Was 6.5 until 2026-08-07.
+DZ_BILAYER = 3.5
 
 
 def get_tmd_monolayer_coords(a, c, dMX, mat):

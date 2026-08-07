@@ -43,9 +43,14 @@ SYMMETRY_ELIGIBLE_FILE = DATA_DIR / "symmetry_eligible_materials.json"
 TARGET_SPACEGROUP_SYMBOL = "P6₃/mmc"
 TARGET_CRYSTAL_SYSTEM = "Hexagonal"
 
-# Workflow defaults when MP does not define slab vacuum / interlayer spacing
+# Workflow defaults when MP does not define slab vacuum / interlayer spacing.
+# DEFAULT_DZ is a last-resort fallback for materials with no per-material dz
+# override -- 3.5 matches the observed range across every correctly-relaxed
+# bilayer in this project (~2.9-5.0 A), avoiding the flat vdW tail near 6.5 A
+# that caused the trapped-relaxation bug (see
+# feedback_trapped_bilayer_relaxation_bug memory). Was 6.5 until 2026-08-07.
 DEFAULT_VACUUM_C = 20.0
-DEFAULT_DZ = 6.5
+DEFAULT_DZ = 3.5
 
 # Bump when dMX extraction logic changes (invalidates mp_lattice_params_cache entries).
 DMX_EXTRACTION_VERSION = 2

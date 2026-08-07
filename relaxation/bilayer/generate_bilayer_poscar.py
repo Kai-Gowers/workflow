@@ -419,7 +419,9 @@ def _generate_bilayer_from_relaxed_monolayers(
 
 def _default_params(material_name):
     a, c, dmx = LATTICE_PARAMS.get(material_name, (3.2, 20.0, 1.58))
-    return a, c, DZ_BILAYER, dmx
+    override = _load_overrides().get(material_name)
+    dz = float(override["dz"]) if isinstance(override, dict) and "dz" in override else DZ_BILAYER
+    return a, c, dz, dmx
 
 
 def _resolve_bilayer_lattice_params(
