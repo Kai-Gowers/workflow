@@ -4,12 +4,26 @@ Script to generate POTCAR file from POSCAR file.
 Reads element names from POSCAR and concatenates appropriate POTCAR files.
 """
 
-import os
 import sys
 from pathlib import Path
 
-# Default POTCAR path (can be overridden)
-DEFAULT_POTCAR_PATH = "/projects/twist2d/modules/vasp/potpaw_PBE.64"
+# Host-aware potpaw root (NERSC vs Andromeda); override with TWIST_POTCAR_PATH.
+_COMMON_DIR = Path(__file__).resolve().parent.parent.parent / "common"
+if str(_COMMON_DIR) not in sys.path:
+    sys.path.insert(0, str(_COMMON_DIR))
+from host_config import get_potcar_path  # noqa: E402
+
+
+def _default_potcar_path() -> Path:
+    return get_potcar_path()
+
+
+# Resolved lazily so import succeeds even before host detection is needed.
+# Kept as a callable-friendly name for CLI help / backward compatibility.
+try:
+    DEFAULT_POTCAR_PATH = _default_potcar_path()
+except (RuntimeError, FileNotFoundError):
+    DEFAULT_POTCAR_PATH = None
 
 # Priority order for pseudopotential variants (higher priority first)
 # This determines which variant to use when multiple are available
@@ -209,7 +223,7 @@ def generate_potcar(poscar_path, potcar_path=None, potcar_base_path=None, output
     potcar_path : str or Path, optional
         Path where POTCAR will be written (default: same directory as POSCAR, named "POTCAR")
     potcar_base_path : str or Path, optional
-        Base path to POTCAR pseudopotential files (default: DEFAULT_POTCAR_PATH)
+        Base path to POTCAR pseudopotential files (default: host-detected potpaw_PBE.64)
     output_path : str or Path, optional
         Alias for potcar_path (for backward compatibility)
     preferred_variants : dict, optional
@@ -233,9 +247,9 @@ def generate_potcar(poscar_path, potcar_path=None, potcar_base_path=None, output
     else:
         potcar_path = Path(potcar_path)
     
-    # Use default base path if not specified
+    # Use host-detected base path if not specified
     if potcar_base_path is None:
-        potcar_base_path = DEFAULT_POTCAR_PATH
+        potcar_base_path = _default_potcar_path()
     else:
         potcar_base_path = Path(potcar_base_path)
     
@@ -325,7 +339,10 @@ Examples:
         "--potcar-base",
         type=str,
         default=None,
-        help=f"Base path to POTCAR pseudopotential files (default: {DEFAULT_POTCAR_PATH})"
+        help=(
+            "Base path to POTCAR pseudopotential files "
+            "(default: host-detected potpaw_PBE.64; override with TWIST_POTCAR_PATH)"
+        ),
     )
     parser.add_argument(
         "-v", "--verbose",

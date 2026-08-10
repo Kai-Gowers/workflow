@@ -17,6 +17,11 @@ export MP_API_KEY=<your_key>   # Required for Materials Project API calls
 
 Dependencies: `phonopy` (CLI tool), `mp-api`, `pymatgen`, VASP (external), SLURM (external).
 
+Host-specific settings (POTCAR paths, etc.) live in `common/host_config.py` and
+auto-detect NERSC vs Andromeda. Override with `TWIST_HOST=nersc|andromeda` or
+`TWIST_POTCAR_PATH=/path/to/potpaw_PBE.64`. SLURM/`bat` templates remain
+host-local under `common/*_templates/` (gitignored).
+
 ## Common Commands
 
 **Monolayer relaxation:**
@@ -133,11 +138,12 @@ Each `disp-XXX/` folder inside a staticpoint dir is a separate VASP calculation.
 
 ### VASP Templates
 
-Templates for INCAR, KPOINTS, and SLURM batch scripts live in:
+Templates for INCAR, KPOINTS, and SLURM batch scripts live in (gitignored; host-local):
 - `common/relaxation_templates/` — for structural relaxation (ionic + cell DOF)
 - `common/staticpoint_templates/` — for static calculations (IBRION=-1, NSW=0)
 
-Key VASP settings used: DFT-D3 van der Waals corrections, KPAR=6, NCORE=4.
+Perlmutter defaults: `vasp/6.6.0-cpu`, 2 CPU nodes, 42 MPI ranks × 6 OpenMP threads,
+`KPAR=7`, `NCORE=6`, account `m5370`, queue `regular`.
 
 ### Material List
 

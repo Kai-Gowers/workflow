@@ -16,6 +16,10 @@ vasprun.xml
 OUTCAR
 OSZICAR
 
+# Host-specific VASP/SLURM templates (Perlmutter vs Andromeda differ)
+common/relaxation_templates/
+common/staticpoint_templates/
+
 # Example run directories (local VASP/phonopy outputs)
 monolayer_examples/
 bilayer_examples/
