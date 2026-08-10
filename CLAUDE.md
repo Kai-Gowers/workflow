@@ -142,8 +142,10 @@ Templates for INCAR, KPOINTS, and SLURM batch scripts live in (gitignored; host-
 - `common/relaxation_templates/` — for structural relaxation (ionic + cell DOF)
 - `common/staticpoint_templates/` — for static calculations (IBRION=-1, NSW=0)
 
-Perlmutter defaults: `vasp/6.6.0-cpu`, 2 CPU nodes, 42 MPI ranks × 6 OpenMP threads,
-`KPAR=7`, `NCORE=6`, account `m5370`, queue `regular`.
+Perlmutter defaults (`vasp/6.6.0-cpu`, account `m5370`, queue `regular`,
+5h walltime, 21 MPI ranks/node × 6 OpenMP):
+- relaxation: 2 nodes, 42 ranks, `KPAR=7`, `NCORE=6`
+- staticpoint: 6 nodes, 126 ranks, `KPAR=21`, `NCORE=6`
 
 ### Material List
 
