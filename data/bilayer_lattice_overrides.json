@@ -35,6 +35,30 @@
     "MoS2_TiS2_2H": {
       "a": 3.226823,
       "note": "DFT ISIF=4 residual-strain correction (pilot for the batch 5/6 TiS2-cluster diagnosis, 2026-08-06); corrects large residual in-plane stress (-14.89 kB external pressure) at the monolayer-derived lattice constant (3.270195 A). Averaged in-plane 'a' over the last 50 of 400 ionic steps (NSW-limited, plateaued, std=0.0000083 A). Rerun ISIF=2 relaxation pending -- will confirm residual stress and phonon band at this geometry."
+    },
+    "MoS2_TiS2_3R": {
+      "a": 3.224475,
+      "note": "DFT ISIF=4 residual-strain correction (2026-08-13, batch 5 TiS2-cluster full fix); corrects large residual in-plane stress (-14.10 kB) at the monolayer-derived lattice constant (3.270195 A), matching the earlier hiphive-confirmed Gamma-only phonon artifact at the uncorrected geometry. Averaged in-plane 'a' over the last 50 of 400 ionic steps (NSW-limited, plateaued, std=0.000174 A). ISIF=4 residual stress dropped to ~-1.5 kB. Rerun ISIF=2 relaxation pending -- will confirm residual stress and phonon band at this geometry."
+    },
+    "MoSe2_TiS2_2H": {
+      "a": 3.292796,
+      "note": "DFT ISIF=4 residual-strain correction (2026-08-13, batch 5 TiS2-cluster full fix); corrects large residual in-plane stress (-6.02 kB) at the monolayer-derived lattice constant (3.315867 A), which produced a BZ-wide (non-Gamma-only) phonon instability (36/864 negative, min -1.32 THz at 4x4x1) that a 5x5x1 supercell alone and hiphive correction both failed to fix. Averaged in-plane 'a' over the last 50 of 400 ionic steps (NSW-limited, plateaued, std=0.000171 A). ISIF=4 residual stress dropped to ~-0.77 kB. Rerun ISIF=2 relaxation pending -- will confirm residual stress and phonon band at this geometry."
+    },
+    "MoSe2_TiS2_3R": {
+      "a": 3.295639,
+      "note": "DFT ISIF=4 residual-strain correction (2026-08-13, batch 5 TiS2-cluster full fix); corrects residual in-plane stress at the monolayer-derived lattice constant (3.315867 A) -- no ISIF=2 stress value was previously logged for this material, but it showed the same BZ-wide (non-Gamma-only) phonon instability pattern as its cluster-mates (37/864 negative, min -1.11 THz at 4x4x1, untouched by the earlier 5x5x1-only retry round). Averaged in-plane 'a' over the last 50 of 400 ionic steps (NSW-limited, plateaued, std=0.0000766 A). ISIF=4 residual stress dropped to ~-0.6 kB. Rerun ISIF=2 relaxation pending -- will confirm residual stress and phonon band at this geometry."
+    },
+    "MoTe2_TiS2_2H": {
+      "a": 3.404221,
+      "note": "DFT ISIF=4 residual-strain correction (2026-08-13, batch 5 TiS2-cluster full fix); corrects large residual in-plane stress (-7.31 kB) at the monolayer-derived lattice constant (3.425556 A), which produced a BZ-wide (non-Gamma-only) phonon instability (30/864 negative, min -2.11 THz at 4x4x1, essentially unchanged at 5x5x1). Averaged in-plane 'a' over the last 50 of 400 ionic steps (NSW-limited, plateaued, std=0.000272 A). ISIF=4 residual stress dropped to ~-4.2 kB -- the least-improved of the 6, worth re-checking closely once phonons are re-verified. Rerun ISIF=2 relaxation pending -- will confirm residual stress and phonon band at this geometry."
+    },
+    "MoTe2_TiS2_3R": {
+      "a": 3.397782,
+      "note": "DFT ISIF=4 residual-strain correction (2026-08-13, batch 5 TiS2-cluster full fix); corrects large residual in-plane stress (-6.10 kB) at the monolayer-derived lattice constant (3.425556 A), which produced a BZ-wide (non-Gamma-only) phonon instability (34/864 negative, min -2.64 THz at 4x4x1, modest improvement to -1.87 THz at 5x5x1 but still clearly unstable). Averaged in-plane 'a' over the last 50 of 400 ionic steps (NSW-limited, plateaued, std=0.000596 A). ISIF=4 residual stress dropped to ~-0.7 kB. Rerun ISIF=2 relaxation pending -- will confirm residual stress and phonon band at this geometry."
+    },
+    "TiS2_bilayer_2H": {
+      "a": 3.307659,
+      "note": "DFT ISIF=4 residual-strain correction (2026-08-13, batch 5 TiS2-cluster full fix); corrects large residual in-plane stress (-10.82 kB) at the monolayer-derived lattice constant (3.348152 A), which produced the deepest BZ-wide (non-Gamma-only) phonon instability in the cluster (86/864 negative, min -2.73 THz at 4x4x1, worse at 5x5x1: 98/864, -4.01 THz) despite being a zero-lattice-mismatch homobilayer, ruling out lattice mismatch as the sole mechanism. Averaged in-plane 'a' over the last 50 of 400 ionic steps (NSW-limited, plateaued, std=0.000173 A). ISIF=4 residual stress dropped to ~-2.5 kB. Rerun ISIF=2 relaxation pending -- will confirm residual stress and phonon band at this geometry."
     }
   }
 }
