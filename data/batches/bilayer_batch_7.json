@@ -1,0 +1,26 @@
+{
+  "kind": "bilayer",
+  "batch_number": 7,
+  "bilayers": [
+    "MoS2_MoTe2_3R",
+    "MoS2_MoTe2_2H",
+    "MoS2_WTe2_3R",
+    "MoS2_WTe2_2H",
+    "MoTe2_WS2_3R",
+    "MoTe2_WS2_2H",
+    "WS2_WTe2_3R",
+    "WS2_WTe2_2H",
+    "TiS2_GaSe_TM_H",
+    "TiS2_GaSe_TM_H2",
+    "MoTe2_InSe_TM_H",
+    "MoTe2_InSe_TM_H2",
+    "WTe2_InSe_TM_H",
+    "WTe2_InSe_TM_H2",
+    "MoSe2_GaSe_TM_H",
+    "MoSe2_GaSe_TM_H2",
+    "WSe2_GaSe_TM_H",
+    "WSe2_GaSe_TM_H2"
+  ],
+  "count": 18,
+  "note": "Lattice-mismatch experiment: Tier-1 (MoS2/MoTe2/WS2/WTe2 TMD-TMD pairs, 11.6-12.0% mismatch, exceed default 10% are_materials_compatible tolerance) + Tier-2 (GaSe/InSe monochalcogenide-TMD pairs, 12.7-13.6% mismatch). All 18 pairs were excluded by the standard generate_bilayer_combinations.py compatibility filter; batched manually to test whether the ISIF=4 lattice-constant-correction pipeline (validated on batch 5/data/bilayer_lattice_overrides.json) produces physically sound structures above the normal cutoff."
+}
