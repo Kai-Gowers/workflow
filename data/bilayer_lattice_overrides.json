@@ -147,6 +147,14 @@
     "WSe2_GaSe_TM_H2": {
       "a": 3.534588,
       "note": "DFT ISIF=4 residual-strain correction (2026-08-15, batch 7 lattice-mismatch experiment; see project_bilayer_batch7_lattice_mismatch memory). Pair exceeds the standard 10% are_materials_compatible tolerance, batched manually to test whether the correction generalizes above the normal cutoff. ISIF=4 run directly from the anchor/average-built POSCAR (no separate ISIF=2 baseline at the uncorrected lattice constant was run first, per this batch's direct-to-ISIF=4 approach). Averaged in-plane 'a' over the last 50 of 400 ionic steps (NSW-limited, plateaued, std=0.000055 A). Verified c (vacuum) drift < 2.4% across the run, ruling out the vacuum-collapse artifact seen on 3 other pairs in this batch (see feedback_isif4_vacuum_volume_degeneracy memory). Rerun ISIF=2 relaxation pending -- will confirm residual stress and phonon band at this geometry."
+    },
+    "GaSe_InSe_AB": {
+      "a": 3.914938,
+      "note": "DFT ISIF=4 residual-strain correction (2026-08-17, triggered by a FINAL_RESULTS_HEALTHY structural-soundness audit -- user asked to verify GaSe_InSe_AB/BA weren't sitting at the wrong lattice constant, since the existing FINAL_RESULTS_HEALTHY structure was still at the raw monolayer-average anchor a=3.907154 with no lattice correction ever applied). ISIF=4 run seeded from the existing ISIF=2-relaxed structure (job 57189609, 402/402 NSW-limited ionic steps). Averaged in-plane 'a' over the last 50 steps: plateaued, std=0.000020 A -- a tiny +0.20% correction. Verified c (vacuum) drift only 0.44% across the run (19.912-20.0 A), well under the 3% vacuum-collapse contamination threshold (see feedback_isif4_vacuum_volume_degeneracy memory) -- this result is trustworthy, not a divergence artifact. Rerun ISIF=2 relaxation pending -- will confirm residual stress and phonon band at this geometry."
+    },
+    "GaSe_InSe_BA": {
+      "a": 3.917361,
+      "note": "DFT ISIF=4 residual-strain correction (2026-08-17, same audit as GaSe_InSe_AB -- see that entry's note). ISIF=4 run seeded from the existing ISIF=2-relaxed structure (job 57189610, 402/402 NSW-limited ionic steps). Averaged in-plane 'a' over the last 50 steps: plateaued, std=0.000002 A -- a tiny +0.26% correction. Verified c (vacuum) drift only 0.55% across the run (19.890-20.0 A), well under the 3% vacuum-collapse contamination threshold (see feedback_isif4_vacuum_volume_degeneracy memory) -- this result is trustworthy, not a divergence artifact. Rerun ISIF=2 relaxation pending -- will confirm residual stress and phonon band at this geometry."
     }
   }
 }
