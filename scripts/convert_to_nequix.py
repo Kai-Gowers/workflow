@@ -25,13 +25,13 @@ from phonopy.harmonic.force_constants import compact_fc_to_full_fc
 
 ROOT = Path(__file__).parent.parent
 
-# Bilayer names contain an underscore-separated stacking suffix (3R, 2H, AB, BA, TM_H, TM_H2)
-_STACKING = {"3R", "2H", "AB", "BA", "TM_H", "TM_H2"}
+sys.path.insert(0, str(ROOT / "common"))
+from structural_families import STACKING_SUFFIXES  # noqa: E402
 
 
 def is_bilayer(name: str) -> bool:
-    parts = name.rsplit("_", 1)
-    return len(parts) == 2 and parts[1] in _STACKING
+    # Longest suffix first (STACKING_SUFFIXES) so "TM_H2" isn't misread as "TM_H".
+    return any(name.endswith("_" + suffix) for suffix in STACKING_SUFFIXES)
 
 
 def convert_material(material_dir: Path, db: ase.db.core.Database) -> str | None:
