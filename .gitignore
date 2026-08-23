@@ -38,3 +38,7 @@ nequix_dataset_healthy.aselmdb-lock
 # Nequix dataset versions (large binaries; materials.txt manifests stay tracked)
 nequix_datasets/*/dataset.aselmdb
 nequix_datasets/*/*.aselmdb-lock
+
+# Transient symlink staging trees for convert_to_nequix.py (regenerable from
+# FINAL_RESULTS_HEALTHY + the material lists in nequix_datasets/*/materials.txt)
+/staging/
