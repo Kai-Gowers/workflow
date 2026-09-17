@@ -88,6 +88,17 @@ Each version directory is a permanent, immutable snapshot — never regenerate i
 existing version dir. The script auto-writes a `materials.txt` manifest alongside
 `dataset.aselmdb` listing every material included. See `nequix_datasets/README.md`.
 
+**Template start structures (for Nequix end-to-end evals):**
+```bash
+python3 scripts/generate_template_start_structures.py      # 48 v4_tmd_only materials -> template_structures/
+```
+Writes the workflow's *pre-relaxation* POSCAR for each material (the same kind of unrelaxed
+structure VASP is given), using the production parameter precedence (material/bilayer overrides
+first, then the MP cache; dz from overrides else 3.5 Å). `template_structures/` is tracked;
+`summary.csv` compares template vs DFT-relaxed `a` and interlayer gap. Consumed by
+`nequix/scripts/eval_healthy2d_finetune.py --relax positions|cell`. Structure generation of any
+kind belongs here in `workflow/`, not in `nequix/`.
+
 **Cleanup:**
 ```bash
 python3 scripts/maintenance/cleanup_all.py                 # Remove all generated dirs
