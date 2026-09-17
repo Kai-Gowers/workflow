@@ -90,7 +90,12 @@ def write_band_conf(staticpoint_dir: Path,
     contents = (
         f"{atom_line}"
         f"DIM = {dim}\n"
-        "BAND = 0 0 0  0.6667 0.3333 0  0.5 0 0  0 0 0\n"
+        # Γ-K-M-Γ. The POSCARs are 60° hexagonal cells, but the phonopy CLI defaults to
+        # PRIMITIVE_AXES = AUTO and re-expresses q-points in a standardized 120° primitive
+        # cell (see primitive_matrix in phonopy.yaml). In that basis K = (1/3, 1/3, 0) and
+        # M = (1/2, 0, 0). Before 2026-09-17 this used (2/3, 1/3, 0), which is K only in the
+        # 60° cell -> every "K" tick was mislabelled; see phonopy/regenerate_band_structures.py.
+        "BAND = 0 0 0  0.3333 0.3333 0  0.5 0 0  0 0 0\n"
         "BAND_LABELS = Γ K M Γ\n"
         "FC_SYMMETRY = .TRUE.\n"
     )

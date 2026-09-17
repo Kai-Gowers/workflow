@@ -143,6 +143,12 @@ python3 scripts/maintenance/list_jobs.py                   # Show tracked SLURM 
 
 **`phonopy/postprocess_results.py`** collects `vasprun.xml` from displacement folders, builds `FORCE_SETS`, calls phonopy to generate the band structure, and copies outputs to `FINAL_RESULTS/`.
 
+**Band-path gotcha (fixed 2026-09-17):** POSCARs are 60° cells, but phonopy's CLI default `PRIMITIVE_AXES = AUTO`
+re-expresses band q-points in a 120° standardized primitive cell (`primitive_matrix` in `phonopy.yaml`). In that basis
+K = (1/3, 1/3, 0), not (2/3, 1/3, 0). `band.conf` now uses the 120° coordinates; all `FINAL_RESULTS*/*/band.{yaml,pdf}`
+were regenerated from the stored `FORCE_CONSTANTS` with `phonopy/regenerate_band_structures.py` (force constants and
+stability verdicts unchanged). Files produced before that date have a mislabelled "K" tick and never sampled true K.
+
 ### Data Files
 
 - **`data/batches/`** — batch assignments, one JSON file per batch (`monolayer_batch_<N>.json`, `bilayer_batch_<N>.json`); add a new batch by dropping in a new file
