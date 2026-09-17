@@ -99,6 +99,19 @@ first, then the MP cache; dz from overrides else 3.5 Å). `template_structures/`
 `nequix/scripts/eval_healthy2d_finetune.py --relax positions|cell`. Structure generation of any
 kind belongs here in `workflow/`, not in `nequix/`.
 
+**Twisted bilayers (model-only phonon inputs for Nequix):**
+```bash
+python3 twisted/build_twisted_bilayer.py            # MoS2, (m, m+1) series m=1..5, near0 + near60 -> twisted/structures/
+python3 twisted/build_twisted_bilayer.py --m 2 --family near0 --png
+```
+Builds commensurate twisted homobilayers from the existing 1x1 generators (`get_monolayer_coords` +
+`apply_bilayer_stacking`), rotating the top layer by +θ(m, n) about the layer-1 metal with an exact
+commensurability assert. Families: `near0` (3R-seeded), `near60` (2H-seeded). One in-plane `a` for
+both layers from the MP cache (the stacking-specific bilayer lattice override is deliberately not
+applied); interlayer gap from the DFT-relaxed homobilayer POSCAR. Each `twist.json` records θ, atom
+count and the recommended phonopy `k` (`ceil(25 Å / a_moiré)`, capped at 900 supercell atoms).
+Consumed by `nequix/scripts/eval_twisted_phonons.py`. `twisted/structures/` is tracked.
+
 **Cleanup:**
 ```bash
 python3 scripts/maintenance/cleanup_all.py                 # Remove all generated dirs
