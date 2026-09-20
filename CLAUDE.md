@@ -180,3 +180,29 @@ Perlmutter defaults (`vasp/6.6.0-cpu`, account `m5370`, queue `regular`,
 ### Material List
 
 `common/materials_list.txt` is the master list of 16 materials. Bilayer combinations are generated from all valid pairs using `generate_bilayer_combinations.py`.
+
+## Bare-PBE campaign (IVDW off) — `twist/workflow_bare/` worktree
+
+Started 2026-09-19 at the PI's request: re-run relaxation + phonons for the 48 `v4_tmd_only` TMDs with **no
+dispersion correction**, to get genuinely D3-free reference data (the earlier `nequix/explicit_dispersion` stage-1
+check only *subtracted* D3 at the PBE+D3 geometries). Every generated directory in this pipeline is hardcoded
+relative to the repo root (`monolayer_examples/`, `phonopy_*_examples/`, `FINAL_RESULTS/`, templates), so the
+campaign runs from a **separate git worktree** rather than a code change:
+
+- `twist/workflow_bare/` = worktree on branch `bare-pbe`, created from `main`. Same code; its own gitignored
+  `monolayer_examples/`, `bilayer_examples/`, `phonopy_*_examples/`, `data/job_registry.json` and host-local
+  `common/*_templates/`. The templates there are copies of the PBE+D3 ones with the `IVDW = 12` line removed
+  (both relaxation and staticpoint INCAR); nothing else differs. `data/mp_structure_cache.json` was copied over.
+- Batches (tracked on `main`, shared by both checkouts): `monolayer_batch_5.json` (6 TMD monolayers) and
+  `bilayer_batch_8..11.json` (42 bilayers, 11/11/10/10, alphabetical). Each carries a `note` field. Running them
+  from the *main* checkout is harmless (example dirs already exist → skipped) but pointless.
+- Order: monolayers first — bilayers are built from the relaxed monolayer `CONTCAR`s in the checkout's own
+  `monolayer_examples/`, so bare-PBE bilayers need bare-PBE monolayers.
+- Run every step from `workflow_bare/` (`submit_batch.py --monolayer 5`, `phonopy/submit_batch.py --bilayer --batch 8`, ...).
+  Postprocess writes to `workflow_bare/FINAL_RESULTS/<mat>/`, which on the `bare-pbe` branch shadows the PBE+D3
+  entries of the same name. **Do not merge `bare-pbe` into `main`.** Curated bare results are to be copied into
+  `main`'s `FINAL_RESULTS_BARE_PBE/<mat>/` (not yet created) and committed there.
+- Code fixes go on `main`; pull them into the worktree with `git -C ../workflow_bare merge main`.
+- Known caveat: relaxation is `ISIF=2` at the in-plane `a` from `mp_material_overrides.json`, several of which were
+  refined under PBE+D3. Bare PBE prefers a slightly different `a`, so check residual stress in each `OUTCAR` after
+  relaxation and apply the ISIF=4 protocol (see memory / `common/isif4_lattice_extract.py`) where it is large.
