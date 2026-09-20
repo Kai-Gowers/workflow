@@ -11,6 +11,8 @@ This is a convenience script for quickly generating and submitting new relaxatio
 
 import sys
 from pathlib import Path
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "common"))
+from run_variant import generated_dir  # noqa: E402
 from create_monolayer_example import create_training_example
 from submit_monolayer_job import submit_job
 
@@ -37,7 +39,7 @@ def create_and_submit(base_dir=None, generate_potcar_file=True,
     """
     # Default base_dir is monolayer_examples in parent directory (workflow level)
     if base_dir is None:
-        base_dir = Path(__file__).parent.parent.parent / "monolayer_examples"
+        base_dir = generated_dir("monolayer_examples")
     
     # Create the training example
     if verbose:

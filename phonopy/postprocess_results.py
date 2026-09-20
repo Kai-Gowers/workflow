@@ -20,14 +20,16 @@ from typing import List, Tuple
 
 
 ROOT = Path(__file__).parent
+sys.path.insert(0, str(ROOT.parent / "common"))
+from run_variant import generated_dir  # noqa: E402
 
 
 def find_staticpoint_dirs(kind: str) -> List[Path]:
     """Return list of staticpoint directories for given kind."""
     if kind == "monolayer":
-        base = ROOT.parent / "phonopy_monolayer_examples"
+        base = generated_dir("phonopy_monolayer_examples", ROOT.parent)
     elif kind == "bilayer":
-        base = ROOT.parent / "phonopy_bilayer_examples"
+        base = generated_dir("phonopy_bilayer_examples", ROOT.parent)
     else:
         raise ValueError(f"Unknown kind: {kind}")
 
@@ -177,7 +179,7 @@ def copy_final_results(staticpoint_dir: Path,
     Returns (success, target_dir).
     """
     workflow_root = ROOT.parent
-    final_root = workflow_root / "FINAL_RESULTS"
+    final_root = generated_dir("FINAL_RESULTS", workflow_root)
     final_root.mkdir(exist_ok=True)
 
     # Name = staticpoint_dir name without trailing "_staticpoint"
@@ -313,7 +315,7 @@ Examples:
             for d in dirs:
                 results.append(process_staticpoint_dir(d, "monolayer", dim=args.dim))
         else:
-            base = ROOT.parent / "phonopy_monolayer_examples"
+            base = generated_dir("phonopy_monolayer_examples", ROOT.parent)
             d = (base / args.staticpoint).resolve()
             if not d.exists():
                 print(f"Error: staticpoint directory not found: {d}", file=sys.stderr)
@@ -328,7 +330,7 @@ Examples:
             for d in dirs:
                 results.append(process_staticpoint_dir(d, "bilayer", dim=args.dim))
         else:
-            base = ROOT.parent / "phonopy_bilayer_examples"
+            base = generated_dir("phonopy_bilayer_examples", ROOT.parent)
             d = (base / args.staticpoint).resolve()
             if not d.exists():
                 print(f"Error: staticpoint directory not found: {d}", file=sys.stderr)

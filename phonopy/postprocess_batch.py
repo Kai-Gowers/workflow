@@ -33,6 +33,7 @@ from pathlib import Path
 
 WORKFLOW_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(WORKFLOW_ROOT / "common"))
+from run_variant import generated_dir  # noqa: E402
 
 from batches import load_batch
 
@@ -54,7 +55,7 @@ def postprocess_monolayer_batch(batch_number: int,
         print(f"Warning: Monolayer batch {batch_number} has no materials", file=sys.stderr)
         return []
 
-    static_root = WORKFLOW_ROOT / "phonopy_monolayer_examples"
+    static_root = generated_dir("phonopy_monolayer_examples", WORKFLOW_ROOT)
     pp = _import_postprocess()
 
     print(f"\n{'=' * 60}")
@@ -91,7 +92,7 @@ def postprocess_bilayer_batch(batch_number: int,
         print(f"Warning: Bilayer batch {batch_number} has no bilayers", file=sys.stderr)
         return []
 
-    static_root = WORKFLOW_ROOT / "phonopy_bilayer_examples"
+    static_root = generated_dir("phonopy_bilayer_examples", WORKFLOW_ROOT)
     pp = _import_postprocess()
 
     print(f"\n{'=' * 60}")

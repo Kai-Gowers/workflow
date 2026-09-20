@@ -18,6 +18,7 @@ import shutil
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "common"))
 from incar_utils import customize_incar  # noqa: E402
 from cli_helpers import add_mp_args  # noqa: E402
+from run_variant import generated_dir, templates_dir  # noqa: E402
 from generate_monolayer_poscar import generate_random_poscar, generate_poscar, load_materials_list
 from generate_potcar import generate_potcar
 
@@ -85,7 +86,7 @@ def create_training_example(
     """
     # Default base_dir is monolayer_examples in parent directory (workflow level)
     if base_dir is None:
-        base_dir = Path(__file__).parent.parent.parent / "monolayer_examples"
+        base_dir = generated_dir("monolayer_examples")
     else:
         base_dir = Path(base_dir)
     
@@ -169,7 +170,7 @@ def create_training_example(
             print(f"  Warning: Could not generate POTCAR: {e}")
     
     # Copy and customize template files
-    template_dir = Path(__file__).parent.parent.parent / "common" / "relaxation_templates"
+    template_dir = templates_dir("relaxation")
     copied_files = []
     
     try:

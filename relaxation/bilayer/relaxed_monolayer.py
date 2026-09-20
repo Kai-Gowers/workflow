@@ -3,7 +3,11 @@
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "common"))
+from run_variant import generated_dir  # noqa: E402
 from typing import List, Optional, Tuple
 
 import numpy as np
@@ -19,7 +23,7 @@ except ImportError as exc:
 
 def default_monolayer_examples_dir() -> Path:
     """Workflow-level ``monolayer_examples`` directory."""
-    return Path(__file__).resolve().parent.parent.parent / "monolayer_examples"
+    return generated_dir("monolayer_examples")
 
 
 def relaxed_monolayer_path(

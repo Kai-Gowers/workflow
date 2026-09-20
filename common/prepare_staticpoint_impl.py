@@ -24,6 +24,7 @@ from poscar_utils import reorder_poscar_for_phonopy  # noqa: E402
 
 from incar_utils import customize_incar as _customize_incar
 from interlayer_check import check_bilayer_interlayer_gap
+from run_variant import generated_dir, templates_dir
 
 
 def customize_incar(template_path, output_path, name):
@@ -119,7 +120,7 @@ def prepare_staticpoint(
 
     # Default base_dir
     if base_dir is None:
-        base_dir = WORKFLOW_ROOT / examples_root_name
+        base_dir = generated_dir(examples_root_name)
     else:
         base_dir = Path(base_dir)
 
@@ -157,7 +158,7 @@ def prepare_staticpoint(
         raise FileNotFoundError(f"POTCAR not found in {relaxed_example_path}")
 
     # Get template paths
-    template_dir = WORKFLOW_ROOT / "common" / "staticpoint_templates"
+    template_dir = templates_dir("staticpoint")
     incar_template = template_dir / "INCAR"
     bat_template = template_dir / "bat"
     kpoints_template = template_dir / "KPOINTS"
@@ -275,7 +276,7 @@ def main(prepare_fn, examples_dirname, description, example_hint):
     if args.all:
         # Process all examples
         if args.base_dir is None:
-            base_dir = WORKFLOW_ROOT / examples_dirname
+            base_dir = generated_dir(examples_dirname)
         else:
             base_dir = Path(args.base_dir).parent / examples_dirname
 
@@ -316,7 +317,7 @@ def main(prepare_fn, examples_dirname, description, example_hint):
 
         # If just a name, assume it's in the default examples directory
         if not example_path.is_absolute() and not example_path.parent.name:
-            base_dir = WORKFLOW_ROOT / examples_dirname
+            base_dir = generated_dir(examples_dirname)
             example_path = base_dir / example_path
 
         try:

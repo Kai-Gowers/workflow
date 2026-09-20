@@ -24,6 +24,7 @@ import sys
 WORKFLOW_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(WORKFLOW_ROOT / "scripts" / "maintenance"))
 from job_tracking import submit_bat  # noqa: E402
+from run_variant import generated_dir, templates_dir  # noqa: E402
 
 
 def find_displacement_poscars(staticpoint_dir):
@@ -59,7 +60,7 @@ def find_displacement_poscars(staticpoint_dir):
 
 def _staticpoint_bat_template() -> Path:
     """Always use the shared SLURM template for displacement jobs."""
-    return WORKFLOW_ROOT / "common" / "staticpoint_templates" / "bat"
+    return templates_dir("staticpoint") / "bat"
 
 
 def setup_displacement_folder(staticpoint_dir, poscar_file, disp_num):
@@ -172,7 +173,7 @@ def setup_and_submit_displacements(staticpoint_path, examples_root_name, submit=
         staticpoint_dir = staticpoint_path.resolve()
     else:
         # Assume it's a bare name in the given examples root
-        base_dir = WORKFLOW_ROOT / examples_root_name
+        base_dir = generated_dir(examples_root_name)
         staticpoint_dir = base_dir / f"{staticpoint_path.name}_staticpoint"
 
     staticpoint_dir = staticpoint_dir.resolve()
@@ -305,7 +306,7 @@ Examples:
 
     if args.all:
         # Find all staticpoint directories
-        base_dir = WORKFLOW_ROOT / examples_root_name
+        base_dir = generated_dir(examples_root_name)
         if not base_dir.exists():
             print(f"Error: Directory not found: {base_dir}", file=sys.stderr)
             sys.exit(1)

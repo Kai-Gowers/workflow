@@ -26,6 +26,7 @@ from phonopy.harmonic.force_constants import compact_fc_to_full_fc
 ROOT = Path(__file__).parent.parent
 
 sys.path.insert(0, str(ROOT / "common"))
+from run_variant import generated_dir  # noqa: E402
 from structural_families import STACKING_SUFFIXES  # noqa: E402
 
 
@@ -99,7 +100,7 @@ Examples:
     parser.add_argument(
         "--source",
         type=Path,
-        default=ROOT / "FINAL_RESULTS",
+        default=generated_dir("FINAL_RESULTS", ROOT),
         help="Directory of per-material subdirectories to convert (default: workflow/FINAL_RESULTS)",
     )
     parser.add_argument(

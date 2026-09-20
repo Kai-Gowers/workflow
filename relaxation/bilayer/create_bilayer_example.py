@@ -18,6 +18,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent / "monolayer"))
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "common"))
 from incar_utils import customize_incar
 from cli_helpers import add_mp_args
+from run_variant import generated_dir, templates_dir
 from generate_potcar import generate_potcar
 from generate_bilayer_poscar import generate_bilayer_poscar, parse_bilayer_name
 
@@ -38,7 +39,7 @@ def find_unique_bilayer_name(bilayer_name, base_dir=None):
     str : Unique directory name
     """
     if base_dir is None:
-        base_dir = Path(__file__).parent.parent.parent / "bilayer_examples"
+        base_dir = generated_dir("bilayer_examples")
     else:
         base_dir = Path(base_dir)
     
@@ -95,7 +96,7 @@ def create_bilayer_example(
     """
     # Default base_dir
     if base_dir is None:
-        base_dir = Path(__file__).parent.parent.parent / "bilayer_examples"
+        base_dir = generated_dir("bilayer_examples")
     else:
         base_dir = Path(base_dir)
     
@@ -144,7 +145,7 @@ def create_bilayer_example(
             print(f"  Warning: Could not generate POTCAR: {e}")
     
     # Copy and customize template files
-    template_dir = Path(__file__).parent.parent.parent / "common" / "relaxation_templates"
+    template_dir = templates_dir("relaxation")
     copied_files = []
     
     try:

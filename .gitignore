@@ -18,19 +18,27 @@ OSZICAR
 
 # Host-specific VASP/SLURM templates (Perlmutter vs Andromeda differ)
 common/relaxation_templates/
+common/relaxation_templates_*/
 common/staticpoint_templates/
+common/staticpoint_templates_*/
 
 # Example run directories (local VASP/phonopy outputs)
 monolayer_examples/
 bilayer_examples/
 phonopy_monolayer_examples/
 phonopy_bilayer_examples/
+# ... and their TWIST_VARIANT-suffixed twins (e.g. monolayer_examples_bare_pbe/); FINAL_RESULTS_* stay tracked
+monolayer_examples_*/
+bilayer_examples_*/
+phonopy_monolayer_examples_*/
+phonopy_bilayer_examples_*/
 
 # Local backups and generated artifacts
 backups/
 data/mp_structure_cache.json
 data/pipeline_state.json
 data/job_registry.json
+data/job_registry_*.json
 nequix_dataset.aselmdb
 nequix_dataset.aselmdb-lock
 nequix_dataset_healthy.aselmdb-lock

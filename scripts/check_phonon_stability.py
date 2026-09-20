@@ -15,8 +15,10 @@ from pathlib import Path
 import yaml
 
 WORKFLOW_ROOT = Path(__file__).resolve().parent.parent
-FINAL_RESULTS = WORKFLOW_ROOT / "FINAL_RESULTS"
 sys.path.insert(0, str(WORKFLOW_ROOT / "common"))
+from run_variant import generated_dir  # noqa: E402
+
+FINAL_RESULTS = generated_dir("FINAL_RESULTS", WORKFLOW_ROOT)
 
 from batches import load_batch
 

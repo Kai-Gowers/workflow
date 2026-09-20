@@ -13,6 +13,9 @@ import sys
 from pathlib import Path
 import argparse
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent / "common"))
+from run_variant import generated_dir, variant_name  # noqa: E402
+
 
 def cancel_all_jobs(dry_run=False):
     """Cancel all SLURM jobs for the current user."""
@@ -169,15 +172,15 @@ Examples:
     print("\n2. Deleting example directories...")
     
     dirs_to_delete = [
-        (workflow_root / "monolayer_examples", "monolayer_examples"),
-        (workflow_root / "bilayer_examples", "bilayer_examples"),
+        (generated_dir("monolayer_examples", workflow_root), variant_name("monolayer_examples")),
+        (generated_dir("bilayer_examples", workflow_root), variant_name("bilayer_examples")),
     ]
     
     if args.include_phonopy:
         dirs_to_delete.extend([
-            (workflow_root / "phonopy_monolayer_examples", "phonopy_monolayer_examples"),
-            (workflow_root / "phonopy_bilayer_examples", "phonopy_bilayer_examples"),
-            (workflow_root / "FINAL_RESULTS", "FINAL_RESULTS"),
+            (generated_dir("phonopy_monolayer_examples", workflow_root), variant_name("phonopy_monolayer_examples")),
+            (generated_dir("phonopy_bilayer_examples", workflow_root), variant_name("phonopy_bilayer_examples")),
+            (generated_dir("FINAL_RESULTS", workflow_root), variant_name("FINAL_RESULTS")),
         ])
     
     # Show what will be deleted

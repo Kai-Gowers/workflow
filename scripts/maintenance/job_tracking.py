@@ -6,13 +6,17 @@ from __future__ import annotations
 import json
 import re
 import subprocess
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional
 
 
 WORKFLOW_ROOT = Path(__file__).resolve().parent.parent.parent
-REGISTRY_PATH = WORKFLOW_ROOT / "data" / "job_registry.json"
+sys.path.insert(0, str(WORKFLOW_ROOT / "common"))
+from run_variant import generated_dir, registry_path  # noqa: E402
+
+REGISTRY_PATH = registry_path()
 
 SEARCH_ROOTS = (
     "monolayer_examples",
@@ -129,7 +133,7 @@ def build_slurm_output_index() -> Dict[str, Path]:
     """Map job IDs to directories via slurm-<jobid>.out files."""
     index: Dict[str, Path] = {}
     for root_name in SEARCH_ROOTS:
-        root = WORKFLOW_ROOT / root_name
+        root = generated_dir(root_name, WORKFLOW_ROOT)
         if not root.exists():
             continue
         for out_file in root.rglob("slurm-*.out"):

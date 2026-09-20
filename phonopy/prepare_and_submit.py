@@ -29,6 +29,8 @@ import json
 #
 
 ROOT = Path(__file__).parent
+sys.path.insert(0, str(ROOT.parent / "common"))
+from run_variant import generated_dir  # noqa: E402
 
 
 def _get_workflow_root() -> Path:
@@ -69,9 +71,9 @@ def _resolve_relaxed_example(example_path, kind: str) -> Path:
 
     workflow_root = _get_workflow_root()  # .../workflow
     if kind == "monolayer":
-        return (workflow_root / "monolayer_examples" / p.name).resolve()
+        return (generated_dir("monolayer_examples", workflow_root) / p.name).resolve()
     if kind == "bilayer":
-        return (workflow_root / "bilayer_examples" / p.name).resolve()
+        return (generated_dir("bilayer_examples", workflow_root) / p.name).resolve()
     raise ValueError(f"Unknown kind: {kind}")
 
 
@@ -202,7 +204,7 @@ def process_bilayer(example_path, supercell_dim="4 4 1", submit=True, dry_run=Fa
 def _process_all(kind, process_fn, supercell_dim="4 4 1", submit=True, dry_run=False):
     """Process all examples of a given kind in ../<kind>_examples."""
     examples_dirname = _KIND_CONFIG[kind]["examples_dirname"]
-    base_examples_dir = ROOT.parent / examples_dirname
+    base_examples_dir = generated_dir(examples_dirname, ROOT.parent)
     if not base_examples_dir.exists():
         print(
             f"Error: {kind.capitalize()} examples directory not found: {base_examples_dir}",

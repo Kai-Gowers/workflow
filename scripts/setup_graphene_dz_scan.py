@@ -17,6 +17,8 @@ import sys
 from pathlib import Path
 
 WORKFLOW = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(WORKFLOW / "common"))
+from run_variant import generated_dir  # noqa: E402
 
 # Interlayer spacings to scan (Å)
 DZ_VALUES = [3.0, 3.2, 3.35, 3.5, 4.0]
@@ -59,7 +61,7 @@ def make_poscar(dz: float, label: str) -> str:
 def setup_example(dz: float, template_dir: Path) -> Path:
     label = f"{int(dz * 100):04d}"          # e.g. 335 → "0335"
     name = f"graphene_bilayer_BA_dz{label}"
-    out_dir = WORKFLOW / "bilayer_examples" / name
+    out_dir = generated_dir("bilayer_examples", WORKFLOW) / name
     out_dir.mkdir(parents=True, exist_ok=True)
 
     poscar_text = make_poscar(dz, label)
@@ -97,7 +99,7 @@ def main():
     )
     args = parser.parse_args()
 
-    template_dir = WORKFLOW / "bilayer_examples" / "graphene_bilayer_BA"
+    template_dir = generated_dir("bilayer_examples", WORKFLOW) / "graphene_bilayer_BA"
     if not template_dir.exists():
         sys.exit(f"Template directory not found: {template_dir}")
 

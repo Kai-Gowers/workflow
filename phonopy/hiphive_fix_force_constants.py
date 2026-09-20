@@ -44,6 +44,8 @@ from hiphive import enforce_rotational_sum_rules
 from hiphive.utilities import extract_parameters
 
 ROOT = Path(__file__).parent
+sys.path.insert(0, str(ROOT.parent / "common"))
+from run_variant import generated_dir, variant_name  # noqa: E402
 
 
 def phonopy_atoms_to_ase(patoms) -> Atoms:
@@ -113,7 +115,7 @@ def copy_final_results(staticpoint_dir: Path) -> Path:
     name = staticpoint_dir.name
     if name.endswith("_staticpoint"):
         name = name[: -len("_staticpoint")]
-    final_root = staticpoint_dir.parent.parent / "FINAL_RESULTS"
+    final_root = staticpoint_dir.parent.parent / variant_name("FINAL_RESULTS")
     target = final_root / name
     target.mkdir(parents=True, exist_ok=True)
     for fname in ("band.pdf", "band.yaml", "phonopy.yaml", "FORCE_SETS", "POSCAR", "FORCE_CONSTANTS"):
@@ -226,9 +228,9 @@ Examples:
         parser.error("Specify at most one of --monolayer / --bilayer")
 
     if args.monolayer:
-        d = (ROOT.parent / "phonopy_monolayer_examples" / args.staticpoint).resolve()
+        d = (generated_dir("phonopy_monolayer_examples", ROOT.parent) / args.staticpoint).resolve()
     elif args.bilayer:
-        d = (ROOT.parent / "phonopy_bilayer_examples" / args.staticpoint).resolve()
+        d = (generated_dir("phonopy_bilayer_examples", ROOT.parent) / args.staticpoint).resolve()
     else:
         d = Path(args.staticpoint).resolve()
 

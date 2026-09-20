@@ -24,6 +24,7 @@ from pathlib import Path
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT / "relaxation" / "monolayer"))
 sys.path.insert(0, str(REPO_ROOT / "common"))
+from run_variant import generated_dir, templates_dir  # noqa: E402
 
 from generate_potcar import generate_potcar
 from incar_utils import customize_incar
@@ -40,7 +41,7 @@ DEFAULT_MATERIALS = [
 ]
 STRAINS = [("m2pct", -0.02), ("m1pct", -0.01), ("p1pct", 0.01), ("p2pct", 0.02)]
 
-TEMPLATE_DIR = REPO_ROOT / "common" / "relaxation_templates"
+TEMPLATE_DIR = templates_dir("relaxation")
 FINAL_HEALTHY = REPO_ROOT / "FINAL_RESULTS_HEALTHY"
 
 
@@ -55,7 +56,7 @@ def output_base_for(name: str) -> Path:
     # --monolayer/--bilayer flags resolve example names against these fixed dirs
     # (_resolve_relaxed_example), so a monolayer strain variant placed under
     # bilayer_examples/ would silently fail to resolve.
-    return REPO_ROOT / ("bilayer_examples" if is_bilayer(name) else "monolayer_examples")
+    return generated_dir("bilayer_examples" if is_bilayer(name) else "monolayer_examples", REPO_ROOT)
 
 
 def make_strained_poscar(src_lines: list[str], strain: float) -> list[str]:

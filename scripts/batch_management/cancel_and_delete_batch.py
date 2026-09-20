@@ -16,6 +16,7 @@ from pathlib import Path
 workflow_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(workflow_root / "common"))
 sys.path.insert(0, str(workflow_root / "scripts" / "maintenance"))
+from run_variant import variant_name  # noqa: E402
 
 from batches import load_batch, items_key
 import job_tracking
@@ -165,9 +166,9 @@ def cancel_and_delete_batch(batch_number, batch_type='bilayer', base_dir=None, d
     
     # Determine base directory for examples
     if batch_type == 'bilayer':
-        examples_dir = base_dir / "bilayer_examples"
+        examples_dir = base_dir / variant_name("bilayer_examples")
     else:
-        examples_dir = base_dir / "monolayer_examples"
+        examples_dir = base_dir / variant_name("monolayer_examples")
     
     # Find directories
     directories = []

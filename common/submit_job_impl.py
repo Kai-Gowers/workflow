@@ -15,6 +15,7 @@ import sys
 WORKFLOW_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(WORKFLOW_ROOT / "scripts" / "maintenance"))
 from job_tracking import submit_bat  # noqa: E402
+from run_variant import generated_dir  # noqa: E402
 
 
 def submit_example_job(example_path, examples_root_name, dry_run=False):
@@ -46,7 +47,7 @@ def submit_example_job(example_path, examples_root_name, dry_run=False):
         example_dir = example_path.resolve()
     else:
         # Assume it's a bare name in the given examples root
-        base_dir = WORKFLOW_ROOT / examples_root_name
+        base_dir = generated_dir(examples_root_name)
         example_dir = base_dir / example_path.name
 
     # Resolve to absolute path

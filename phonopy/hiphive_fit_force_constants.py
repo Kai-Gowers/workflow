@@ -50,6 +50,8 @@ from hiphive.core.rotational_constraints import get_rotational_constraint_matrix
 from trainstation import Optimizer
 
 ROOT = Path(__file__).parent
+sys.path.insert(0, str(ROOT.parent / "common"))
+from run_variant import generated_dir, variant_name  # noqa: E402
 
 DEFAULT_LAMBDAS = [1e-3, 1e-2, 1e-1, 1.0, 10.0, 100.0]
 
@@ -111,7 +113,7 @@ def copy_final_results(staticpoint_dir: Path) -> Path:
     name = staticpoint_dir.name
     if name.endswith("_staticpoint"):
         name = name[: -len("_staticpoint")]
-    target = staticpoint_dir.parent.parent / "FINAL_RESULTS" / name
+    target = staticpoint_dir.parent.parent / variant_name("FINAL_RESULTS") / name
     target.mkdir(parents=True, exist_ok=True)
     for fname in ("band.pdf", "band.yaml", "phonopy.yaml", "FORCE_SETS", "POSCAR", "FORCE_CONSTANTS"):
         src = staticpoint_dir / fname
@@ -247,9 +249,9 @@ Examples:
         parser.error("Specify at most one of --monolayer / --bilayer")
 
     if args.monolayer:
-        d = (ROOT.parent / "phonopy_monolayer_examples" / args.staticpoint).resolve()
+        d = (generated_dir("phonopy_monolayer_examples", ROOT.parent) / args.staticpoint).resolve()
     elif args.bilayer:
-        d = (ROOT.parent / "phonopy_bilayer_examples" / args.staticpoint).resolve()
+        d = (generated_dir("phonopy_bilayer_examples", ROOT.parent) / args.staticpoint).resolve()
     else:
         d = Path(args.staticpoint).resolve()
 

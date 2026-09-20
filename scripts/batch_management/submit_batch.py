@@ -22,6 +22,7 @@ from submit_bilayer_job import submit_bilayer_job
 from materials_project_api import load_symmetry_eligible_set, parse_bilayer_components
 from batches import load_batch, iter_batches
 from cli_helpers import add_mp_args
+from run_variant import generated_dir
 
 
 def _skip_symmetry(name: str, eligible_set, is_bilayer: bool = False) -> bool:
@@ -100,7 +101,7 @@ def submit_monolayer_batch(
     skipped = 0
     
     workflow_root = Path(__file__).parent.parent.parent
-    monolayer_dir = workflow_root / "monolayer_examples"
+    monolayer_dir = generated_dir("monolayer_examples", workflow_root)
     eligible_set = load_symmetry_eligible_set()
 
     for i, material in enumerate(batch['materials'], 1):
@@ -258,7 +259,7 @@ def submit_bilayer_batch(
     skipped = 0
     
     workflow_root = Path(__file__).parent.parent.parent
-    bilayer_dir = workflow_root / "bilayer_examples"
+    bilayer_dir = generated_dir("bilayer_examples", workflow_root)
     eligible_set = load_symmetry_eligible_set()
 
     for i, bilayer_name in enumerate(batch['bilayers'], 1):
