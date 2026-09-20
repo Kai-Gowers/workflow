@@ -181,28 +181,43 @@ Perlmutter defaults (`vasp/6.6.0-cpu`, account `m5370`, queue `regular`,
 
 `common/materials_list.txt` is the master list of 16 materials. Bilayer combinations are generated from all valid pairs using `generate_bilayer_combinations.py`.
 
-## Bare-PBE campaign (IVDW off) — `twist/workflow_bare/` worktree
+## Run variants (`TWIST_VARIANT`) and the bare-PBE campaign
 
-Started 2026-09-19 at the PI's request: re-run relaxation + phonons for the 48 `v4_tmd_only` TMDs with **no
-dispersion correction**, to get genuinely D3-free reference data (the earlier `nequix/explicit_dispersion` stage-1
-check only *subtracted* D3 at the PBE+D3 geometries). Every generated directory in this pipeline is hardcoded
-relative to the repo root (`monolayer_examples/`, `phonopy_*_examples/`, `FINAL_RESULTS/`, templates), so the
-campaign runs from a **separate git worktree** rather than a code change:
+`common/run_variant.py` lets a second, independent campaign run from this same checkout. With the variable
+unset the pipeline behaves exactly as before (verified byte-for-byte on a 23-command regression suite on
+2026-09-19). With `export TWIST_VARIANT=<name>` (lowercase `[a-z0-9_]`), every generated path gets a suffix:
 
-- `twist/workflow_bare/` = worktree on branch `bare-pbe`, created from `main`. Same code; its own gitignored
-  `monolayer_examples/`, `bilayer_examples/`, `phonopy_*_examples/`, `data/job_registry.json` and host-local
-  `common/*_templates/`. The templates there are copies of the PBE+D3 ones with the `IVDW = 12` line removed
-  (both relaxation and staticpoint INCAR); nothing else differs. `data/mp_structure_cache.json` was copied over.
-- Batches (tracked on `main`, shared by both checkouts): `monolayer_batch_5.json` (6 TMD monolayers) and
-  `bilayer_batch_8..11.json` (42 bilayers, 11/11/10/10, alphabetical). Each carries a `note` field. Running them
-  from the *main* checkout is harmless (example dirs already exist → skipped) but pointless.
-- Order: monolayers first — bilayers are built from the relaxed monolayer `CONTCAR`s in the checkout's own
-  `monolayer_examples/`, so bare-PBE bilayers need bare-PBE monolayers.
-- Run every step from `workflow_bare/` (`submit_batch.py --monolayer 5`, `phonopy/submit_batch.py --bilayer --batch 8`, ...).
-  Postprocess writes to `workflow_bare/FINAL_RESULTS/<mat>/`, which on the `bare-pbe` branch shadows the PBE+D3
-  entries of the same name. **Do not merge `bare-pbe` into `main`.** Curated bare results are to be copied into
-  `main`'s `FINAL_RESULTS_BARE_PBE/<mat>/` (not yet created) and committed there.
-- Code fixes go on `main`; pull them into the worktree with `git -C ../workflow_bare merge main`.
-- Known caveat: relaxation is `ISIF=2` at the in-plane `a` from `mp_material_overrides.json`, several of which were
+| unset | `TWIST_VARIANT=bare_pbe` |
+|---|---|
+| `monolayer_examples/`, `bilayer_examples/` | `monolayer_examples_bare_pbe/`, `bilayer_examples_bare_pbe/` |
+| `phonopy_monolayer_examples/`, `phonopy_bilayer_examples/` | `..._bare_pbe/` |
+| `FINAL_RESULTS/` (tracked) | `FINAL_RESULTS_BARE_PBE/` (tracked) |
+| `common/relaxation_templates/`, `common/staticpoint_templates/` | `common/relaxation_templates_bare_pbe/`, `common/staticpoint_templates_bare_pbe/` (host-local, gitignored) |
+| `data/job_registry.json` | `data/job_registry_bare_pbe.json` |
+
+Not variant-aware on purpose: `FINAL_RESULTS_HEALTHY/` (hand-curated), `data/batches/`, override/cache JSONs,
+`template_structures/`, `nequix_datasets/` (pass an explicit `--output`). The active variant is announced once
+on stderr by every script, so a stray export is visible. Every entry point resolves paths through
+`generated_dir()` / `templates_dir()` / `registry_path()` from `run_variant.py`; when adding a new script, use
+those instead of `WORKFLOW_ROOT / "monolayer_examples"`.
+
+**Bare-PBE campaign (IVDW off), started 2026-09-19 at the PI's request** — re-run relaxation + phonons for the 48
+`v4_tmd_only` TMDs with **no dispersion correction**, to get genuinely D3-free reference data (the earlier
+`nequix/explicit_dispersion` stage-1 check only *subtracted* D3 at the PBE+D3 geometries).
+
+- Templates: `common/*_templates_bare_pbe/` are copies of the PBE+D3 templates with the `IVDW = 12` line removed
+  (both relaxation and staticpoint INCAR); nothing else differs. On a new host, copy your templates and delete
+  that line again — they are gitignored.
+- Batches (tracked): `monolayer_batch_5.json` (6 TMD monolayers) and `bilayer_batch_8..11.json` (42 bilayers,
+  11/11/10/10, alphabetical); each carries a `note`. Running them without the variant is harmless (the PBE+D3
+  example dirs already exist → skipped) but pointless.
+- Order: monolayers first — bilayers are built from the relaxed monolayer `CONTCAR`s in
+  `monolayer_examples_bare_pbe/`, so bare-PBE bilayers need bare-PBE monolayers.
+- Commands are the usual ones with the variable exported, e.g.
+  `TWIST_VARIANT=bare_pbe python3 scripts/batch_management/submit_batch.py --monolayer 5`, then
+  `phonopy/submit_batch.py --monolayer --batch 5`, `phonopy/postprocess_batch.py --monolayer --batch 5`
+  (→ `FINAL_RESULTS_BARE_PBE/`), then bilayer batches 8–11. Commit `FINAL_RESULTS_BARE_PBE/` like `FINAL_RESULTS/`.
+- Known caveat: relaxation is `ISIF=2` at the in-plane `a` from the overrides/MP cache, several of which were
   refined under PBE+D3. Bare PBE prefers a slightly different `a`, so check residual stress in each `OUTCAR` after
   relaxation and apply the ISIF=4 protocol (see memory / `common/isif4_lattice_extract.py`) where it is large.
+  Expect softer interlayer (shear/breathing) modes and larger gaps in bare-PBE bilayers; that is physics.

@@ -1,7 +1,7 @@
 {
   "kind": "bilayer",
   "batch_number": 9,
-  "note": "bare-PBE campaign (IVDW off), 2026-09-19. Run from the twist/workflow_bare worktree, whose host-local INCAR templates have no IVDW line. Same 48 v4_tmd_only materials.",
+  "note": "bare-PBE campaign (IVDW off), 2026-09-19. Run with TWIST_VARIANT=bare_pbe exported: inputs from common/*_templates_bare_pbe/ (no IVDW line), outputs in *_examples_bare_pbe/ and FINAL_RESULTS_BARE_PBE/. Same 48 v4_tmd_only materials.",
   "bilayers": [
     "MoS2_bilayer_3R",
     "MoSe2_MoTe2_2H",
