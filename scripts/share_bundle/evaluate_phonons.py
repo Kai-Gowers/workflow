@@ -117,8 +117,13 @@ def plot(material: str, distances, dft, model, out: Path, label: str) -> None:
     h, l = ax.get_legend_handles_labels()
     ax.legend(h[:1] + h[dft.shape[1]:dft.shape[1] + 1], l[:1] + l[dft.shape[1]:dft.shape[1] + 1])
     ax.axhline(0, color="gray", lw=0.5)
-    ax.set_xticks([distances[0], distances[-1]])
-    ax.set_xticklabels(["Γ", "Γ"])
+    n = len(distances) // 3  # three equal segments: Γ-K, K-M, M-Γ
+    ticks = [distances[0], distances[n - 1], distances[2 * n - 1], distances[-1]]
+    for t in ticks[1:-1]:
+        ax.axvline(t, color="gray", lw=0.5)
+    ax.set_xticks(ticks)
+    ax.set_xticklabels(["Γ", "K", "M", "Γ"])
+    ax.set_xlim(distances[0], distances[-1])
     ax.set_title(f"{material}  (path Γ–K–M–Γ)")
     ax.set_ylabel("Frequency (THz)")
     fig.tight_layout()
