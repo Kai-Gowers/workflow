@@ -221,3 +221,30 @@ those instead of `WORKFLOW_ROOT / "monolayer_examples"`.
   refined under PBE+D3. Bare PBE prefers a slightly different `a`, so check residual stress in each `OUTCAR` after
   relaxation and apply the ISIF=4 protocol (see memory / `common/isif4_lattice_extract.py`) where it is large.
   Expect softer interlayer (shear/breathing) modes and larger gaps in bare-PBE bilayers; that is physics.
+
+**Twisted-bilayer DFT campaign (`TWIST_VARIANT=twisted`), started 2026-10-01** — run the moiré cells from
+`twisted/build_twisted_bilayer.py` through the standard relax → phonopy → postprocess pipeline (first batch:
+`MoS2_twist_m{1,2,3}_near0`, θ = 21.8/13.2/9.4°, 42/114/222 atoms). Additive only: no production script or
+template was changed; the default dry-run was verified byte-identical before/after.
+
+- Templates (host-local, gitignored — recreate on a new host): `common/relaxation_templates_twisted/` = PBE+D3
+  relaxation templates with `EDIFFG = -1E-4` (the production `-1E-7` never converges and burns all 400 steps even
+  on 6-atom cells; a 100–200-atom cell would exceed 24 h); `common/staticpoint_templates_twisted/` = production
+  static templates with `KPOINTS` Gamma `5 5 1` (7x7x1 is sized for a 12.8 Å supercell; moiré supercells are
+  14–19 Å). Everything else (ENCUT 520, EDIFF 1e-6, IVDW=12, ISIF=2, 2 nodes × 44, medium/24 h) is unchanged.
+- `twisted/prepare_dft_inputs.py` writes `bilayer_examples_twisted/<name>/` (POSCAR copied verbatim, POTCAR,
+  INCAR, per-structure `KPOINTS` n×n×1 with n = ceil(67 Å / a_moiré) matching the 21x21x1@3.19 Å production
+  density, `bat` with `--nodes=4` above 200 atoms, and `phonopy_dim.txt` = the `--dim` to use: smallest k with
+  k·a_moiré ≥ 12.8 Å → `2 2 1` for m1, `1 1 1` for m2/m3). It refuses to run unless `TWIST_VARIANT=twisted`.
+- Per structure, with the variable exported: `relaxation/bilayer/submit_bilayer_job.py bilayer_examples_twisted/<name>`;
+  after relaxation `phonopy/prepare_and_submit.py --bilayer bilayer_examples_twisted/<name> --dim "$(cat
+  bilayer_examples_twisted/<name>/phonopy_dim.txt)" --no-submit`, **check the `POSCAR-XXX` count equals the atom
+  count** (P321 is kept by VASP's ISYM; a numerically broken CONTCAR gives P1 and 3× the displacements — symmetrize
+  it with spglib 1e-3 and re-prepare instead), for m3 set `--nodes=4` in `common/staticpoint_templates_twisted/bat`
+  first (the bat is copied from the template at setup time, so edit the template, not `disp-XXX/bat`), then
+  `phonopy/bilayer/setup_displacements.py <name>_staticpoint`, then `phonopy/postprocess_results.py --bilayer
+  <name>_staticpoint --dim "..."` → `FINAL_RESULTS_TWISTED/<name>/` (commit it like `FINAL_RESULTS/`).
+- Cost: displacements = atoms (42/114/222) on 168/114/222-atom supercells; m3 dominates (~1,200 node-hours total,
+  comparable to the whole 48-TMD dataset). Run m1 → m2 → m3 so m3 can be dropped.
+- Not in scope here: comparing to Nequix. That is a separate step (the twisted `band.yaml` is in the same
+  `FINAL_RESULTS` layout as everything else, so `scripts/share_bundle/evaluate_phonons.py`-style tooling applies).
