@@ -242,7 +242,7 @@ template was changed; the default dry-run was verified byte-identical before/aft
   count** (P321 is kept by VASP's ISYM; a numerically broken CONTCAR gives P1 and 3× the displacements — symmetrize
   it with spglib 1e-3 and re-prepare instead), for m3 set `--nodes=4` in `common/staticpoint_templates_twisted/bat`
   first (the bat is copied from the template at setup time, so edit the template, not `disp-XXX/bat`), then
-  `phonopy/bilayer/setup_displacements.py <name>_staticpoint`, then `phonopy/postprocess_results.py --bilayer
+  `phonopy/bilayer/setup_displacements.py <name>` (bare name; the script appends `_staticpoint` itself), then `phonopy/postprocess_results.py --bilayer
   <name>_staticpoint --dim "..."` → `FINAL_RESULTS_TWISTED/<name>/` (commit it like `FINAL_RESULTS/`).
 - Cost: displacements = atoms (42/114/222) on 168/114/222-atom supercells; m3 dominates (~1,200 node-hours total,
   comparable to the whole 48-TMD dataset). Run m1 → m2 → m3 so m3 can be dropped.
