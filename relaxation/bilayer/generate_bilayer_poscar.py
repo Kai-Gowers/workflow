@@ -44,6 +44,7 @@ except ImportError:
 
 from structural_families import validate_stacking, STACKING_SUFFIXES
 from cli_helpers import add_mp_args
+from run_variant import variant
 
 try:
     sys.path.insert(0, str(MONOLAYER_DIR))
@@ -58,6 +59,16 @@ BILAYER_DATA_DIR = Path(__file__).parent.parent.parent / "data"
 BILAYER_OVERRIDES_FILE = BILAYER_DATA_DIR / "bilayer_lattice_overrides.json"
 
 
+def bilayer_overrides_file():
+    """data/bilayer_lattice_overrides[_<variant>].json. The PBE+D3 ISIF=4 corrections do not
+    transfer to other variants (bare PBE sits at +15-17 kB at the D3 'a'), so a variant reads only
+    its own file and falls back to the relaxed-monolayer 'a' for pairs not listed there."""
+    v = variant()
+    if not v:
+        return BILAYER_OVERRIDES_FILE
+    return BILAYER_DATA_DIR / f"bilayer_lattice_overrides_{v}.json"
+
+
 def _load_bilayer_overrides():
     """Load per-bilayer lattice-constant overrides, keyed by bilayer example name:
     'mat_bilayer_stacking' for homobilayers (e.g. 'MoS2_bilayer_3R'), or
@@ -65,10 +76,11 @@ def _load_bilayer_overrides():
     residual in-plane strain left by the default relaxed-monolayer-derived 'a' when
     a bilayer's own ISIF=2 relaxation shows large residual stress at that lattice
     constant."""
-    if not BILAYER_OVERRIDES_FILE.exists():
+    path = bilayer_overrides_file()
+    if not path.exists():
         return {}
     try:
-        with open(BILAYER_OVERRIDES_FILE) as f:
+        with open(path) as f:
             data = json.load(f)
     except (json.JSONDecodeError, OSError):
         return {}

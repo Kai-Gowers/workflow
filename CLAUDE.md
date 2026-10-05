@@ -172,7 +172,7 @@ Templates for INCAR, KPOINTS, and SLURM batch scripts live in (gitignored; host-
 - `common/relaxation_templates/` — for structural relaxation (ionic + cell DOF)
 - `common/staticpoint_templates/` — for static calculations (IBRION=-1, NSW=0)
 
-Perlmutter defaults (`vasp/6.6.0-cpu`, account `m5370`, queue `regular`,
+Perlmutter defaults (`vasp/6.6.1-cpu`, account `m5370`, queue `regular`,
 5h walltime, 21 MPI ranks/node × 6 OpenMP):
 - relaxation: 2 nodes, 42 ranks, `KPAR=7`, `NCORE=6`
 - staticpoint: 6 nodes, 126 ranks, `KPAR=21`, `NCORE=6`
@@ -195,7 +195,11 @@ unset the pipeline behaves exactly as before (verified byte-for-byte on a 23-com
 | `common/relaxation_templates/`, `common/staticpoint_templates/` | `common/relaxation_templates_bare_pbe/`, `common/staticpoint_templates_bare_pbe/` (host-local, gitignored) |
 | `data/job_registry.json` | `data/job_registry_bare_pbe.json` |
 
-Not variant-aware on purpose: `FINAL_RESULTS_HEALTHY/` (hand-curated), `data/batches/`, override/cache JSONs,
+Exception: bilayer in-plane `a` corrections are variant-aware. A variant reads only
+`data/bilayer_lattice_overrides_<variant>.json` and falls back to the relaxed-monolayer `a`, never to the PBE+D3
+file, because D3-fitted `a` values leave +15-17 kB stress in bare PBE (2026-09-30).
+
+Not variant-aware on purpose: `FINAL_RESULTS_HEALTHY/` (hand-curated), `data/batches/`, other override/cache JSONs,
 `template_structures/`, `nequix_datasets/` (pass an explicit `--output`). The active variant is announced once
 on stderr by every script, so a stray export is visible. Every entry point resolves paths through
 `generated_dir()` / `templates_dir()` / `registry_path()` from `run_variant.py`; when adding a new script, use
@@ -217,7 +221,23 @@ those instead of `WORKFLOW_ROOT / "monolayer_examples"`.
   `TWIST_VARIANT=bare_pbe python3 scripts/batch_management/submit_batch.py --monolayer 5`, then
   `phonopy/submit_batch.py --monolayer --batch 5`, `phonopy/postprocess_batch.py --monolayer --batch 5`
   (→ `FINAL_RESULTS_BARE_PBE/`), then bilayer batches 8–11. Commit `FINAL_RESULTS_BARE_PBE/` like `FINAL_RESULTS/`.
-- Known caveat: relaxation is `ISIF=2` at the in-plane `a` from the overrides/MP cache, several of which were
-  refined under PBE+D3. Bare PBE prefers a slightly different `a`, so check residual stress in each `OUTCAR` after
-  relaxation and apply the ISIF=4 protocol (see memory / `common/isif4_lattice_extract.py`) where it is large.
+- Bilayer protocol (from batch 8, 2026-09-30). The PI expects NO imaginary modes, so every bilayer goes through:
+  1. ISIF=2 relaxation (the gap stalls 0.25-0.8 Å short of the minimum; don't trust it).
+  2. ISIF=4 for `a`: `gap_scan_bare_pbe/setup_isif4.py <names>` → `<name>_isif4/`. Keep only the plateaued `a`
+     (`common/isif4_lattice_extract.py`) after checking `c` drift < ~2-3%, and write it to
+     `data/bilayer_lattice_overrides_bare_pbe.json`.
+  3. Rebuild at that `a` (`apply_isif4_a.py`: ISIF=4 CONTCAR rescaled to the override `a`, c reset to 20 Å; old files →
+     `<name>/pre_isif4a/`), then gap scan (`make_scan.py`, `apply_dmin.py`; batch 8 used `--archive=pre_gapscan2`).
+  4. Fixed-gap intralayer relaxation (`setup_intralayer.py`). Target max |F| ≲ 1e-3 eV/Å, including the 2 frozen
+     chalcogens, and in-plane stress < ~3 kB.
+  5. Phonopy (`setup_phonopy_tight.py`): 0.03 Å displacements, EDIFF 1E-8, LREAL .FALSE. Batch 8 skipped disp-000
+     because its residual forces after step 4 were ≤ 7e-4 eV/Å. Then run the normal `postprocess_batch.py`, and
+     check Γ, a fine near-Γ scan and a Γ-centred odd mesh.
+     Do NOT hiphive bare-PBE bilayers. At a ~4.3 Å gap the interlayer FCs extend past the 4x4 cutoff (≤5.85 Å),
+     so truncating them makes breathing negative and swings the shear by ±0.6-0.8 THz (tested 2026-10-03).
+     Batch 8 result: residual negatives ≤ 0.11 THz, either a doubly-degenerate Γ shear or (Te pairs) a small
+     acoustic dip near Γ. The sign of the Γ shear is being checked with a rigid slide scan
+     (`make_slide_scan.py` / `analyze_slide_scan.py`).
+  A dip that survives all 5 steps is kept in `FINAL_RESULTS_BARE_PBE/`, flagged as genuinely unstable and reported
+  to the PI, not excluded (user decision 2026-09-30).
   Expect softer interlayer (shear/breathing) modes and larger gaps in bare-PBE bilayers; that is physics.
