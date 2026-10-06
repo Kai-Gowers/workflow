@@ -1,0 +1,45 @@
+{
+  "method": "hiphive constraint-based fit from bare FORCE_SETS (phonopy/hiphive_fit_force_constants.py recipe)",
+  "cutoff_A": 8.0,
+  "unconstrained_rmse_train_eV_per_A": 0.00012434018567865333,
+  "sweep": [
+    {
+      "lambda": 0.001,
+      "band_min": -4.041694697435381e-07,
+      "mesh_min": -4.041694697435381e-07,
+      "mesh_n_negative": 0
+    },
+    {
+      "lambda": 0.01,
+      "band_min": -4.060861745611992e-07,
+      "mesh_min": -4.060861745611992e-07,
+      "mesh_n_negative": 0
+    },
+    {
+      "lambda": 0.1,
+      "band_min": -4.000497291754414e-07,
+      "mesh_min": -4.000497291754414e-07,
+      "mesh_n_negative": 0
+    },
+    {
+      "lambda": 1.0,
+      "band_min": -4.101811379135661e-07,
+      "mesh_min": -4.101811379135661e-07,
+      "mesh_n_negative": 0
+    },
+    {
+      "lambda": 10.0,
+      "band_min": -4.059042561054458e-07,
+      "mesh_min": -4.059042561054458e-07,
+      "mesh_n_negative": 0
+    },
+    {
+      "lambda": 100.0,
+      "band_min": -4.308378678319377e-07,
+      "mesh_min": -4.308378678319377e-07,
+      "mesh_n_negative": 0
+    }
+  ],
+  "chosen_lambda": 100.0,
+  "n_training_structures": 12
+}

@@ -222,6 +222,27 @@ those instead of `WORKFLOW_ROOT / "monolayer_examples"`.
   relaxation and apply the ISIF=4 protocol (see memory / `common/isif4_lattice_extract.py`) where it is large.
   Expect softer interlayer (shear/breathing) modes and larger gaps in bare-PBE bilayers; that is physics.
 
+**Bare PBE by D3 subtraction (`FINAL_RESULTS_BARE_PBE_SUBTRACT/`, 2026-10-06)** — the cheap complement to the
+campaign above: bare-PBE force constants for the same 48 TMDs *at the PBE+D3 geometries*, obtained by subtracting the
+explicit DFT-D3(BJ) force (VASP `IVDW = 12` parameters via simple-dftd3, `nequix/explicit_dispersion/d3.py`) from every
+displaced-supercell force in `FINAL_RESULTS_HEALTHY/<mat>/FORCE_SETS`, *including the equilibrium D3 force*
+(`F_bare(disp) = F_ref(disp) - [F_D3(disp) - F_D3(eq)]`, phonopy's `--fz` treatment). Not variant-aware; two new
+scripts, nothing existing changed:
+
+- `phonopy/subtract_d3_force_sets.py` (stage 1, **run from the nequix uv env**: `cd ../nequix && uv run python
+  ../workflow/phonopy/subtract_d3_force_sets.py`) writes `<mat>/{FORCE_SETS,POSCAR,phonopy_disp.yaml,band.conf,
+  d3_subtraction.npz,d3_subtraction.json}`; the JSON flags whether the reference `FORCE_CONSTANTS` was a plain phonopy
+  rebuild (28) or hiphive-corrected (20); the flag is decided by the RMS band-frequency change of the
+  plain rebuild vs the shipped FC (> 0.002 THz), not by the FC max-diff alone (that mis-flagged MoTe2_WSe2_3R).
+- `phonopy/postprocess_bare_pbe_subtract.py` (stage 2, workflow conda env) runs the usual `phonopy -p -s --writefc` for
+  all 48 (copy kept in `<mat>/plain_phonopy/`) and re-applies the `hiphive_fit_force_constants.py` constraint-based fit
+  to the 20 flagged materials from the bare FORCE_SETS (no vasprun needed) → final `FORCE_CONSTANTS/band.yaml/band.pdf`,
+  `hiphive_fit.json`, `bare_vs_pbed3.json` (incl. a plain-vs-plain column = pure D3 effect, separate from hiphive-method
+  mismatch); `summary.csv` + `README.md` at the top level (`--summary-only` rebuilds them). Commit the directory like
+  `FINAL_RESULTS/`.
+- Label any number from it "bare-PBE curvature at the PBE+D3 geometry". The true bare-PBE minimum is what
+  `FINAL_RESULTS_BARE_PBE/` provides; comparing the two per material isolates the geometry-relaxation effect.
+
 **Twisted-bilayer DFT campaign (`TWIST_VARIANT=twisted`), started 2026-10-01** — run the moiré cells from
 `twisted/build_twisted_bilayer.py` through the standard relax → phonopy → postprocess pipeline (first batch:
 `MoS2_twist_m{1,2,3}_near0`, θ = 21.8/13.2/9.4°, 42/114/222 atoms). Additive only: no production script or

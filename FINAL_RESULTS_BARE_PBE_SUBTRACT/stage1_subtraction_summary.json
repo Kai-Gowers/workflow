@@ -1,0 +1,2066 @@
+[
+  {
+    "material": "MoS2",
+    "source": "FINAL_RESULTS_HEALTHY/MoS2",
+    "n_displacements": 3,
+    "n_atoms_supercell": 48,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -14.999168199263321,
+    "max_abs_F_d3_eq_eV_per_A": 0.10129899723155393,
+    "max_abs_F_d3_disp_eV_per_A": 0.1016332120672758,
+    "max_abs_dF_d3_eV_per_A": 0.0005720609622118308,
+    "max_abs_F_ref_disp_eV_per_A": 0.22249553,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.005540240838197443,
+        -3.3896871910084047e-18,
+        3.43454258440375e-21
+      ],
+      [
+        -3.4032692466379987e-18,
+        0.0055402408381975765,
+        9.194024068600368e-20
+      ],
+      [
+        3.435562514875413e-21,
+        9.924491722511595e-20,
+        0.0018138719307834819
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": true,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.00017773959964717534,
+    "reference_fc_reproduce_freq_rms_THz": 8.431762726606956e-05,
+    "hiphive_rotational_fit_required": false,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoS2_MoSe2_2H",
+    "source": "FINAL_RESULTS_HEALTHY/MoS2_MoSe2_2H",
+    "n_displacements": 12,
+    "n_atoms_supercell": 150,
+    "dim": "5 5 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -59.327263964266976,
+    "max_abs_F_d3_eq_eV_per_A": 0.13485128225067253,
+    "max_abs_F_d3_disp_eV_per_A": 0.13505765248624813,
+    "max_abs_dF_d3_eV_per_A": 0.00021478600155998284,
+    "max_abs_F_ref_disp_eV_per_A": 0.20140738,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013598472378859862,
+        -6.34906045309013e-18,
+        -2.854898220689654e-19
+      ],
+      [
+        -6.372465085456961e-18,
+        0.013598472378853805,
+        1.3214508134383627e-18
+      ],
+      [
+        -2.6571163484584476e-19,
+        1.3451860993391454e-18,
+        0.009816461366211634
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": false,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.026499671688622217,
+    "reference_fc_reproduce_freq_rms_THz": 0.02410118576337776,
+    "hiphive_rotational_fit_required": true,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoS2_MoSe2_3R",
+    "source": "FINAL_RESULTS_HEALTHY/MoS2_MoSe2_3R",
+    "n_displacements": 12,
+    "n_atoms_supercell": 96,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -37.68247565456529,
+    "max_abs_F_d3_eq_eV_per_A": 0.13344649839839476,
+    "max_abs_F_d3_disp_eV_per_A": 0.13366598135366398,
+    "max_abs_dF_d3_eV_per_A": 0.00022801710986217194,
+    "max_abs_F_ref_disp_eV_per_A": 0.21356216,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013298182159825362,
+        -4.900057538846613e-18,
+        4.283255902087931e-19
+      ],
+      [
+        -4.91837268198879e-18,
+        0.013298182159815422,
+        -7.937833403100973e-19
+      ],
+      [
+        4.2831106255568673e-19,
+        -7.734788430748692e-19,
+        0.00963249754476492
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": true,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.0002576501750231053,
+    "reference_fc_reproduce_freq_rms_THz": 5.8224123722724784e-05,
+    "hiphive_rotational_fit_required": false,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoS2_MoTe2_2H",
+    "source": "FINAL_RESULTS_HEALTHY/MoS2_MoTe2_2H",
+    "n_displacements": 12,
+    "n_atoms_supercell": 96,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -41.54433905637409,
+    "max_abs_F_d3_eq_eV_per_A": 0.16906116720998313,
+    "max_abs_F_d3_disp_eV_per_A": 0.1692808898498647,
+    "max_abs_dF_d3_eV_per_A": 0.00024470373283261293,
+    "max_abs_F_ref_disp_eV_per_A": 0.18776967,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013930541113329132,
+        -6.3298689817334375e-18,
+        -2.539182791122197e-19
+      ],
+      [
+        -6.336142697524329e-18,
+        0.013930541113325999,
+        -3.863548420214503e-19
+      ],
+      [
+        -2.771387348598033e-19,
+        -4.714121735971248e-19,
+        0.010330196557046414
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": false,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.4898363561955805,
+    "reference_fc_reproduce_freq_rms_THz": 0.04463300633604994,
+    "hiphive_rotational_fit_required": true,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoS2_MoTe2_3R",
+    "source": "FINAL_RESULTS_HEALTHY/MoS2_MoTe2_3R",
+    "n_displacements": 12,
+    "n_atoms_supercell": 96,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -41.68544894827559,
+    "max_abs_F_d3_eq_eV_per_A": 0.16940162915462265,
+    "max_abs_F_d3_disp_eV_per_A": 0.16961929798608774,
+    "max_abs_dF_d3_eV_per_A": 0.00023320519719633587,
+    "max_abs_F_ref_disp_eV_per_A": 0.18565652,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013938702098795022,
+        -4.6212365922392704e-18,
+        3.688418377476655e-19
+      ],
+      [
+        -4.615456816488349e-18,
+        0.013938702098795575,
+        -8.334398593778927e-19
+      ],
+      [
+        3.958643247129405e-19,
+        -8.836049663938405e-19,
+        0.01038116556069951
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": false,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.496689250724297,
+    "reference_fc_reproduce_freq_rms_THz": 0.04159469242718174,
+    "hiphive_rotational_fit_required": true,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoS2_WS2_2H",
+    "source": "FINAL_RESULTS_HEALTHY/MoS2_WS2_2H",
+    "n_displacements": 12,
+    "n_atoms_supercell": 96,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -35.181443712187644,
+    "max_abs_F_d3_eq_eV_per_A": 0.11455292142850938,
+    "max_abs_F_d3_disp_eV_per_A": 0.11479492828195198,
+    "max_abs_dF_d3_eV_per_A": 0.0002430911495541893,
+    "max_abs_F_ref_disp_eV_per_A": 0.2388434,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.012993836849257872,
+        -6.992972707484066e-18,
+        -3.245530396794593e-19
+      ],
+      [
+        -7.021262467392914e-18,
+        0.01299383684925638,
+        -1.0150549207480243e-18
+      ],
+      [
+        -3.1224746505444102e-19,
+        -1.0254970911248408e-18,
+        0.009275424338072302
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": true,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.0014822065142938712,
+    "reference_fc_reproduce_freq_rms_THz": 0.0002548117878096412,
+    "hiphive_rotational_fit_required": false,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoS2_WS2_3R",
+    "source": "FINAL_RESULTS_HEALTHY/MoS2_WS2_3R",
+    "n_displacements": 12,
+    "n_atoms_supercell": 216,
+    "dim": "6 6 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -80.84987894131176,
+    "max_abs_F_d3_eq_eV_per_A": 0.11768423989199753,
+    "max_abs_F_d3_disp_eV_per_A": 0.11789109999462671,
+    "max_abs_dF_d3_eV_per_A": 0.000207712990012196,
+    "max_abs_F_ref_disp_eV_per_A": 0.21432799,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013240507660381162,
+        -5.731143034097451e-18,
+        4.391328050971104e-19
+      ],
+      [
+        -5.745630001742896e-18,
+        0.013240507660377418,
+        -2.569380699769705e-18
+      ],
+      [
+        4.382030960982751e-19,
+        -2.5804364053642187e-18,
+        0.009524324896239058
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": false,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.05343658301389631,
+    "reference_fc_reproduce_freq_rms_THz": 0.03150815427726592,
+    "hiphive_rotational_fit_required": true,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoS2_WSe2_2H",
+    "source": "FINAL_RESULTS_HEALTHY/MoS2_WSe2_2H",
+    "n_displacements": 12,
+    "n_atoms_supercell": 150,
+    "dim": "5 5 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -58.622995084588396,
+    "max_abs_F_d3_eq_eV_per_A": 0.13010012669160065,
+    "max_abs_F_d3_disp_eV_per_A": 0.13029031816120767,
+    "max_abs_dF_d3_eV_per_A": 0.00021621564208190724,
+    "max_abs_F_ref_disp_eV_per_A": 0.21739475,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013161086893892912,
+        -5.499163128449816e-18,
+        -9.222008922871616e-19
+      ],
+      [
+        -5.485992517150708e-18,
+        0.013161086893887432,
+        9.14767485809412e-19
+      ],
+      [
+        -8.97782432197543e-19,
+        8.86493515741565e-19,
+        0.009585481819732488
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": true,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.00022672542512847116,
+    "reference_fc_reproduce_freq_rms_THz": 5.423661091556415e-05,
+    "hiphive_rotational_fit_required": false,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoS2_WTe2_2H",
+    "source": "FINAL_RESULTS_HEALTHY/MoS2_WTe2_2H",
+    "n_displacements": 12,
+    "n_atoms_supercell": 96,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -41.06945357483566,
+    "max_abs_F_d3_eq_eV_per_A": 0.162721667795999,
+    "max_abs_F_d3_disp_eV_per_A": 0.16291414284229289,
+    "max_abs_dF_d3_eV_per_A": 0.00021455867327255587,
+    "max_abs_F_ref_disp_eV_per_A": 0.1964713,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013791238972502395,
+        -5.680850539845334e-18,
+        -4.6630195857972524e-20
+      ],
+      [
+        -5.707828898544162e-18,
+        0.013791238972492962,
+        7.547530167864334e-19
+      ],
+      [
+        -4.2805440389217474e-20,
+        7.624540331421058e-19,
+        0.010337672470583864
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": false,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.5072145508265682,
+    "reference_fc_reproduce_freq_rms_THz": 0.052974840082943196,
+    "hiphive_rotational_fit_required": true,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoS2_WTe2_3R",
+    "source": "FINAL_RESULTS_HEALTHY/MoS2_WTe2_3R",
+    "n_displacements": 12,
+    "n_atoms_supercell": 96,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -41.137311592948144,
+    "max_abs_F_d3_eq_eV_per_A": 0.16281721744635588,
+    "max_abs_F_d3_disp_eV_per_A": 0.16300817203881968,
+    "max_abs_dF_d3_eV_per_A": 0.00021965711215545317,
+    "max_abs_F_ref_disp_eV_per_A": 0.19781051,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.01376615753023494,
+        -4.5349059076237114e-18,
+        4.790950352613012e-19
+      ],
+      [
+        -4.473373087959581e-18,
+        0.013766157530236623,
+        2.767501276185755e-19
+      ],
+      [
+        4.886550178572021e-19,
+        2.9602293780438945e-19,
+        0.010359421056908071
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": false,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.5217616471309188,
+    "reference_fc_reproduce_freq_rms_THz": 0.03912010021821679,
+    "hiphive_rotational_fit_required": true,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoS2_bilayer_3R",
+    "source": "FINAL_RESULTS_HEALTHY/MoS2_bilayer_3R",
+    "n_displacements": 12,
+    "n_atoms_supercell": 150,
+    "dim": "5 5 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -56.60657912976269,
+    "max_abs_F_d3_eq_eV_per_A": 0.11753258141206802,
+    "max_abs_F_d3_disp_eV_per_A": 0.11775866098907685,
+    "max_abs_dF_d3_eV_per_A": 0.00022713021824276314,
+    "max_abs_F_ref_disp_eV_per_A": 0.21840809,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013245773360427685,
+        -5.990628308825432e-18,
+        7.661601305346849e-19
+      ],
+      [
+        -5.991964261476537e-18,
+        0.013245773360411463,
+        -5.734803525657031e-18
+      ],
+      [
+        7.594745546127299e-19,
+        -5.740822176931342e-18,
+        0.009414796155224425
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": true,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.000648993476470041,
+    "reference_fc_reproduce_freq_rms_THz": 0.00011608701802304452,
+    "hiphive_rotational_fit_required": false,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoSe2",
+    "source": "FINAL_RESULTS_HEALTHY/MoSe2",
+    "n_displacements": 3,
+    "n_atoms_supercell": 48,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -16.66929778135879,
+    "max_abs_F_d3_eq_eV_per_A": 0.11636566106610437,
+    "max_abs_F_d3_disp_eV_per_A": 0.1166815274711577,
+    "max_abs_dF_d3_eV_per_A": 0.0005545258342573661,
+    "max_abs_F_ref_disp_eV_per_A": 0.20511763,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.005573356204766937,
+        -3.9198560060400454e-18,
+        -2.0725105463607293e-20
+      ],
+      [
+        -3.9208262395321384e-18,
+        0.005573356204766498,
+        1.0592426840290545e-20
+      ],
+      [
+        -1.6866773940976395e-20,
+        3.6640020544185444e-20,
+        0.0020749247856779044
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": false,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.2806729744732861,
+    "reference_fc_reproduce_freq_rms_THz": 0.02960100207666417,
+    "hiphive_rotational_fit_required": true,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoSe2_MoTe2_2H",
+    "source": "FINAL_RESULTS_HEALTHY/MoSe2_MoTe2_2H",
+    "n_displacements": 12,
+    "n_atoms_supercell": 150,
+    "dim": "5 5 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -66.99511094164855,
+    "max_abs_F_d3_eq_eV_per_A": 0.16325007247906959,
+    "max_abs_F_d3_disp_eV_per_A": 0.16344491813134157,
+    "max_abs_dF_d3_eV_per_A": 0.00019832139482733185,
+    "max_abs_F_ref_disp_eV_per_A": 0.16800391,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013649050741151579,
+        -5.8534732690412195e-18,
+        5.229185827713224e-20
+      ],
+      [
+        -5.827362402910282e-18,
+        0.013649050741148014,
+        -8.808248947394297e-19
+      ],
+      [
+        7.3652022396484e-20,
+        -8.689638637242794e-19,
+        0.01025603796496839
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": false,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.05996442564720539,
+    "reference_fc_reproduce_freq_rms_THz": 0.05790446243006284,
+    "hiphive_rotational_fit_required": true,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoSe2_MoTe2_3R",
+    "source": "FINAL_RESULTS_HEALTHY/MoSe2_MoTe2_3R",
+    "n_displacements": 12,
+    "n_atoms_supercell": 96,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -42.86556951090144,
+    "max_abs_F_d3_eq_eV_per_A": 0.16309116127917564,
+    "max_abs_F_d3_disp_eV_per_A": 0.16330147005287726,
+    "max_abs_dF_d3_eV_per_A": 0.00021268395785303817,
+    "max_abs_F_ref_disp_eV_per_A": 0.179306,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013600512759965702,
+        -4.303418570440603e-18,
+        4.3374489982851005e-20
+      ],
+      [
+        -4.28866148044012e-18,
+        0.013600512759971041,
+        -1.823127413098569e-18
+      ],
+      [
+        3.7813185881414746e-20,
+        -1.9007911218288826e-18,
+        0.010250566461970954
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": true,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.0007557782695366555,
+    "reference_fc_reproduce_freq_rms_THz": 0.00019106062780878817,
+    "hiphive_rotational_fit_required": false,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoSe2_WS2_2H",
+    "source": "FINAL_RESULTS_HEALTHY/MoSe2_WS2_2H",
+    "n_displacements": 12,
+    "n_atoms_supercell": 96,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -37.282612224249895,
+    "max_abs_F_d3_eq_eV_per_A": 0.13341257097765033,
+    "max_abs_F_d3_disp_eV_per_A": 0.13363467133570958,
+    "max_abs_dF_d3_eV_per_A": 0.00022393085028005189,
+    "max_abs_F_ref_disp_eV_per_A": 0.22587658,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013280373399357588,
+        -7.415627213582535e-18,
+        -3.792263501854525e-19
+      ],
+      [
+        -7.407484530124194e-18,
+        0.013280373399350396,
+        1.579151549650606e-19
+      ],
+      [
+        -3.670128925969266e-19,
+        1.4569335045161165e-19,
+        0.009632170622234303
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": false,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.3676204276875066,
+    "reference_fc_reproduce_freq_rms_THz": 0.11779957947879892,
+    "hiphive_rotational_fit_required": true,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoSe2_WS2_3R",
+    "source": "FINAL_RESULTS_HEALTHY/MoSe2_WS2_3R",
+    "n_displacements": 12,
+    "n_atoms_supercell": 96,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -37.290219227742966,
+    "max_abs_F_d3_eq_eV_per_A": 0.1334589226324618,
+    "max_abs_F_d3_disp_eV_per_A": 0.13368112872069327,
+    "max_abs_dF_d3_eV_per_A": 0.00022405711592268784,
+    "max_abs_F_ref_disp_eV_per_A": 0.22719791,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.01328193453709649,
+        -5.897174116121049e-18,
+        2.1086625241666188e-19
+      ],
+      [
+        -5.917529136072989e-18,
+        0.01328193453709699,
+        -7.043525310826008e-19
+      ],
+      [
+        2.1392889400177036e-19,
+        -7.247055031094371e-19,
+        0.009647819946936554
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": false,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.45372543660598197,
+    "reference_fc_reproduce_freq_rms_THz": 0.1251190738388429,
+    "hiphive_rotational_fit_required": true,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoSe2_WTe2_3R",
+    "source": "FINAL_RESULTS_HEALTHY/MoSe2_WTe2_3R",
+    "n_displacements": 12,
+    "n_atoms_supercell": 96,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -42.40760633444793,
+    "max_abs_F_d3_eq_eV_per_A": 0.15733485832215216,
+    "max_abs_F_d3_disp_eV_per_A": 0.15752086954329533,
+    "max_abs_dF_d3_eV_per_A": 0.00018832153743952862,
+    "max_abs_F_ref_disp_eV_per_A": 0.19325078,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013487177770324436,
+        -4.588326135798559e-18,
+        1.6907949570034763e-19
+      ],
+      [
+        -4.5541783503490485e-18,
+        0.01348717777031877,
+        5.433214856387017e-19
+      ],
+      [
+        1.8016105140710023e-19,
+        5.820584828655746e-19,
+        0.010265320858982383
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": true,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.0007898224140971809,
+    "reference_fc_reproduce_freq_rms_THz": 0.00021591999914510085,
+    "hiphive_rotational_fit_required": false,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoSe2_bilayer_2H",
+    "source": "FINAL_RESULTS_HEALTHY/MoSe2_bilayer_2H",
+    "n_displacements": 6,
+    "n_atoms_supercell": 150,
+    "dim": "5 5 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -61.59249565760858,
+    "max_abs_F_d3_eq_eV_per_A": 0.13008176518355785,
+    "max_abs_F_d3_disp_eV_per_A": 0.13027863602103912,
+    "max_abs_dF_d3_eV_per_A": 0.00019823752940553718,
+    "max_abs_F_ref_disp_eV_per_A": 0.18921167,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013420202186983908,
+        -7.023096728766634e-18,
+        1.102407953655218e-21
+      ],
+      [
+        -7.028152424132712e-18,
+        0.013420202186990646,
+        -8.841632293473242e-19
+      ],
+      [
+        -1.4062347803638496e-20,
+        -8.418259416551165e-19,
+        0.009829792702786291
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": false,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.014146270689879281,
+    "reference_fc_reproduce_freq_rms_THz": 0.03465371783614017,
+    "hiphive_rotational_fit_required": true,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoSe2_bilayer_3R",
+    "source": "FINAL_RESULTS_HEALTHY/MoSe2_bilayer_3R",
+    "n_displacements": 12,
+    "n_atoms_supercell": 150,
+    "dim": "5 5 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -61.68889236170313,
+    "max_abs_F_d3_eq_eV_per_A": 0.13030385788326557,
+    "max_abs_F_d3_disp_eV_per_A": 0.13049987009499833,
+    "max_abs_dF_d3_eV_per_A": 0.00019749385616960047,
+    "max_abs_F_ref_disp_eV_per_A": 0.1904391,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.01343768001371954,
+        -5.650443174880361e-18,
+        7.990933344926113e-20
+      ],
+      [
+        -5.63906979109368e-18,
+        0.013437680013713081,
+        -8.346311741604606e-19
+      ],
+      [
+        8.74938410859292e-20,
+        -8.295754013056436e-19,
+        0.009870329902094322
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": true,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.0005306669402789232,
+    "reference_fc_reproduce_freq_rms_THz": 9.615864784822317e-05,
+    "hiphive_rotational_fit_required": false,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoTe2",
+    "source": "FINAL_RESULTS_HEALTHY/MoTe2",
+    "n_displacements": 3,
+    "n_atoms_supercell": 48,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -19.26200729131575,
+    "max_abs_F_d3_eq_eV_per_A": 0.1395457084124907,
+    "max_abs_F_d3_disp_eV_per_A": 0.1398635737610488,
+    "max_abs_dF_d3_eV_per_A": 0.00052038891280218,
+    "max_abs_F_ref_disp_eV_per_A": 0.16831694,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.005518821467682215,
+        -2.9609313281688965e-18,
+        9.148504256414119e-20
+      ],
+      [
+        -2.961768659299358e-18,
+        0.005518821467682794,
+        -8.294931745691947e-20
+      ],
+      [
+        9.64984517580561e-20,
+        -1.0638844666110374e-19,
+        0.002343990840665028
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": true,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.0001701742009738716,
+    "reference_fc_reproduce_freq_rms_THz": 5.591790863570581e-05,
+    "hiphive_rotational_fit_required": false,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoTe2_WSe2_2H",
+    "source": "FINAL_RESULTS_HEALTHY/MoTe2_WSe2_2H",
+    "n_displacements": 12,
+    "n_atoms_supercell": 96,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -42.06598553971035,
+    "max_abs_F_d3_eq_eV_per_A": 0.16128631226452522,
+    "max_abs_F_d3_disp_eV_per_A": 0.16149697204358646,
+    "max_abs_dF_d3_eV_per_A": 0.00021296183151234271,
+    "max_abs_F_ref_disp_eV_per_A": 0.18904768,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013283549727546497,
+        -6.699864203156473e-18,
+        -1.2393390591717162e-20
+      ],
+      [
+        -6.692544388053719e-18,
+        0.013283549727541132,
+        -2.306464195034015e-19
+      ],
+      [
+        -1.0569804992709793e-20,
+        -2.315569281254589e-19,
+        0.010013360856859933
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": false,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.45517255448082355,
+    "reference_fc_reproduce_freq_rms_THz": 0.04689044367422976,
+    "hiphive_rotational_fit_required": true,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoTe2_WSe2_3R",
+    "source": "FINAL_RESULTS_HEALTHY/MoTe2_WSe2_3R",
+    "n_displacements": 12,
+    "n_atoms_supercell": 96,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -41.97493048755066,
+    "max_abs_F_d3_eq_eV_per_A": 0.16101776066319026,
+    "max_abs_F_d3_disp_eV_per_A": 0.161230784266666,
+    "max_abs_dF_d3_eV_per_A": 0.0002153454494855933,
+    "max_abs_F_ref_disp_eV_per_A": 0.19201861,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013254904433045776,
+        -5.66772080705576e-18,
+        1.7482308803531434e-19
+      ],
+      [
+        -5.625638643419149e-18,
+        0.013254904433041453,
+        8.724492752935345e-19
+      ],
+      [
+        1.912877302144591e-19,
+        8.184995720518795e-19,
+        0.009993090561422585
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": true,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.006317322570573046,
+    "reference_fc_reproduce_freq_rms_THz": 0.0003550814283117235,
+    "hiphive_rotational_fit_required": false,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoTe2_WTe2_2H",
+    "source": "FINAL_RESULTS_HEALTHY/MoTe2_WTe2_2H",
+    "n_displacements": 12,
+    "n_atoms_supercell": 96,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -45.34952268097513,
+    "max_abs_F_d3_eq_eV_per_A": 0.15413804814662668,
+    "max_abs_F_d3_disp_eV_per_A": 0.15432839291553233,
+    "max_abs_dF_d3_eV_per_A": 0.00019216237193983576,
+    "max_abs_F_ref_disp_eV_per_A": 0.17848587,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013442500907486662,
+        -6.2229208294370125e-18,
+        9.88039950872081e-20
+      ],
+      [
+        -6.2521444713860535e-18,
+        0.013442500907481829,
+        5.714780383810428e-19
+      ],
+      [
+        1.23914970693208e-19,
+        5.7185667096416625e-19,
+        0.010381558346167554
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": true,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.0030160482064309265,
+    "reference_fc_reproduce_freq_rms_THz": 0.00042445964014210086,
+    "hiphive_rotational_fit_required": false,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoTe2_WTe2_3R",
+    "source": "FINAL_RESULTS_HEALTHY/MoTe2_WTe2_3R",
+    "n_displacements": 12,
+    "n_atoms_supercell": 96,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -45.300979934333114,
+    "max_abs_F_d3_eq_eV_per_A": 0.1539740579407973,
+    "max_abs_F_d3_disp_eV_per_A": 0.15416617464934632,
+    "max_abs_dF_d3_eV_per_A": 0.00019394579272907775,
+    "max_abs_F_ref_disp_eV_per_A": 0.18030453,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013426376621227249,
+        -4.584658132760568e-18,
+        -1.7229870332467736e-19
+      ],
+      [
+        -4.5896437401945695e-18,
+        0.013426376621223408,
+        -4.1690056431614913e-19
+      ],
+      [
+        -2.0325475084206597e-19,
+        -3.887588566805424e-19,
+        0.010381300486589596
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": false,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.325608838557204,
+    "reference_fc_reproduce_freq_rms_THz": 0.03765454547068229,
+    "hiphive_rotational_fit_required": true,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoTe2_bilayer_2H",
+    "source": "FINAL_RESULTS_HEALTHY/MoTe2_bilayer_2H",
+    "n_displacements": 6,
+    "n_atoms_supercell": 96,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -45.81136139352547,
+    "max_abs_F_d3_eq_eV_per_A": 0.15420924840788866,
+    "max_abs_F_d3_disp_eV_per_A": 0.15440191353350669,
+    "max_abs_dF_d3_eV_per_A": 0.0001945078024129243,
+    "max_abs_F_ref_disp_eV_per_A": 0.16749478,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.01355061995399726,
+        -5.010123053729378e-18,
+        3.505770548417976e-19
+      ],
+      [
+        -4.985823976575994e-18,
+        0.013550619953993884,
+        -1.0578490873172954e-19
+      ],
+      [
+        3.62725099152228e-19,
+        -1.578533269559094e-19,
+        0.010378986348062445
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": true,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.0005733489009505357,
+    "reference_fc_reproduce_freq_rms_THz": 0.00021756566654535956,
+    "hiphive_rotational_fit_required": false,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoTe2_bilayer_3R",
+    "source": "FINAL_RESULTS_HEALTHY/MoTe2_bilayer_3R",
+    "n_displacements": 12,
+    "n_atoms_supercell": 150,
+    "dim": "5 5 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -71.46436551070828,
+    "max_abs_F_d3_eq_eV_per_A": 0.15394734680158542,
+    "max_abs_F_d3_disp_eV_per_A": 0.15412625580923972,
+    "max_abs_dF_d3_eV_per_A": 0.00018053212882024328,
+    "max_abs_F_ref_disp_eV_per_A": 0.15260464,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013526664294611475,
+        -4.395193826848205e-18,
+        1.8970146479699612e-19
+      ],
+      [
+        -4.416293367715684e-18,
+        0.013526664294600314,
+        -2.9651448461012764e-19
+      ],
+      [
+        2.074655644165459e-19,
+        -3.109511748867226e-19,
+        0.010370652107594164
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": true,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.0007775856962130082,
+    "reference_fc_reproduce_freq_rms_THz": 0.0002639754057058376,
+    "hiphive_rotational_fit_required": false,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "WS2",
+    "source": "FINAL_RESULTS_HEALTHY/WS2",
+    "n_displacements": 3,
+    "n_atoms_supercell": 48,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -14.678579453046188,
+    "max_abs_F_d3_eq_eV_per_A": 0.09869092834548837,
+    "max_abs_F_d3_disp_eV_per_A": 0.09900624216453939,
+    "max_abs_dF_d3_eV_per_A": 0.0005137208412402701,
+    "max_abs_F_ref_disp_eV_per_A": 0.23987081,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.0055234861405881065,
+        -4.074291275517574e-18,
+        -7.843264295616545e-20
+      ],
+      [
+        -4.0742871717270374e-18,
+        0.005523486140586313,
+        -1.5207668784889382e-20
+      ],
+      [
+        -7.949144431657339e-20,
+        -2.3598201699195597e-20,
+        0.0017947085565510456
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": false,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.22333239367939398,
+    "reference_fc_reproduce_freq_rms_THz": 0.03645849398280178,
+    "hiphive_rotational_fit_required": true,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "WS2_WTe2_2H",
+    "source": "FINAL_RESULTS_HEALTHY/WS2_WTe2_2H",
+    "n_displacements": 12,
+    "n_atoms_supercell": 96,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -40.87064347901527,
+    "max_abs_F_d3_eq_eV_per_A": 0.16338086688450906,
+    "max_abs_F_d3_disp_eV_per_A": 0.1635733687579553,
+    "max_abs_dF_d3_eV_per_A": 0.00019936568376277553,
+    "max_abs_F_ref_disp_eV_per_A": 0.20411656,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013869898352222949,
+        -6.81851817166384e-18,
+        -8.047660210602099e-20
+      ],
+      [
+        -6.8122232188559776e-18,
+        0.013869898352224429,
+        -1.8172307334829204e-18
+      ],
+      [
+        -5.336298862388091e-20,
+        -1.8269195200775963e-18,
+        0.010437241287000769
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": false,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.5399069171957727,
+    "reference_fc_reproduce_freq_rms_THz": 0.051558955386464655,
+    "hiphive_rotational_fit_required": true,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "WS2_WTe2_3R",
+    "source": "FINAL_RESULTS_HEALTHY/WS2_WTe2_3R",
+    "n_displacements": 12,
+    "n_atoms_supercell": 96,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -40.94169114460738,
+    "max_abs_F_d3_eq_eV_per_A": 0.16343560700579682,
+    "max_abs_F_d3_disp_eV_per_A": 0.16362595535954083,
+    "max_abs_dF_d3_eV_per_A": 0.00019835175489956933,
+    "max_abs_F_ref_disp_eV_per_A": 0.20266679,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.01383031322561365,
+        -5.684220419581286e-18,
+        4.771759813874789e-19
+      ],
+      [
+        -5.66661430281398e-18,
+        0.013830313225613079,
+        -1.9137829507379923e-19
+      ],
+      [
+        4.849280739314402e-19,
+        -1.759518439908427e-19,
+        0.010426792780725206
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": false,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.5501368374308152,
+    "reference_fc_reproduce_freq_rms_THz": 0.05265382961871474,
+    "hiphive_rotational_fit_required": true,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "WS2_bilayer_2H",
+    "source": "FINAL_RESULTS_HEALTHY/WS2_bilayer_2H",
+    "n_displacements": 6,
+    "n_atoms_supercell": 96,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -35.04513097023463,
+    "max_abs_F_d3_eq_eV_per_A": 0.1113841171715664,
+    "max_abs_F_d3_disp_eV_per_A": 0.11160909740878786,
+    "max_abs_dF_d3_eV_per_A": 0.0002260764123121345,
+    "max_abs_F_ref_disp_eV_per_A": 0.24087027,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013048544206026153,
+        -7.158425683220319e-18,
+        -5.300719980186239e-19
+      ],
+      [
+        -7.182570690749334e-18,
+        0.013048544206025883,
+        -3.305924226548171e-19
+      ],
+      [
+        -5.069807298281638e-19,
+        -3.3689219076867576e-19,
+        0.009431602660055959
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": true,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.00023676613054313123,
+    "reference_fc_reproduce_freq_rms_THz": 5.725119746813415e-05,
+    "hiphive_rotational_fit_required": false,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "WS2_bilayer_3R",
+    "source": "FINAL_RESULTS_HEALTHY/WS2_bilayer_3R",
+    "n_displacements": 12,
+    "n_atoms_supercell": 96,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -35.12777478469954,
+    "max_abs_F_d3_eq_eV_per_A": 0.11164333962085929,
+    "max_abs_F_d3_disp_eV_per_A": 0.11186677131395618,
+    "max_abs_dF_d3_eV_per_A": 0.00022450780336415177,
+    "max_abs_F_ref_disp_eV_per_A": 0.24161763,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013071048372155785,
+        -6.131843748795711e-18,
+        4.381689640027122e-19
+      ],
+      [
+        -6.152842919194224e-18,
+        0.013071048372165927,
+        5.073302605883116e-19
+      ],
+      [
+        4.392180287388629e-19,
+        4.936785214949558e-19,
+        0.009483822789726511
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": true,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.0010712838495697818,
+    "reference_fc_reproduce_freq_rms_THz": 0.00017676938824251698,
+    "hiphive_rotational_fit_required": false,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "WSe2",
+    "source": "FINAL_RESULTS_HEALTHY/WSe2",
+    "n_displacements": 3,
+    "n_atoms_supercell": 48,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -15.897087851207452,
+    "max_abs_F_d3_eq_eV_per_A": 0.10956214189988228,
+    "max_abs_F_d3_disp_eV_per_A": 0.10985607782598851,
+    "max_abs_dF_d3_eV_per_A": 0.00047017375766422113,
+    "max_abs_F_ref_disp_eV_per_A": 0.21178443,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.005398539056091233,
+        -4.189564282736843e-18,
+        -3.991700249001311e-20
+      ],
+      [
+        -4.199226734826865e-18,
+        0.005398539056091435,
+        -2.829054976017495e-20
+      ],
+      [
+        -3.606068588689685e-20,
+        -4.566867376580248e-20,
+        0.0019615607087177236
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": true,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 8.40260989387609e-05,
+    "reference_fc_reproduce_freq_rms_THz": 2.9935490312539004e-05,
+    "hiphive_rotational_fit_required": false,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "WSe2_WTe2_2H",
+    "source": "FINAL_RESULTS_HEALTHY/WSe2_WTe2_2H",
+    "n_displacements": 12,
+    "n_atoms_supercell": 96,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -41.52124450450865,
+    "max_abs_F_d3_eq_eV_per_A": 0.15534496920506885,
+    "max_abs_F_d3_disp_eV_per_A": 0.15553335700694962,
+    "max_abs_dF_d3_eV_per_A": 0.00019065020490802165,
+    "max_abs_F_ref_disp_eV_per_A": 0.19763836,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013145300073612913,
+        -6.590738166231306e-18,
+        2.50969659198488e-20
+      ],
+      [
+        -6.54144796966779e-18,
+        0.013145300073606573,
+        -2.667747363309233e-19
+      ],
+      [
+        2.1445736319405802e-20,
+        -3.178970132720047e-19,
+        0.010006207758503975
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": true,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.0008703319603179833,
+    "reference_fc_reproduce_freq_rms_THz": 0.00012030103139319237,
+    "hiphive_rotational_fit_required": false,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "WSe2_WTe2_3R",
+    "source": "FINAL_RESULTS_HEALTHY/WSe2_WTe2_3R",
+    "n_displacements": 12,
+    "n_atoms_supercell": 96,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -41.68933832214741,
+    "max_abs_F_d3_eq_eV_per_A": 0.15588946889912594,
+    "max_abs_F_d3_disp_eV_per_A": 0.15607559607191288,
+    "max_abs_dF_d3_eV_per_A": 0.00018836821091108846,
+    "max_abs_F_ref_disp_eV_per_A": 0.19138577,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.01318796347776497,
+        -5.481954728257865e-18,
+        1.8631657556698692e-19
+      ],
+      [
+        -5.480100626923901e-18,
+        0.013187963477752517,
+        2.0886196641728636e-19
+      ],
+      [
+        1.826520950750102e-19,
+        2.4536962893297804e-19,
+        0.010070570754677391
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": false,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.47108449806972186,
+    "reference_fc_reproduce_freq_rms_THz": 0.03906165057819282,
+    "hiphive_rotational_fit_required": true,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "WSe2_bilayer_2H",
+    "source": "FINAL_RESULTS_HEALTHY/WSe2_bilayer_2H",
+    "n_displacements": 6,
+    "n_atoms_supercell": 150,
+    "dim": "5 5 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -60.51949159495384,
+    "max_abs_F_d3_eq_eV_per_A": 0.12628582525383436,
+    "max_abs_F_d3_disp_eV_per_A": 0.12646595129657007,
+    "max_abs_dF_d3_eV_per_A": 0.0001814759207757477,
+    "max_abs_F_ref_disp_eV_per_A": 0.20604125,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013036121944519046,
+        -4.124205404393411e-18,
+        -1.1595277797716172e-17
+      ],
+      [
+        -4.100719053381517e-18,
+        0.01303612194452191,
+        2.0920391346616707e-18
+      ],
+      [
+        -1.159775062044191e-17,
+        2.1272717298331197e-18,
+        0.009712945335359659
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": true,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.00011735930141121287,
+    "reference_fc_reproduce_freq_rms_THz": 3.2230615309010864e-05,
+    "hiphive_rotational_fit_required": false,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "WSe2_bilayer_3R",
+    "source": "FINAL_RESULTS_HEALTHY/WSe2_bilayer_3R",
+    "n_displacements": 12,
+    "n_atoms_supercell": 150,
+    "dim": "5 5 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -60.511561056555294,
+    "max_abs_F_d3_eq_eV_per_A": 0.1262395988480757,
+    "max_abs_F_d3_disp_eV_per_A": 0.12641950077165298,
+    "max_abs_dF_d3_eV_per_A": 0.00018123236775433038,
+    "max_abs_F_ref_disp_eV_per_A": 0.20572194,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013031543651855229,
+        -5.6781888823205716e-18,
+        2.4913777750111524e-19
+      ],
+      [
+        -5.689318608512659e-18,
+        0.013031543651866505,
+        8.871512459453188e-19
+      ],
+      [
+        2.738669853666514e-19,
+        8.920964431785815e-19,
+        0.009730381704216383
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": true,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.00039524150992762915,
+    "reference_fc_reproduce_freq_rms_THz": 7.980972360870721e-05,
+    "hiphive_rotational_fit_required": false,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "WTe2",
+    "source": "FINAL_RESULTS_HEALTHY/WTe2",
+    "n_displacements": 3,
+    "n_atoms_supercell": 75,
+    "dim": "5 5 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -29.18908296214429,
+    "max_abs_F_d3_eq_eV_per_A": 0.1344166596174149,
+    "max_abs_F_d3_disp_eV_per_A": 0.13468944793864696,
+    "max_abs_dF_d3_eV_per_A": 0.0004082862714848077,
+    "max_abs_F_ref_disp_eV_per_A": 0.16601567,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.005417446600352719,
+        -3.612711519621668e-18,
+        5.367074610363847e-21
+      ],
+      [
+        -3.613783704217932e-18,
+        0.005417446600350824,
+        1.7589192089306448e-19
+      ],
+      [
+        1.718485263280173e-20,
+        1.3936572759415458e-19,
+        0.002275738586885593
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": true,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.0002331858896069683,
+    "reference_fc_reproduce_freq_rms_THz": 5.680593733505793e-05,
+    "hiphive_rotational_fit_required": false,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "WTe2_bilayer_2H",
+    "source": "FINAL_RESULTS_HEALTHY/WTe2_bilayer_2H",
+    "n_displacements": 6,
+    "n_atoms_supercell": 150,
+    "dim": "5 5 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -70.1101533411165,
+    "max_abs_F_d3_eq_eV_per_A": 0.14889421185427815,
+    "max_abs_F_d3_disp_eV_per_A": 0.14905130523401922,
+    "max_abs_dF_d3_eV_per_A": 0.00015868116664513598,
+    "max_abs_F_ref_disp_eV_per_A": 0.16280326,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013329347504694616,
+        -6.528499221274141e-18,
+        1.8425259930435917e-19
+      ],
+      [
+        -6.522966748866214e-18,
+        0.013329347504689545,
+        1.4249027147121047e-18
+      ],
+      [
+        1.986323070899941e-19,
+        1.4337496351942873e-18,
+        0.010383338101288752
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": true,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.00018839197462885982,
+    "reference_fc_reproduce_freq_rms_THz": 0.00017928540544842017,
+    "hiphive_rotational_fit_required": false,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "WTe2_bilayer_3R",
+    "source": "FINAL_RESULTS_HEALTHY/WTe2_bilayer_3R",
+    "n_displacements": 12,
+    "n_atoms_supercell": 96,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -44.76298808719543,
+    "max_abs_F_d3_eq_eV_per_A": 0.14848543106668285,
+    "max_abs_F_d3_disp_eV_per_A": 0.1486594054189277,
+    "max_abs_dF_d3_eV_per_A": 0.00017581565690416578,
+    "max_abs_F_ref_disp_eV_per_A": 0.17828669,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013293359480944188,
+        -5.1469720096539914e-18,
+        -2.5018091427729452e-20
+      ],
+      [
+        -5.083860343656035e-18,
+        0.013293359480939038,
+        1.1602125115100057e-18
+      ],
+      [
+        -3.1917519159151475e-20,
+        1.1602108302223425e-18,
+        0.0103677317547519
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": true,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.0014170714398556031,
+    "reference_fc_reproduce_freq_rms_THz": 0.00025162643988529596,
+    "hiphive_rotational_fit_required": false,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoS2_WSe2_3R",
+    "source": "FINAL_RESULTS_HEALTHY/MoS2_WSe2_3R",
+    "n_displacements": 12,
+    "n_atoms_supercell": 216,
+    "dim": "6 6 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -84.70419603167622,
+    "max_abs_F_d3_eq_eV_per_A": 0.13040027454836547,
+    "max_abs_F_d3_disp_eV_per_A": 0.1305734060637064,
+    "max_abs_dF_d3_eV_per_A": 0.00019627813164775632,
+    "max_abs_F_ref_disp_eV_per_A": 0.19743866,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013198438636219159,
+        -5.596551373091163e-18,
+        5.435887265004408e-19
+      ],
+      [
+        -5.59387317031266e-18,
+        0.013198438636217776,
+        1.094079829494438e-18
+      ],
+      [
+        5.471594847181186e-19,
+        1.067301945265489e-18,
+        0.009665295690110196
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": false,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.17158985192620052,
+    "reference_fc_reproduce_freq_rms_THz": 0.06316423433834936,
+    "hiphive_rotational_fit_required": true,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoS2_bilayer_2H",
+    "source": "FINAL_RESULTS_HEALTHY/MoS2_bilayer_2H",
+    "n_displacements": 6,
+    "n_atoms_supercell": 96,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -35.33515936203324,
+    "max_abs_F_d3_eq_eV_per_A": 0.11382548890360955,
+    "max_abs_F_d3_disp_eV_per_A": 0.11407037981349805,
+    "max_abs_dF_d3_eV_per_A": 0.00024597864035792727,
+    "max_abs_F_ref_disp_eV_per_A": 0.22434314,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.012943984457763041,
+        -6.516242033164195e-18,
+        -5.199895383320627e-19
+      ],
+      [
+        -6.4921966800643335e-18,
+        0.012943984457765475,
+        -1.4597587088972034e-18
+      ],
+      [
+        -5.367031282609889e-19,
+        -1.4378110112239368e-18,
+        0.00912368874080439
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": true,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.0002428436738046713,
+    "reference_fc_reproduce_freq_rms_THz": 7.190178613864308e-05,
+    "hiphive_rotational_fit_required": false,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoSe2_WTe2_2H",
+    "source": "FINAL_RESULTS_HEALTHY/MoSe2_WTe2_2H",
+    "n_displacements": 12,
+    "n_atoms_supercell": 96,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -42.29747820043599,
+    "max_abs_F_d3_eq_eV_per_A": 0.1569907946283694,
+    "max_abs_F_d3_disp_eV_per_A": 0.1571782261544259,
+    "max_abs_dF_d3_eV_per_A": 0.00018975587601471888,
+    "max_abs_F_ref_disp_eV_per_A": 0.19458982,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013459649393062278,
+        -5.618325823810208e-18,
+        7.28468757290902e-20
+      ],
+      [
+        -5.58877380041583e-18,
+        0.013459649393048155,
+        -1.1830435792904477e-19
+      ],
+      [
+        5.070539056348427e-20,
+        -1.146221817717232e-19,
+        0.010206420310715924
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": true,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.0005451116606260825,
+    "reference_fc_reproduce_freq_rms_THz": 0.00014649170891386834,
+    "hiphive_rotational_fit_required": false,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoSe2_WSe2_2H",
+    "source": "FINAL_RESULTS_HEALTHY/MoSe2_WSe2_2H",
+    "n_displacements": 12,
+    "n_atoms_supercell": 150,
+    "dim": "5 5 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -61.19088120263825,
+    "max_abs_F_d3_eq_eV_per_A": 0.13081573711067804,
+    "max_abs_F_d3_disp_eV_per_A": 0.13101072971791497,
+    "max_abs_dF_d3_eV_per_A": 0.00019633796416471117,
+    "max_abs_F_ref_disp_eV_per_A": 0.20255212,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013252383875527515,
+        -7.139768446562384e-18,
+        -1.3064957616499692e-18
+      ],
+      [
+        -7.144768232903245e-18,
+        0.013252383875519465,
+        -2.9150746005213367e-18
+      ],
+      [
+        -1.3284037529896088e-18,
+        -2.9463348842757628e-18,
+        0.009797211468711224
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": true,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.000461743321682917,
+    "reference_fc_reproduce_freq_rms_THz": 5.0811312167687e-05,
+    "hiphive_rotational_fit_required": false,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoSe2_WSe2_3R",
+    "source": "FINAL_RESULTS_HEALTHY/MoSe2_WSe2_3R",
+    "n_displacements": 12,
+    "n_atoms_supercell": 150,
+    "dim": "5 5 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -61.07672145189765,
+    "max_abs_F_d3_eq_eV_per_A": 0.13049599282223262,
+    "max_abs_F_d3_disp_eV_per_A": 0.1306909124184786,
+    "max_abs_dF_d3_eV_per_A": 0.0001962610161152234,
+    "max_abs_F_ref_disp_eV_per_A": 0.20543982,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013228316369591465,
+        -5.09588392024142e-18,
+        -1.1617260791516375e-18
+      ],
+      [
+        -5.04713065354576e-18,
+        0.013228316369596507,
+        1.235696359833717e-18
+      ],
+      [
+        -1.184226455524734e-18,
+        1.2509703931080418e-18,
+        0.009798533606832277
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": true,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.0004448426065497557,
+    "reference_fc_reproduce_freq_rms_THz": 6.708479963351347e-05,
+    "hiphive_rotational_fit_required": false,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoTe2_WS2_2H",
+    "source": "FINAL_RESULTS_HEALTHY/MoTe2_WS2_2H",
+    "n_displacements": 12,
+    "n_atoms_supercell": 96,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -41.354367849239466,
+    "max_abs_F_d3_eq_eV_per_A": 0.1698294598886226,
+    "max_abs_F_d3_disp_eV_per_A": 0.17004919907451146,
+    "max_abs_dF_d3_eV_per_A": 0.0002487694163429005,
+    "max_abs_F_ref_disp_eV_per_A": 0.20377521,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.014020192197924757,
+        -6.586059058510277e-18,
+        -3.523794372876191e-19
+      ],
+      [
+        -6.6210378888624734e-18,
+        0.014020192197911256,
+        8.510418457458005e-19
+      ],
+      [
+        -3.5335028982233796e-19,
+        8.782475470833428e-19,
+        0.01043727858935316
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": false,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.5092897774710037,
+    "reference_fc_reproduce_freq_rms_THz": 0.047303304688010445,
+    "hiphive_rotational_fit_required": true,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "MoTe2_WS2_3R",
+    "source": "FINAL_RESULTS_HEALTHY/MoTe2_WS2_3R",
+    "n_displacements": 12,
+    "n_atoms_supercell": 96,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -41.06031529135353,
+    "max_abs_F_d3_eq_eV_per_A": 0.16887919888837147,
+    "max_abs_F_d3_disp_eV_per_A": 0.1691030435018186,
+    "max_abs_dF_d3_eV_per_A": 0.00025442338750843174,
+    "max_abs_F_ref_disp_eV_per_A": 0.20180034,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.013889970181027646,
+        -6.1356368112995045e-18,
+        1.2524205970874744e-19
+      ],
+      [
+        -6.127867364431333e-18,
+        0.01388997018103227,
+        -1.26509361877221e-18
+      ],
+      [
+        9.034838307833844e-20,
+        -1.2999881944747537e-18,
+        0.010322341829341757
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": false,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.5343752497989219,
+    "reference_fc_reproduce_freq_rms_THz": 0.05268573539700025,
+    "hiphive_rotational_fit_required": true,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "WS2_WSe2_2H",
+    "source": "FINAL_RESULTS_HEALTHY/WS2_WSe2_2H",
+    "n_displacements": 12,
+    "n_atoms_supercell": 96,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -36.536035016233086,
+    "max_abs_F_d3_eq_eV_per_A": 0.12726195375468213,
+    "max_abs_F_d3_disp_eV_per_A": 0.12746491777931754,
+    "max_abs_dF_d3_eV_per_A": 0.00021930477687244487,
+    "max_abs_F_ref_disp_eV_per_A": 0.22616752,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.012947447910353276,
+        -7.001925861003603e-18,
+        -3.2144395163576005e-19
+      ],
+      [
+        -6.957387459077748e-18,
+        0.012947447910353321,
+        7.932883430840067e-19
+      ],
+      [
+        -3.254863412013723e-19,
+        7.409427490228886e-19,
+        0.009478941042506146
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": true,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.0009953483562606669,
+    "reference_fc_reproduce_freq_rms_THz": 0.0001605632486187529,
+    "hiphive_rotational_fit_required": false,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  },
+  {
+    "material": "WS2_WSe2_3R",
+    "source": "FINAL_RESULTS_HEALTHY/WS2_WSe2_3R",
+    "n_displacements": 12,
+    "n_atoms_supercell": 96,
+    "dim": "4 4 1",
+    "d3_params": {
+      "s6": 1.0,
+      "s8": 0.7875,
+      "a1": 0.4289,
+      "a2": 4.4407,
+      "s9": 0.0,
+      "cutoff_disp2_A": 50.2022,
+      "cutoff_cn_A": 21.1671
+    },
+    "E_d3_eq_eV": -36.7935593070896,
+    "max_abs_F_d3_eq_eV_per_A": 0.12803771038969947,
+    "max_abs_F_d3_disp_eV_per_A": 0.12823584875078023,
+    "max_abs_dF_d3_eV_per_A": 0.00021338257923132764,
+    "max_abs_F_ref_disp_eV_per_A": 0.22704881,
+    "stress_d3_eq_eV_per_A3": [
+      [
+        0.01302433144698622,
+        -5.242695387677903e-18,
+        2.838054702680018e-19
+      ],
+      [
+        -5.244443189216844e-18,
+        0.013024331446999566,
+        1.0691901664771494e-18
+      ],
+      [
+        2.737436501099067e-19,
+        1.0772430573800289e-18,
+        0.009587003373647174
+      ]
+    ],
+    "reference_fc_is_plain_phonopy_rebuild": true,
+    "reference_fc_reproduce_maxdiff_eV_per_A2": 0.0005254808957819712,
+    "reference_fc_reproduce_freq_rms_THz": 8.454494179701082e-05,
+    "hiphive_rotational_fit_required": false,
+    "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+  }
+]
