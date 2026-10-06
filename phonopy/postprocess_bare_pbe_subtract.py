@@ -148,7 +148,7 @@ def compare_to_reference(mat_dir: Path, material: str) -> dict:
             "mesh40_min_THz": float(mesh.min()), "mesh40_n_negative": int((mesh < -1e-4).sum()), "n_q": int(len(q))}
 
 
-def process(material: str, cutoff: float | None, lambdas: list[float], skip_hiphive: bool) -> dict:
+def process(material: str, cutoff: float | None, lambdas: list[float], skip_hiphive: bool, force_hiphive: bool = False) -> dict:
     mat_dir = OUT_ROOT / material
     info = json.loads((mat_dir / "d3_subtraction.json").read_text())
     print(f"{material}", flush=True)
@@ -161,11 +161,14 @@ def process(material: str, cutoff: float | None, lambdas: list[float], skip_hiph
     for f in PLAIN_FILES:
         shutil.copy2(mat_dir / f, plain_dir / f)
     row = {"material": material, "hiphive_required": info["hiphive_rotational_fit_required"],
-           "min_freq_plain_THz": band_min(mat_dir), "hiphive_applied": False, "hiphive_cutoff_A": None, "hiphive_lambda": None}
-    if info["hiphive_rotational_fit_required"] and not skip_hiphive:
-        print("  hiphive rotational-sum-rule fit (reference was hiphive-corrected)", flush=True)
+           "min_freq_plain_THz": band_min(mat_dir), "hiphive_applied": False, "hiphive_reason": None,
+           "hiphive_cutoff_A": None, "hiphive_lambda": None}
+    if (info["hiphive_rotational_fit_required"] or force_hiphive) and not skip_hiphive:
+        reason = ("reference FORCE_CONSTANTS was hiphive-corrected" if info["hiphive_rotational_fit_required"]
+                  else "forced (--force-hiphive): remove residual ZA dip the plain reference also carries")
+        print(f"  hiphive rotational-sum-rule fit ({reason})", flush=True)
         fit = hiphive_fit(mat_dir, cutoff, lambdas)
-        row.update(hiphive_applied=True, hiphive_cutoff_A=fit["cutoff_A"], hiphive_lambda=fit["chosen_lambda"])
+        row.update(hiphive_applied=True, hiphive_reason=reason, hiphive_cutoff_A=fit["cutoff_A"], hiphive_lambda=fit["chosen_lambda"])
     (mat_dir / "hiphive_fit.json").unlink(missing_ok=True) if not row["hiphive_applied"] else None
     row.update(compare_to_reference(mat_dir, material))
     row["max_abs_F_d3_eq_eV_per_A"] = info["max_abs_F_d3_eq_eV_per_A"]
@@ -185,6 +188,7 @@ def summarize(material: str) -> dict:
 
 def write_readme(rows: list[dict]) -> None:
     n_h = sum(r["hiphive_applied"] for r in rows)
+    forced = [r["material"] for r in rows if r["hiphive_applied"] and not r["hiphive_required"]]
     worst = min(rows, key=lambda r: r["min_freq_final_THz"])
     rms = np.array([r["rmse_vs_pbed3_THz"] for r in rows])
     txt = f"""# FINAL_RESULTS_BARE_PBE_SUBTRACT — bare-PBE phonons by explicit D3 subtraction
@@ -213,7 +217,7 @@ is recorded per material and the stress placeholder is unchanged from the refere
 | `d3_subtraction.npz/.json` | every D3 quantity used (F_D3 per displacement, F_D3(eq), E_D3, stress) and sanity numbers |
 | `plain_phonopy/` | step 1: plain `phonopy -p -s --writefc` result (FC_SYMMETRY on), kept for all {len(rows)} |
 | `FORCE_CONSTANTS`, `band.yaml`, `band.pdf`, `phonopy.yaml` | final result: = plain for {len(rows) - n_h} materials, hiphive-fit for {n_h} |
-| `hiphive_fit.json` | ({n_h} materials) cutoff, lambda sweep, chosen lambda — only where the PBE+D3 reference had been hiphive-corrected |
+| `hiphive_fit.json` | ({n_h} materials) cutoff, lambda sweep, chosen lambda — where the PBE+D3 reference had been hiphive-corrected{', plus forced (--force-hiphive, user request 2026-10-06) on ' + ', '.join(forced) + ' to remove the small ZA dips their plain references also carry' if forced else ''} |
 | `bare_vs_pbed3.json` | band-path / 40x40x1-mesh minima and RMS difference to the PBE+D3 reference on its own q-points |
 
 **Headline.** RMS(bare - PBE+D3) over all bands: mean {rms.mean():.4f} THz, range {rms.min():.4f}-{rms.max():.4f} THz.
@@ -233,12 +237,14 @@ def main() -> None:
     ap.add_argument("--cutoff", type=float, default=None, help="hiphive cutoff (default: estimate_safe_cutoff)")
     ap.add_argument("--lambdas", type=str, default=None, help="comma-separated lambda sweep (default as hiphive_fit_force_constants.py)")
     ap.add_argument("--skip-hiphive", action="store_true")
+    ap.add_argument("--force-hiphive", action="store_true",
+                    help="apply the hiphive refit even where the reference was plain (use with --materials)")
     ap.add_argument("--summary-only", action="store_true",
                     help="recompute bare_vs_pbed3.json / summary.csv / README.md from the existing FORCE_CONSTANTS, no phonopy/hiphive rerun")
     args = ap.parse_args()
     lambdas = [float(x) for x in args.lambdas.split(",")] if args.lambdas else DEFAULT_LAMBDAS
     mats = args.materials or sorted(p.name for p in OUT_ROOT.iterdir() if (p / "d3_subtraction.json").exists())
-    rows = [summarize(m) if args.summary_only else process(m, args.cutoff, lambdas, args.skip_hiphive) for m in mats]
+    rows = [summarize(m) if args.summary_only else process(m, args.cutoff, lambdas, args.skip_hiphive, args.force_hiphive) for m in mats]
     if args.materials is None:
         with open(OUT_ROOT / "summary.csv", "w", newline="") as f:
             w = csv.DictWriter(f, fieldnames=list(rows[0].keys()))
