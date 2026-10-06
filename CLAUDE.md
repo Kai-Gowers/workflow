@@ -166,6 +166,22 @@ Running the workflow creates these top-level directories:
 
 Each `disp-XXX/` folder inside a staticpoint dir is a separate VASP calculation.
 
+### Keep the `workflow/` top level clean
+
+Keep the top level of `workflow/` to the core folders:
+- code: `common/`, `phonopy/`, `relaxation/`, `scripts/`, `twisted/`
+- inputs: `data/`, `template_structures/`
+- results: `FINAL_RESULTS*/`, `nequix_datasets/`
+- the standard `*_examples*/` run directories above
+- `backups/`
+
+Do not create new top-level folders for anything else:
+- superseded or archived runs and one-off previews go in `backups/<campaign>/` (gitignored)
+- scratch analyses and plots go in a scratch directory outside `workflow/`
+- campaign scripts go under `scripts/`
+
+Ask before adding a new top-level folder.
+
 ### VASP Templates
 
 Templates for INCAR, KPOINTS, and SLURM batch scripts live in (gitignored; host-local):
