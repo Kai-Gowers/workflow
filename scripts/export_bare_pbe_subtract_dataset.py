@@ -130,10 +130,13 @@ a1 = 0.4289, a2 = 4.4407, two-body cutoff 50.2022 Å, CN cutoff 21.1671 Å, no t
 D3 term was re-evaluated with simple-dftd3 on every structure (checked against VASP's own `Edisp`: max
 0.85 meV per supercell) and subtracted: `E = E_pbe_d3 − E_d3`, `F = F_pbe_d3 − F_d3`, `σ = σ_pbe_d3 − σ_d3`.
 
-`materials/<name>/FORCE_SETS` differs from the frame forces by one constant per atom: the bare-PBE
-equilibrium force `F_d3(eq)` is removed there (`F_pbe_d3 − [F_d3(disp) − F_d3(eq)]`), because phonopy's
-finite differences assume zero force on the undisplaced cell. Use the extxyz for training and FORCE_SETS
-for phonons; do not mix them.
+**Train on `displacements.extxyz`.** `materials/<name>/FORCE_SETS` is not training data: it is phonopy's
+input file holding the same DFT forces, which produced the reference `FORCE_CONSTANTS` / `band.yaml`; keep it
+only if you want to regenerate or refit the reference bands. It differs from the frame forces by one constant
+per atom (the bare-PBE equilibrium force `F_d3(eq)`, removed there because phonopy's finite differences assume
+a force-free undisplaced cell); curvature, and therefore the phonons, are identical. A model trained on the
+extxyz is evaluated by running phonopy *with the model as calculator* (`evaluate_phonons.py`), never by
+reading FORCE_SETS.
 
 Energies are VASP `e_0_energy` (σ→0 extrapolated; ISMEAR = 0, SIGMA = 0.05). Stresses are in eV/Å³,
 ASE sign convention (positive = tensile), Voigt order xx yy zz yz xz xy, for the full 20 Å-vacuum cell.
