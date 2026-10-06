@@ -7,7 +7,7 @@ shared code and templates (common/, phonopy/, *_templates*/) are untouched. Diff
   - displacements are generated with --amplitude 0.03 (phonopy default 0.01 Å)
   - no disp-000 job (the residual forces after the intralayer relax are <= 7e-4 eV/Å)
 The existing phonopy_bilayer_examples_bare_pbe/<name>_staticpoint is moved to
-phonopy_superseded_bare_pbe_pre_intralayer/ first. Postprocessing is unchanged: phonopy_disp.yaml carries the amplitude.
+backups/bare_pbe/phonopy_superseded_bare_pbe_pre_intralayer/ first. Postprocessing is unchanged: phonopy_disp.yaml carries the amplitude.
 
 Usage (dry run is the default; nothing is submitted without --submit):
   TWIST_VARIANT=bare_pbe python3 setup_phonopy_tight.py [--submit] <name> ...
@@ -28,7 +28,7 @@ from setup_displacements import setup_and_submit_displacements  # noqa: E402
 
 AMPLITUDE = 0.03
 SRC = WF / "bilayer_examples_bare_pbe"
-SUPERSEDED = WF / "phonopy_superseded_bare_pbe_pre_intralayer"
+SUPERSEDED = WF / "backups" / "bare_pbe" / "phonopy_superseded_bare_pbe_pre_intralayer"
 
 assert variant() == "bare_pbe", "run with TWIST_VARIANT=bare_pbe"
 submit = "--submit" in sys.argv[1:]
@@ -46,7 +46,7 @@ for name in [a for a in sys.argv[1:] if not a.startswith("--")]:
 
     sp = generated_dir("phonopy_bilayer_examples") / f"{name}_staticpoint"
     if sp.exists():
-        SUPERSEDED.mkdir(exist_ok=True)
+        SUPERSEDED.mkdir(parents=True, exist_ok=True)
         assert not (SUPERSEDED / sp.name).exists(), f"{SUPERSEDED / sp.name} already exists"
         shutil.move(str(sp), SUPERSEDED / sp.name)
 

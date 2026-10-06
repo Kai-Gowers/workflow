@@ -50,8 +50,6 @@ nequix_datasets/*/*.aselmdb-lock
 # Transient symlink staging trees for convert_to_nequix.py (regenerable from
 # FINAL_RESULTS_HEALTHY + the material lists in nequix_datasets/*/materials.txt)
 /staging/
-# bare-PBE campaign: run outputs under gap_scan_bare_pbe/ (scripts at its top level stay tracked), superseded runs, scratch previews
+# bare-PBE campaign: run outputs under gap_scan_bare_pbe/ (scripts at its top level stay tracked)
 gap_scan_bare_pbe/*/
 gap_scan_bare_pbe/slurm-*.out
-phonopy_superseded_*/
-preview_bands_*/
