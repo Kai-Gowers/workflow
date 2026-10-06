@@ -5,17 +5,17 @@ D3 subtraction) as a self-contained, model-agnostic bundle, same layout as
 scripts/export_shareable_dataset.py produced for the PBE+D3 data (share/tmd48_phonon_dataset_v1),
 but with energies and stresses on every displaced supercell.
 
-Bundle layout (share/<name>/):
+Bundle layout (share/<name>/), lean by default — final results only:
   README.md                 what this is, how it was made, units, caveats
   materials.csv / .txt      one row / one name per material
-  displacements.extxyz      every DFT displaced supercell. Standard keys = bare PBE
-                            (energy, forces, stress); PBE+D3 and D3 kept alongside.
+  displacements.extxyz      every DFT displaced supercell with bare-PBE energy, forces, stress
   evaluate_phonons.py       reference evaluation script (any ASE calculator -> phonon RMSE)
   requirements.txt, SHA256SUMS
   materials/<name>/         POSCAR, phonopy.yaml, FORCE_SETS (bare, fz-corrected), FORCE_CONSTANTS,
-                            band.yaml, band.pdf, d3_subtraction.{json,npz}, bare_vs_pbed3.json,
-                            [hiphive_fit.json], plain_phonopy/, reference_pbe_d3/{band.yaml,band.pdf}
-and a zip next to it.
+                            band.yaml, band.pdf
+and a zip next to it. --full additionally ships the audit trail: PBE+D3 / D3 split of every frame
+(*_pbe_d3, *_d3 keys), d3_subtraction.{json,npz}, bare_vs_pbed3.json, hiphive_fit.json,
+plain_phonopy/, reference_pbe_d3/, and the PBE+D3 / RMS columns in materials.csv.
 
 Needs simple-dftd3 (nequix uv env):
     cd ../nequix && uv run python ../workflow/scripts/export_bare_pbe_subtract_dataset.py
@@ -48,8 +48,8 @@ import d3  # noqa: E402
 
 SOURCE = ROOT / "FINAL_RESULTS_BARE_PBE_SUBTRACT"
 REFERENCE = ROOT / "FINAL_RESULTS_HEALTHY"
-PER_MATERIAL_FILES = ["POSCAR", "phonopy.yaml", "FORCE_SETS", "FORCE_CONSTANTS", "band.yaml", "band.pdf",
-                      "d3_subtraction.json", "d3_subtraction.npz", "bare_vs_pbed3.json"]
+PER_MATERIAL_FILES = ["POSCAR", "phonopy.yaml", "FORCE_SETS", "FORCE_CONSTANTS", "band.yaml", "band.pdf"]
+FULL_EXTRA_FILES = ["d3_subtraction.json", "d3_subtraction.npz", "bare_vs_pbed3.json"]
 OPTIONAL_FILES = ["hiphive_fit.json"]
 EV_A3_TO_GPA = 160.21766
 
@@ -95,87 +95,73 @@ def unitcell_energetics(name: str, poscar: Path) -> dict:
                 unitcell_energetics_note="relaxation OUTCAR, 21x21x1 k-mesh (supercell statics use 7x7x1)")
 
 
-def readme(n_mat: int, n_frames: int, n_hiphive: int, forced: list[str]) -> str:
+def readme(n_mat: int, n_frames: int, n_hiphive: int, forced: list[str], full: bool) -> str:
+    audit = f"""
+## Audit trail (this is the `--full` export)
+
+Every frame also carries the split `energy_pbe_d3` / `energy_d3` (same for forces and stress), and each
+`materials/<name>/` has `d3_subtraction.{{json,npz}}` (every D3 quantity used, incl. `f_d3_eq`),
+`bare_vs_pbed3.json`, `hiphive_fit.json` where a refit was done, `plain_phonopy/` (the pre-refit result)
+and `reference_pbe_d3/` (the PBE+D3 dispersion the bare one was derived from). `materials.csv` has the
+PBE+D3 / D3 unit-cell energetics and two RMS columns: `rmse_plain_bare_vs_plain_pbed3_THz` is the pure D3
+effect at fixed geometry (plain phonopy both sides, 0.007–0.018 THz, always a softening);
+`rmse_vs_pbed3_THz` compares final to shipped reference and for hiphive materials also contains the mismatch
+between this refit and the reference's own hiphive step.
+""" if full else ""
+    per_mat_extra = """
+    plain_phonopy/, reference_pbe_d3/, d3_subtraction.*, bare_vs_pbed3.json, hiphive_fit.json  (audit trail)""" if full else ""
     return f"""# 48-material Mo/W TMD phonon dataset — bare PBE by explicit D3 subtraction
 
 Harmonic phonon reference data for the same 48 dynamically stable 2D transition-metal dichalcogenides
 as `tmd48_phonon_dataset_v1` (6 monolayers, 12 homobilayers, 30 heterobilayers built from MoS2, MoSe2,
-MoTe2, WS2, WSe2, WTe2), but with the Grimme D3(BJ) dispersion term **removed analytically** so the
-targets are **bare PBE**. Built {date.today().isoformat()} from `FINAL_RESULTS_BARE_PBE_SUBTRACT/` in the
-twist workflow.
+MoTe2, WS2, WSe2, WTe2), with the Grimme D3(BJ) dispersion term **removed analytically** so that every
+energy, force, stress and force constant is **bare PBE**. Built {date.today().isoformat()}.
 
-> **Read every number here as bare-PBE curvature / energetics at the PBE+D3-relaxed geometry.**
-> No structure was re-relaxed without D3. The structures are therefore *not* stationary points of
-> bare PBE: each carries a residual bare-PBE force of 0.10–0.17 eV/Å (= −F_D3 at equilibrium, mostly
-> on the chalcogen / interlayer z coordinate) and a nonzero stress. A genuine bare-PBE (IVDW off)
-> re-relaxation + phonon campaign exists separately and is the right reference for bare-PBE minima.
+> **Read every number here as bare PBE at the PBE+D3-relaxed geometry.** No structure was re-relaxed
+> without D3, so the structures are not stationary points of bare PBE: each carries a residual bare-PBE
+> force of 0.10–0.17 eV/Å (`max_abs_F_d3_eq_eV_per_A` in `materials.csv`, mostly on the chalcogen /
+> interlayer z coordinate) and a small nonzero stress. For training this is simply a set of labelled
+> off-minimum configurations; for "bare-PBE phonons" it is the harmonic curvature at that geometry.
 
-## What was subtracted
+## How bare PBE was obtained
 
-The DFT reference is VASP PBE + DFT-D3(BJ) (`IVDW = 12`, VASP defaults: s6 = 1.0, s8 = 0.7875,
-a1 = 0.4289, a2 = 4.4407, two-body cutoff 50.2022 Å, CN cutoff 21.1671 Å, no three-body term). The
-identical D3 term was re-evaluated with simple-dftd3 on every structure (checked against VASP's own
-`Edisp` on 390 supercells: max 0.85 meV, mean 0.49 meV per supercell) and subtracted:
+The parent DFT data is VASP PBE + DFT-D3(BJ) (`IVDW = 12`, VASP defaults: s6 = 1.0, s8 = 0.7875,
+a1 = 0.4289, a2 = 4.4407, two-body cutoff 50.2022 Å, CN cutoff 21.1671 Å, no three-body term). The same
+D3 term was re-evaluated with simple-dftd3 on every structure (checked against VASP's own `Edisp`: max
+0.85 meV per supercell) and subtracted: `E = E_pbe_d3 − E_d3`, `F = F_pbe_d3 − F_d3`, `σ = σ_pbe_d3 − σ_d3`.
 
-| quantity | stored as | definition |
-|---|---|---|
-| `energy`, `forces`, `stress` (standard ASE keys in `displacements.extxyz`) | bare PBE | `X_pbe_d3 − X_d3` on the displaced supercell |
-| `energy_pbe_d3`, `forces_pbe_d3`, `stress_pbe_d3` | PBE+D3 | straight from VASP `vasprun.xml` |
-| `energy_d3`, `forces_d3`, `stress_d3` | D3 only | simple-dftd3 on the same geometry |
-| `materials/<name>/FORCE_SETS` | bare PBE, **residual-corrected** | `F_pbe_d3 − [F_d3(disp) − F_d3(eq)]` |
+`materials/<name>/FORCE_SETS` differs from the frame forces by one constant per atom: the bare-PBE
+equilibrium force `F_d3(eq)` is removed there (`F_pbe_d3 − [F_d3(disp) − F_d3(eq)]`), because phonopy's
+finite differences assume zero force on the undisplaced cell. Use the extxyz for training and FORCE_SETS
+for phonons; do not mix them.
 
-The residual-corrected FORCE_SETS is what the phonons were built from: phonopy's finite differences
-assume zero force on the undisplaced cell, so the constant bare-PBE equilibrium force is removed
-(phonopy's `--fz` treatment). `F_d3(eq)` is in `materials/<name>/d3_subtraction.npz` (`f_d3_eq`),
-so `forces` in the extxyz and FORCE_SETS differ by exactly that constant per atom.
+Energies are VASP `e_0_energy` (σ→0 extrapolated; ISMEAR = 0, SIGMA = 0.05). Stresses are in eV/Å³,
+ASE sign convention (positive = tensile), Voigt order xx yy zz yz xz xy, for the full 20 Å-vacuum cell.
 
-Energies are VASP `e_0_energy` (σ→0 extrapolated, ISMEAR=0 / SIGMA=0.05 so free-energy differences
-are < 1 meV). Stresses are in eV/Å³ in the ASE sign convention (positive = tensile), 6-component
-Voigt order xx yy zz yz xz xy, for the full 20 Å-vacuum cell (not thickness-renormalised).
-
-## Post-processing (same two steps the PBE+D3 reference went through)
-
-1. plain phonopy (`FC_SYMMETRY = .TRUE.`) on the bare FORCE_SETS for all {n_mat} materials; that result
-   is kept in `materials/<name>/plain_phonopy/`.
-2. hiphive rotational-sum-rule constrained fit (cutoff ≈ 6 Å, λ sweep 1e-3…1e2, largest λ kept) on
-   {n_hiphive} materials: the 20 whose PBE+D3 reference had itself been hiphive-corrected, plus
-   {', '.join(forced)} where the plain build kept a small (−0.002…−0.03 THz) flexural dip near Γ. These
-   {n_hiphive} are flagged `hiphive_applied = True` in `materials.csv`, with `hiphive_fit.json` recording the fit.
-   `FORCE_SETS` is always the untouched (subtracted) force data, so you can always refit yourself.
-
-After step 2 every material is ≥ 0 THz on the Γ–K–M–Γ path and on a 40×40×1 mesh.
-
-`materials/<name>/reference_pbe_d3/band.yaml` is the PBE+D3 dispersion the bare one was derived from.
-`bare_vs_pbed3.json` / `materials.csv` give the RMS difference two ways: `rmse_plain_bare_vs_plain_pbed3_THz`
-(plain phonopy on both sides = the pure D3 effect at fixed geometry, 0.007–0.018 THz, always a
-softening) and `rmse_vs_pbed3_THz` (final vs shipped reference; for hiphive materials this also contains
-the mismatch between this refit and the reference's own hiphive step, so quote the former for "what D3
-does").
-
+Force constants: plain phonopy (`FC_SYMMETRY = .TRUE.`) on the bare FORCE_SETS, then a hiphive
+rotational-sum-rule constrained fit on {n_hiphive} of the {n_mat} materials (`force_constants_source =
+hiphive-refit`: the 20 whose PBE+D3 reference had itself been hiphive-corrected, plus {', '.join(forced)}
+where the plain build kept a small flexural dip near Γ). Every material is ≥ 0 THz on Γ–K–M–Γ and on a
+40×40×1 mesh. `FORCE_SETS` is always the untouched (subtracted) force data, so you can refit yourself.
+{audit}
 ## Contents
 
 ```
 materials.csv / materials.txt   per-material table / plain list of the {n_mat} names
-displacements.extxyz            {n_frames} displaced supercells (ASE extended XYZ), keys as above;
-                                atoms.info also has material, displacement_index, displaced_atom, displacement
+displacements.extxyz            {n_frames} displaced supercells (ASE extended XYZ): energy, forces, stress = bare PBE;
+                                atoms.info has material, displacement_index, displaced_atom, displacement
 evaluate_phonons.py             benchmark any ASE calculator against band.yaml (unchanged from v1 bundle)
 requirements.txt, SHA256SUMS
 materials/<name>/
     POSCAR                      PBE+D3-relaxed unit cell (60° hexagonal, 20 Å c)
     phonopy.yaml                unit cell, supercell + primitive matrix, symmetry
     FORCE_SETS                  bare-PBE displaced forces, residual-corrected (see above)
-    FORCE_CONSTANTS             final bare-PBE force constants (eV/Å²), plain or hiphive-refit
-    band.yaml / band.pdf        bare-PBE dispersion on Γ–K–M–Γ (THz; 153 or 303 q-points)
-    plain_phonopy/              step-1 result (band.yaml, band.pdf, FORCE_CONSTANTS)
-    reference_pbe_d3/           PBE+D3 band.yaml / band.pdf from the parent dataset
-    d3_subtraction.json / .npz  every D3 quantity used (f_ref, f_d3_disp, f_d3_eq, f_bare, E_d3, stress_d3)
-    bare_vs_pbed3.json          minima, mesh check, RMS vs PBE+D3 (both definitions)
-    hiphive_fit.json            (hiphive materials only) cutoff, λ sweep, chosen λ
+    FORCE_CONSTANTS             bare-PBE force constants (eV/Å²)
+    band.yaml / band.pdf        bare-PBE dispersion on Γ–K–M–Γ (THz){per_mat_extra}
 ```
 
-`materials.csv` additionally carries, where the relaxation OUTCAR is on the exporting host and its final
-geometry equals the shipped POSCAR, the relaxed **unit-cell** energy (PBE+D3, D3, bare; 21×21×1 k-mesh) and
-stress (GPa, Voigt). Blank cells mean not available; see `unitcell_energetics_note`.
+`materials.csv` also has the relaxed **unit-cell** bare-PBE energy (eV) and stress (GPa, Voigt) from the
+relaxation run (21×21×1 k-mesh; the supercell statics used 7×7×1, so do not mix the two in one fit).
 
 ## DFT settings of the parent data
 
@@ -190,18 +176,14 @@ standardised 120° primitive cell: Γ (0,0,0) → K (1/3,1/3,0) → M (1/2,0,0) 
 ```python
 from ase.io import read
 frames = read("displacements.extxyz", index=":")
-a = frames[0]
-a.get_potential_energy(), a.get_forces(), a.get_stress()     # bare PBE
-a.info["energy_pbe_d3"], a.arrays["forces_pbe_d3"], a.info["stress_pbe_d3"]
-a.info["energy_d3"],     a.arrays["forces_d3"],     a.info["stress_d3"]
+frames[0].get_potential_energy(), frames[0].get_forces(), frames[0].get_stress()   # bare PBE
 ```
 
 ## Benchmarking a model
 
 `python evaluate_phonons.py --calc "pkg.module:make_calculator" [--relax positions] [--plots]` compares
 on exactly the stored q-points; state whether you report `--relax none` (DFT geometry) or `--relax positions`.
-A model that has *no* dispersion term should be compared against this bundle; a model that includes D3
-belongs with `tmd48_phonon_dataset_v1`.
+A model with *no* dispersion term belongs with this bundle; one that includes D3 belongs with `tmd48_phonon_dataset_v1`.
 
 ## Contact
 
@@ -213,7 +195,9 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--name", default="tmd48_bare_pbe_subtract_v1")
     ap.add_argument("--out-root", default="share")
+    ap.add_argument("--full", action="store_true", help="also ship the audit trail (see module docstring)")
     args = ap.parse_args()
+    full = args.full
 
     materials = sorted(p.name for p in SOURCE.iterdir() if p.is_dir() and TMD_RE.match(p.name))
     if len(materials) != 48:
@@ -225,7 +209,7 @@ def main() -> None:
         shutil.rmtree(out)
     (out / "materials").mkdir(parents=True)
 
-    rows, frames = [], []
+    rows, full_rows, frames = [], [], []
     for name in materials:
         src, ref, dst = SOURCE / name, REFERENCE / name, out / "materials" / name
         dst.mkdir()
@@ -233,13 +217,14 @@ def main() -> None:
             if not (src / f).exists():
                 sys.exit(f"{name}: missing {f}")
             shutil.copy2(src / f, dst / f)
-        for f in OPTIONAL_FILES:
-            if (src / f).exists():
-                shutil.copy2(src / f, dst / f)
-        shutil.copytree(src / "plain_phonopy", dst / "plain_phonopy")
-        (dst / "reference_pbe_d3").mkdir()
-        for f in ("band.yaml", "band.pdf"):
-            shutil.copy2(ref / f, dst / "reference_pbe_d3" / f)
+        if full:
+            for f in FULL_EXTRA_FILES + OPTIONAL_FILES:
+                if (src / f).exists():
+                    shutil.copy2(src / f, dst / f)
+            shutil.copytree(src / "plain_phonopy", dst / "plain_phonopy")
+            (dst / "reference_pbe_d3").mkdir()
+            for f in ("band.yaml", "band.pdf"):
+                shutil.copy2(ref / f, dst / "reference_pbe_d3" / f)
 
         # displaced supercells: VASP (PBE+D3) energy/forces/stress + D3 -> bare
         ph = phonopy.load(str(ref / "phonopy.yaml"), force_sets_filename=str(ref / "FORCE_SETS"), log_level=0)
@@ -259,14 +244,15 @@ def main() -> None:
             dd = d3.d3_efs(atoms)
             s_d3 = full_3x3_to_voigt_6_stress(dd["stress"])
             atoms.calc = SinglePointCalculator(atoms, energy=e_ref - dd["energy"], forces=f_ref - dd["forces"], stress=s_ref - s_d3)
-            atoms.arrays["forces_pbe_d3"] = f_ref
-            atoms.arrays["forces_d3"] = dd["forces"]
             atoms.info.update(
                 material=name, displacement_index=i, displaced_atom=int(disp["number"]),
                 displacement=np.array(disp["displacement"]), config_type="phonon_displacement",
-                energy_pbe_d3=e_ref, energy_d3=dd["energy"], stress_pbe_d3=s_ref, stress_d3=s_d3,
                 functional="PBE (D3(BJ) subtracted)", geometry="PBE+D3 relaxed",
             )
+            if full:
+                atoms.arrays["forces_pbe_d3"] = f_ref
+                atoms.arrays["forces_d3"] = dd["forces"]
+                atoms.info.update(energy_pbe_d3=e_ref, energy_d3=dd["energy"], stress_pbe_d3=s_ref, stress_d3=s_d3)
             frames.append(atoms)
 
         band = yaml.safe_load((src / "band.yaml").read_text())
@@ -275,7 +261,8 @@ def main() -> None:
         dim = ph.supercell_matrix.diagonal()
         s = summary[name]
         info = json.loads((src / "d3_subtraction.json").read_text())
-        rows.append(dict(
+        uc = unitcell_energetics(name, src / "POSCAR")
+        row = dict(
             material=name, kind=kind, stacking=stacking, layers=layers,
             formula_unitcell=to_ase(ph.unitcell).get_chemical_formula(), n_atoms_unitcell=len(ph.unitcell),
             supercell=f"{dim[0]}x{dim[1]}x{dim[2]}", n_atoms_supercell=len(ph.supercell), n_displacements=len(disps),
@@ -290,8 +277,19 @@ def main() -> None:
             rmse_vs_pbed3_THz=f"{float(s['rmse_vs_pbed3_THz']):.4f}",
             max_abs_F_d3_eq_eV_per_A=f"{info['max_abs_F_d3_eq_eV_per_A']:.4f}",
             E_d3_eq_supercell_eV=f"{info['E_d3_eq_eV']:.4f}",
-            **unitcell_energetics(name, src / "POSCAR"),
-        ))
+            **uc,
+        )
+        full_rows.append(dict(row))
+        if not full:
+            keep = ["material", "kind", "stacking", "layers", "formula_unitcell", "n_atoms_unitcell", "supercell",
+                    "n_atoms_supercell", "n_displacements", "n_qpoints", "n_bands", "min_freq_THz", "max_freq_THz",
+                    "force_constants_source", "max_abs_F_d3_eq_eV_per_A"]
+            row = {k: row[k] for k in keep}
+            row["unitcell_energy_bare_eV"] = uc["unitcell_energy_bare_eV"]
+            row["unitcell_stress_bare_GPa_voigt"] = " ".join(
+                f"{a - b:.5f}" for a, b in zip(map(float, uc["unitcell_stress_pbe_d3_GPa_voigt"].split()),
+                                               map(float, uc["unitcell_stress_d3_GPa_voigt"].split()))) if uc["unitcell_stress_pbe_d3_GPa_voigt"] else ""
+        rows.append(row)
         print(f"{name:<20} {kind:<14} {rows[-1]['supercell']} {len(disps):>2} disp  fc={rows[-1]['force_constants_source']:<14} "
               f"unitcell E: {'yes' if rows[-1]['unitcell_energy_bare_eV'] else 'no'}", flush=True)
 
@@ -302,9 +300,9 @@ def main() -> None:
     ase_write(str(out / "displacements.extxyz"), frames, format="extxyz")
     for f in ("evaluate_phonons.py", "requirements.txt"):
         shutil.copy2(BUNDLE_SCRIPT_DIR / f, out / f)
-    forced = [r["material"] for r in rows if r["hiphive_applied"] == "True" and r["reference_pbe_d3_was_hiphive"] != "True"]
-    n_h = sum(r["hiphive_applied"] == "True" for r in rows)
-    (out / "README.md").write_text(readme(len(rows), len(frames), n_h, forced))
+    forced = [r["material"] for r in full_rows if r["hiphive_applied"] == "True" and r["reference_pbe_d3_was_hiphive"] != "True"]
+    n_h = sum(r["hiphive_applied"] == "True" for r in full_rows)
+    (out / "README.md").write_text(readme(len(rows), len(frames), n_h, forced, full))
     with (out / "SHA256SUMS").open("w") as fh:
         for p in sorted(out.rglob("*")):
             if p.is_file() and p.name != "SHA256SUMS":
@@ -315,6 +313,7 @@ def main() -> None:
             if p.is_file():
                 zf.write(p, Path(out.name) / p.relative_to(out))
     n_uc = sum(bool(r["unitcell_energy_bare_eV"]) for r in rows)
+    print("variant:", "full (audit trail included)" if full else "lean (final results only)")
     print(f"\n{len(rows)} materials, {len(frames)} displaced supercells, {n_h} hiphive-refit, unit-cell energetics for {n_uc}/48")
     print(f"bundle: {out}\nzip:    {zip_path} ({zip_path.stat().st_size / 1e6:.1f} MB)")
 
