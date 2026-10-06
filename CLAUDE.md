@@ -237,7 +237,7 @@ scripts, nothing existing changed:
 - `phonopy/postprocess_bare_pbe_subtract.py` (stage 2, workflow conda env) runs the usual `phonopy -p -s --writefc` for
   all 48 (copy kept in `<mat>/plain_phonopy/`) and re-applies the `hiphive_fit_force_constants.py` constraint-based fit
   to the 20 flagged materials from the bare FORCE_SETS (no vasprun needed), plus `--force-hiphive` on MoS2, MoTe2,
-  WS2_WSe2_3R, WTe2_bilayer_2H (user request 2026-10-06, to clear −0.01…−0.03 THz ZA dips their plain references also
+  WS2_WSe2_2H, WS2_WSe2_3R, WTe2_bilayer_2H (user request 2026-10-06, to clear −0.002…−0.03 THz ZA dips their plain references also
   carry; costs 0.01–0.04 THz RMS vs the plain reference) → final `FORCE_CONSTANTS/band.yaml/band.pdf`,
   `hiphive_fit.json`, `bare_vs_pbed3.json` (incl. a plain-vs-plain column = pure D3 effect, separate from hiphive-method
   mismatch); `summary.csv` + `README.md` at the top level (`--summary-only` rebuilds them). Commit the directory like
