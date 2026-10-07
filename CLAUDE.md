@@ -237,7 +237,13 @@ those instead of `WORKFLOW_ROOT / "monolayer_examples"`.
   `TWIST_VARIANT=bare_pbe python3 scripts/batch_management/submit_batch.py --monolayer 5`, then
   `phonopy/submit_batch.py --monolayer --batch 5`, `phonopy/postprocess_batch.py --monolayer --batch 5`
   (→ `FINAL_RESULTS_BARE_PBE/`), then bilayer batches 8–11. Commit `FINAL_RESULTS_BARE_PBE/` like `FINAL_RESULTS/`.
-- Bilayer protocol (from batch 8, 2026-09-30). The PI expects NO imaginary modes, so every bilayer goes through:
+- **2026-10-06: the bare-PBE relaxation route below is retired.** Bare-PBE forces are going back to the subtraction
+  method (PBE+D3 forces minus the additive D3 term, at the PBE+D3 geometries). The scripts and run outputs of the
+  route (gap/slide/a-scan, ISIF=4, intralayer, tight phonopy, ADDGRID test) are archived untracked in
+  `backups/bare_pbe/gap_scan_bare_pbe/`; the scripts are also in git history (last tracked at 2262a0f). They
+  resolve `WORKFLOW_ROOT` from their own location, so move them back under `workflow/` before re-running any.
+  Batch 8 results in `FINAL_RESULTS_BARE_PBE/` (93c8327) stay as they are.
+- Bilayer protocol (from batch 8, 2026-09-30; retired 2026-10-06, kept for reference). The PI expects NO imaginary modes, so every bilayer goes through:
   1. ISIF=2 relaxation (the gap stalls 0.25-0.8 Å short of the minimum; don't trust it).
   2. ISIF=4 for `a`: `gap_scan_bare_pbe/setup_isif4.py <names>` → `<name>_isif4/`. Keep only the plateaued `a`
      (`common/isif4_lattice_extract.py`) after checking `c` drift < ~2-3%, and write it to
@@ -252,8 +258,8 @@ those instead of `WORKFLOW_ROOT / "monolayer_examples"`.
      Do NOT hiphive bare-PBE bilayers. At a ~4.3 Å gap the interlayer FCs extend past the 4x4 cutoff (≤5.85 Å),
      so truncating them makes breathing negative and swings the shear by ±0.6-0.8 THz (tested 2026-10-03).
      Batch 8 result: residual negatives ≤ 0.11 THz, either a doubly-degenerate Γ shear or (Te pairs) a small
-     acoustic dip near Γ. The sign of the Γ shear is being checked with a rigid slide scan
-     (`make_slide_scan.py` / `analyze_slide_scan.py`).
+     acoustic dip near Γ. A rigid slide scan (`make_slide_scan.py` / `analyze_slide_scan.py`) gave a positive
+     sliding curvature in all 11 (+0.06..+0.18 THz), so the negative Γ shear is force noise.
   A dip that survives all 5 steps is kept in `FINAL_RESULTS_BARE_PBE/`, flagged as genuinely unstable and reported
   to the PI, not excluded (user decision 2026-09-30).
   Expect softer interlayer (shear/breathing) modes and larger gaps in bare-PBE bilayers; that is physics.
