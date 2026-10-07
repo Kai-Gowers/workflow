@@ -18,7 +18,10 @@ Rules:
     upper-case directory names (FINAL_RESULTS) get the suffix upper-cased.
   * suffixing is idempotent: a name that already carries the suffix is returned unchanged.
   * ``FINAL_RESULTS_HEALTHY`` (hand-curated) and tracked inputs (``data/batches``,
-    ``data/*overrides*.json``, ``template_structures/``) are deliberately NOT variant-aware.
+    ``data/mp_material_overrides.json``, ``template_structures/``) are deliberately NOT variant-aware.
+  * exception: bilayer in-plane ``a`` corrections ARE variant-aware -- a variant reads only
+    ``data/bilayer_lattice_overrides_<variant>.json`` (see generate_bilayer_poscar.bilayer_overrides_file),
+    because ISIF=4 corrections fitted with D3 leave +15-17 kB stress in bare PBE.
   * the active variant is announced once on stderr so a stray export is visible.
 """
 
