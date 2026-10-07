@@ -264,8 +264,8 @@ those instead of `WORKFLOW_ROOT / "monolayer_examples"`.
   to the PI, not excluded (user decision 2026-09-30).
   Expect softer interlayer (shear/breathing) modes and larger gaps in bare-PBE bilayers; that is physics.
 
-**Bare PBE by D3 subtraction (`FINAL_RESULTS_BARE_PBE_SUBTRACT/`, 2026-10-06)** — the cheap complement to the
-campaign above: bare-PBE force constants for the same 48 TMDs *at the PBE+D3 geometries*, obtained by subtracting the
+**Bare PBE by D3 subtraction (`FINAL_RESULTS_BARE_PBE_SUBTRACT/`, 2026-10-06)** — now the primary bare-PBE route
+(the relaxation campaign above was retired the same day): bare-PBE force constants for the same 48 TMDs *at the PBE+D3 geometries*, obtained by subtracting the
 explicit DFT-D3(BJ) force (VASP `IVDW = 12` parameters via simple-dftd3, `nequix/explicit_dispersion/d3.py`) from every
 displaced-supercell force in `FINAL_RESULTS_HEALTHY/<mat>/FORCE_SETS`, *including the equilibrium D3 force*
 (`F_bare(disp) = F_ref(disp) - [F_D3(disp) - F_D3(eq)]`, phonopy's `--fz` treatment). Not variant-aware; two new
@@ -284,8 +284,10 @@ scripts, nothing existing changed:
   `hiphive_fit.json`, `bare_vs_pbed3.json` (incl. a plain-vs-plain column = pure D3 effect, separate from hiphive-method
   mismatch); `summary.csv` + `README.md` at the top level (`--summary-only` rebuilds them). Commit the directory like
   `FINAL_RESULTS/`.
-- Label any number from it "bare-PBE curvature at the PBE+D3 geometry". The true bare-PBE minimum is what
-  `FINAL_RESULTS_BARE_PBE/` provides; comparing the two per material isolates the geometry-relaxation effect.
+- Label any number from it "bare-PBE curvature at the PBE+D3 geometry". `FINAL_RESULTS_BARE_PBE/` (6 monolayers +
+  batch 8's 11 MoS2_* bilayers, retired route) is the only true-bare-PBE-minimum data; comparing the two per material
+  isolates the geometry-relaxation effect. Note the retired protocol's finding that hiphive truncation damages
+  interlayer modes at the bare-PBE gap (~4.3 Å); the subtraction set sits at the PBE+D3 gap, where the refits were benign.
 
 **Twisted-bilayer DFT campaign (`TWIST_VARIANT=twisted`), started 2026-10-01** — run the moiré cells from
 `twisted/build_twisted_bilayer.py` through the standard relax → phonopy → postprocess pipeline (first batch:
