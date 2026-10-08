@@ -9,6 +9,9 @@ Bundle layout (share/<name>/), lean by default — final results only:
   README.md                 what this is, how it was made, units, caveats
   materials.csv / .txt      one row / one name per material
   displacements.extxyz      every DFT displaced supercell with bare-PBE energy, forces, stress
+  equilibrium.extxyz        the 48 undisplaced supercells with the labels our phonon fine-tune trains on
+                            (E, F = -F_D3(eq), sigma = bare unit-cell stress; force constants in materials/)
+  split.txt                 the 39/3/6 train/val/holdout material split used for every result we report
   evaluate_phonons.py       reference evaluation script (any ASE calculator -> phonon RMSE)
   requirements.txt, SHA256SUMS
   materials/<name>/         POSCAR, phonopy.yaml, FORCE_SETS (bare, fz-corrected), FORCE_CONSTANTS,
@@ -38,7 +41,7 @@ import yaml
 from ase.calculators.singlepoint import SinglePointCalculator
 from ase.io import read
 from ase.io import write as ase_write
-from ase.stress import full_3x3_to_voigt_6_stress
+from ase.stress import full_3x3_to_voigt_6_stress, voigt_6_to_full_3x3_stress
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
@@ -52,6 +55,18 @@ PER_MATERIAL_FILES = ["POSCAR", "phonopy.yaml", "FORCE_SETS", "FORCE_CONSTANTS",
 FULL_EXTRA_FILES = ["d3_subtraction.json", "d3_subtraction.npz", "bare_vs_pbed3.json"]
 OPTIONAL_FILES = ["hiphive_fit.json"]
 EV_A3_TO_GPA = 160.21766
+SPLIT_ROOT = ROOT / "nequix_datasets" / "v4_tmd_only"
+
+
+def load_split() -> dict[str, str]:
+    """material -> train|val|holdout from the v4_tmd_only manifests (the split behind every number we report)."""
+    split = {}
+    for part in ("train", "val", "holdout"):
+        for line in (SPLIT_ROOT / part / "materials.txt").read_text().splitlines():
+            line = line.strip()
+            if line and not line.startswith("#"):
+                split[line] = part
+    return split
 
 
 def staticpoint_dir(name: str) -> Path:
@@ -153,6 +168,9 @@ where the plain build kept a small flexural dip near Γ). Every material is ≥ 
 materials.csv / materials.txt   per-material table / plain list of the {n_mat} names
 displacements.extxyz            {n_frames} displaced supercells (ASE extended XYZ): energy, forces, stress = bare PBE;
                                 atoms.info has material, displacement_index, displaced_atom, displacement
+equilibrium.extxyz              {n_mat} undisplaced supercells with the training labels of the protocol below
+                                (atoms.info: material, split, force_constants = path to the matching FORCE_CONSTANTS)
+split.txt                       train / val / holdout membership (39 / 3 / 6), see "Training protocol"
 evaluate_phonons.py             benchmark any ASE calculator against band.yaml (unchanged from v1 bundle)
 requirements.txt, SHA256SUMS
 materials/<name>/
@@ -182,6 +200,44 @@ frames = read("displacements.extxyz", index=":")
 frames[0].get_potential_energy(), frames[0].get_forces(), frames[0].get_stress()   # bare PBE
 ```
 
+## Training protocol (what we do, so results are comparable)
+
+We fine-tune a pretrained equivariant potential (Nequix `nequix-omat-1`, pretrained on OMat24 = PBE without
+D3, so bare PBE is its natural target) with **one training example per material**: the undisplaced phonopy
+supercell in `equilibrium.extxyz` plus its force-constant matrix. The labels are the *true bare-PBE values at
+the PBE+D3 geometry* — the structure is **not** a bare-PBE stationary point and must not be labelled as one:
+
+| target | value | where |
+|---|---|---|
+| Hessian (main signal) | bare-PBE force constants, eV/Å² | `materials/<name>/FORCE_CONSTANTS` (phonopy layout `(n, n, 3, 3)`) |
+| forces | `−F_D3(eq)`: minus the D3 force on the undisplaced supercell (0.10–0.17 eV/Å, mostly interlayer z) — **not zero** | `equilibrium.extxyz` forces |
+| stress | bare unit-cell stress `σ_PBE+D3(OUTCAR) − σ_D3`, eV/Å³, 3×3 — **not zero** (the cell was never relaxed; −0.2…−2.3 GPa in-plane) | `equilibrium.extxyz` stress |
+| energy | bare unit-cell energy × n_supercell / n_unitcell, eV | `equilibrium.extxyz` energy |
+
+Loss = 100 · |ΔHessian| + 20 · |ΔF| + 5 · |Δσ| + 20 · |ΔE / atom| (mean absolute errors; these are the Nequix
+phonon-fine-tuning defaults). Optimiser: Adam, lr 1e-4, weight decay 1e-3, batch size 2, 150 epochs, EMA 0.999,
+gradient clipping at 100. Split (`split.txt`): 39 train / 3 val / 6 holdout, the holdout being heterobilayers whose
+pairing never appears in training (WS2_WSe2, MoSe2_WSe2, MoTe2_WS2, both stackings). Report the Γ–K–M–Γ phonon
+RMSE on the 6 holdout materials against `band.yaml`, next to the un-fine-tuned model; with this recipe the
+fine-tuned model lands near 0.05 THz and the pretrained one near 0.15.
+
+```python
+import numpy as np, phonopy
+from ase.io import read
+rows = read("equilibrium.extxyz", index=":")
+for a in rows:                                         # a.get_forces() == -F_D3(eq), a.get_stress(voigt=False) == bare sigma
+    ph = phonopy.load(f"materials/{{a.info['material']}}/phonopy.yaml",
+                      force_constants_filename=a.info["force_constants"], log_level=0)
+    fc = ph.force_constants                            # (n, n, 3, 3), expand with compact_fc_to_full_fc if fc.shape[0] != fc.shape[1]
+    hessian = fc.swapaxes(1, 2).reshape(3 * len(a), 3 * len(a))   # (3n, 3n) Cartesian, atom-major
+```
+
+If you want PBE+D3 phonons back from a model trained this way, add the D3(BJ) term at inference with the
+parameters above: energy, forces, stress **and the D3 Hessian** (analytic second derivatives, or D3 force
+constants from the same finite displacements). Adding only D3 forces does not restore the D3 curvature.
+`displacements.extxyz` remains available if you prefer to train on forces of displaced frames; its forces are the
+true bare forces too (they include `F_D3(eq)`), while `FORCE_SETS` has that constant removed for phonopy.
+
 ## Benchmarking a model
 
 `python evaluate_phonons.py --calc "pkg.module:make_calculator" [--relax positions] [--plots]` compares
@@ -196,7 +252,7 @@ Dataset produced by Kai Gowers (Boston College). Please get in touch before publ
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--name", default="tmd48_bare_pbe_subtract_v1")
+    ap.add_argument("--name", default="tmd48_bare_pbe_subtract_v2")
     ap.add_argument("--out-root", default="share")
     ap.add_argument("--full", action="store_true", help="also ship the audit trail (see module docstring)")
     args = ap.parse_args()
@@ -206,13 +262,16 @@ def main() -> None:
     if len(materials) != 48:
         sys.exit(f"expected 48 materials in {SOURCE}, found {len(materials)}")
     summary = {r["material"]: r for r in csv.DictReader((SOURCE / "summary.csv").open())}
+    split = load_split()
+    if sorted(split) != materials:
+        sys.exit(f"split manifests under {SPLIT_ROOT} do not cover exactly these 48 materials")
 
     out = ROOT / args.out_root / args.name
     if out.exists():
         shutil.rmtree(out)
     (out / "materials").mkdir(parents=True)
 
-    rows, full_rows, frames = [], [], []
+    rows, full_rows, frames, eq_rows = [], [], [], []
     for name in materials:
         src, ref, dst = SOURCE / name, REFERENCE / name, out / "materials" / name
         dst.mkdir()
@@ -265,8 +324,28 @@ def main() -> None:
         s = summary[name]
         info = json.loads((src / "d3_subtraction.json").read_text())
         uc = unitcell_energetics(name, src / "POSCAR")
+        if not uc["unitcell_energy_bare_eV"]:
+            sys.exit(f"{name}: no unit-cell energetics ({uc['unitcell_energetics_note']}) — needed for equilibrium.extxyz")
+
+        # equilibrium row = exactly what our fine-tune trains on (see README "Training protocol")
+        eq = to_ase(ph.supercell)
+        f_d3_eq = d3.d3_efs(eq)["forces"]
+        if abs(np.abs(f_d3_eq).max() - info["max_abs_F_d3_eq_eV_per_A"]) > 1e-3:
+            sys.exit(f"{name}: F_D3(eq) differs from d3_subtraction.json")
+        s_bare_voigt = (np.array(uc["unitcell_stress_pbe_d3_GPa_voigt"].split(), float)
+                        - np.array(uc["unitcell_stress_d3_GPa_voigt"].split(), float)) / EV_A3_TO_GPA
+        eq.calc = SinglePointCalculator(
+            eq, energy=float(uc["unitcell_energy_bare_eV"]) * len(ph.supercell) / len(ph.unitcell),
+            forces=-f_d3_eq, stress=voigt_6_to_full_3x3_stress(s_bare_voigt))
+        eq.info.update(material=name, split=split[name], config_type="equilibrium",
+                       force_constants=f"materials/{name}/FORCE_CONSTANTS",
+                       supercell_matrix=np.array(ph.supercell_matrix).reshape(-1),
+                       functional="PBE (D3(BJ) subtracted)", geometry="PBE+D3 relaxed",
+                       note="forces = -F_D3(eq); stress = bare unit-cell stress (21x21x1); energy = bare E_unitcell * n_sc/n_uc")
+        eq_rows.append(eq)
+
         row = dict(
-            material=name, kind=kind, stacking=stacking, layers=layers,
+            material=name, split=split[name], kind=kind, stacking=stacking, layers=layers,
             formula_unitcell=to_ase(ph.unitcell).get_chemical_formula(), n_atoms_unitcell=len(ph.unitcell),
             supercell=f"{dim[0]}x{dim[1]}x{dim[2]}", n_atoms_supercell=len(ph.supercell), n_displacements=len(disps),
             n_qpoints=freqs.shape[0], n_bands=freqs.shape[1],
@@ -284,7 +363,7 @@ def main() -> None:
         )
         full_rows.append(dict(row))
         if not full:
-            keep = ["material", "kind", "stacking", "layers", "formula_unitcell", "n_atoms_unitcell", "supercell",
+            keep = ["material", "split", "kind", "stacking", "layers", "formula_unitcell", "n_atoms_unitcell", "supercell",
                     "n_atoms_supercell", "n_displacements", "n_qpoints", "n_bands", "min_freq_THz", "max_freq_THz",
                     "force_constants_source", "max_abs_F_d3_eq_eV_per_A"]
             row = {k: row[k] for k in keep}
@@ -301,6 +380,9 @@ def main() -> None:
         w.writeheader(); w.writerows(rows)
     (out / "materials.txt").write_text("\n".join(materials) + "\n")
     ase_write(str(out / "displacements.extxyz"), frames, format="extxyz")
+    ase_write(str(out / "equilibrium.extxyz"), eq_rows, format="extxyz")
+    (out / "split.txt").write_text("".join(f"{part}\n" + "".join(f"  {m}\n" for m in materials if split[m] == part)
+                                           for part in ("train", "val", "holdout")))
     for f in ("evaluate_phonons.py", "requirements.txt"):
         shutil.copy2(BUNDLE_SCRIPT_DIR / f, out / f)
     forced = [r["material"] for r in full_rows if r["hiphive_applied"] == "True" and r["reference_pbe_d3_was_hiphive"] != "True"]
