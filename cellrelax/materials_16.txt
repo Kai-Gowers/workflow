@@ -1,0 +1,20 @@
+# The 16 TMD reference cells of FINAL_RESULTS_HEALTHY whose PBE+D3 in-plane stress at the ISIF=2 cell
+# is |sigma_xx| > 0.3 GPa (nequix/explicit_dispersion/data/v4_tmd_only_bare_subtract/summary.csv, 2026-10-08).
+# The other 32 sit at |sigma| < 0.3 GPa (July ISIF=4 corrections or coincidence) and are not touched.
+# name            kind       sigma_PBE+D3_xx_GPa(ASE sign)
+MoS2              monolayer  +1.009
+WS2               monolayer  +0.712
+WSe2              monolayer  +0.713
+MoS2_bilayer_2H   bilayer    +2.145
+WS2_bilayer_2H    bilayer    +1.576
+WS2_bilayer_3R    bilayer    +1.489
+MoS2_WS2_2H       bilayer    +1.868
+WS2_WSe2_2H       bilayer    +1.750
+WS2_WSe2_3R       bilayer    +1.638
+MoS2_MoSe2_3R     bilayer    +1.045
+MoSe2_WS2_2H      bilayer    +0.982
+WSe2_WTe2_2H      bilayer    +0.975
+MoTe2_WSe2_2H     bilayer    +0.967
+MoSe2_WS2_3R      bilayer    +0.897
+MoTe2_WSe2_3R     bilayer    +0.866
+WSe2_WTe2_3R      bilayer    +0.848

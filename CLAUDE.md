@@ -315,3 +315,6 @@ template was changed; the default dry-run was verified byte-identical before/aft
   comparable to the whole 48-TMD dataset). Run m1 → m2 → m3 so m3 can be dropped.
 - Not in scope here: comparing to Nequix. That is a separate step (the twisted `band.yaml` is in the same
   `FINAL_RESULTS` layout as everything else, so `scripts/share_bundle/evaluate_phonons.py`-style tooling applies).
+
+
+**Cell-relaxation campaign (`TWIST_VARIANT=cellrelax`), started 2026-10-08** — ISIF=4 residual-strain refinement of the 16 TMD reference cells that carry +0.7…+2.1 GPa PBE+D3 in-plane stress, for a fair all-48 cell-relaxation benchmark. Protocol, file list and stages in `cellrelax/README.md`; additive only (new files + `*_cellrelax` dirs, zero edits to existing scripts).
