@@ -26,3 +26,9 @@ Production `monolayer_examples/`, `bilayer_examples/`, `FINAL_RESULTS*/` are rea
 4. phonopy `--dim "4 4 1"` as production → `FINAL_RESULTS_CELLRELAX/<name>/` (tracked, commit like `FINAL_RESULTS/`).
 5. Curate: 32 from `FINAL_RESULTS_HEALTHY` + 16 from `FINAL_RESULTS_CELLRELAX` → new Nequix dataset version
    (never overwrite `v4_tmd_only`), retrain e20, rerun the template-relax evals.
+6. **Promotion to production (after the bands at the new cells are verified stable; user 2026-10-08: the correct lattice
+   constants belong in production).** Write the 3 monolayer `(a, c, dMX)` into `data/mp_material_overrides.json` (as MoSe2/
+   MoTe2/WTe2 were in July) and the 13 bilayer `a` into `data/bilayer_lattice_overrides.json`; replace the 16 entries in
+   `FINAL_RESULTS_HEALTHY/` with the `FINAL_RESULTS_CELLRELAX/` ones (archive the old 16 untracked + git history); note in
+   `CLAUDE.md` that structures generated after that date use the refined cells while all earlier results (incl. twisted
+   m1–m3 at a = 3.1922 Å) sit at the old ones. Regenerating an old template is then no longer byte-identical — intended.
