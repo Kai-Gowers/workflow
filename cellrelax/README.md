@@ -42,3 +42,13 @@ Production `monolayer_examples/`, `bilayer_examples/`, `FINAL_RESULTS*/` are rea
   from the midplane kept, so dMX is unchanged). Fixed-volume ISIF=4 grows c to 20.3–20.5 Å, and the bilayer builder
   reuses monolayer fractional z assuming c = 20 Å; using the raw CONTCAR would distort dMX in the bilayers by ~2 %.
 - Jobs: `cellrelax/stage3_jobs.json`.
+
+**Plan additions (2026-10-09), beyond the original stages.** The 16 also live in two more tracked dirs:
+- `FINAL_RESULTS/` (raw source of `FINAL_RESULTS_HEALTHY`): at stage 6, replace the 16 there too (old copies archived
+  untracked + git history), so the two dirs never disagree.
+- `FINAL_RESULTS_BARE_PBE_SUBTRACT/` (e20 training targets) was built at the old strained cells: at stage 5, rerun the
+  D3 subtraction on the 16 `FINAL_RESULTS_CELLRELAX` FORCE_SETS (into a variant/new dir, not over the old one) and
+  build the new dataset from that, before retraining e20.
+- `FINAL_RESULTS_BARE_PBE/` (retired IVDW-off campaign, 6 of the 16) stays frozen.
+- Stage 4 as run: 153 statics via `TWIST_VARIANT=cellrelax phonopy/prepare_and_submit.py --{monolayer,bilayer} <name>
+  --dim "4 4 1"` per name (not `--all`: the variant dirs also hold `*_isif4` and the copied MoSe2/MoTe2/WTe2).
