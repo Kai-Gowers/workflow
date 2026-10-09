@@ -32,3 +32,13 @@ Production `monolayer_examples/`, `bilayer_examples/`, `FINAL_RESULTS*/` are rea
    `FINAL_RESULTS_HEALTHY/` with the `FINAL_RESULTS_CELLRELAX/` ones (archive the old 16 untracked + git history); note in
    `CLAUDE.md` that structures generated after that date use the refined cells while all earlier results (incl. twisted
    m1–m3 at a = 3.1922 Å) sit at the old ones. Regenerating an old template is then no longer byte-identical — intended.
+
+**Stage 2-3 as run (2026-10-09), `cellrelax/setup_stage2.py {extract,monolayers,bilayers} [--submit]`.**
+- `a` = mean of the last **10** ISIF=4 steps (not 50): WSe2 and WS2_bilayer_3R hung after 26/29 steps, so a 50-step
+  window would include the initial transient; elsewhere 10 vs 50 agree to ≤0.0005 Å. All std < 0.001 Å.
+  Five runs (MoS2, WS2, WSe2, MoS2/WS2 homobilayers) hit silent VASP hangs, but `a` had plateaued first.
+  Results: `cellrelax/isif4_lattice.json`; bilayers → `data/bilayer_lattice_overrides_cellrelax.json`.
+- Monolayer POSCAR = ISIF=4 CONTCAR rescaled in-plane to the plateau `a` **and c reset to 20 Å** (Cartesian offsets
+  from the midplane kept, so dMX is unchanged). Fixed-volume ISIF=4 grows c to 20.3–20.5 Å, and the bilayer builder
+  reuses monolayer fractional z assuming c = 20 Å; using the raw CONTCAR would distort dMX in the bilayers by ~2 %.
+- Jobs: `cellrelax/stage3_jobs.json`.
