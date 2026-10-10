@@ -1,0 +1,43 @@
+{
+  "material": "MoTe2_WSe2_3R",
+  "source": "FINAL_RESULTS_CELLRELAX/MoTe2_WSe2_3R",
+  "n_displacements": 12,
+  "n_atoms_supercell": 96,
+  "dim": "4 4 1",
+  "d3_params": {
+    "s6": 1.0,
+    "s8": 0.7875,
+    "a1": 0.4289,
+    "a2": 4.4407,
+    "s9": 0.0,
+    "cutoff_disp2_A": 50.2022,
+    "cutoff_cn_A": 21.1671
+  },
+  "E_d3_eq_eV": -42.36365857896701,
+  "max_abs_F_d3_eq_eV_per_A": 0.1628011347144949,
+  "max_abs_F_d3_disp_eV_per_A": 0.16301420578308476,
+  "max_abs_dF_d3_eV_per_A": 0.00021550054232027938,
+  "max_abs_F_ref_disp_eV_per_A": 0.19460275,
+  "stress_d3_eq_eV_per_A3": [
+    [
+      0.013545132235730225,
+      -5.920737711844026e-18,
+      4.8187218092640157e-20
+    ],
+    [
+      -5.90776903337984e-18,
+      0.01354513223572589,
+      7.008594289785979e-20
+    ],
+    [
+      5.931020866889375e-20,
+      1.8207370345932473e-20,
+      0.010235914797773233
+    ]
+  ],
+  "reference_fc_is_plain_phonopy_rebuild": true,
+  "reference_fc_reproduce_maxdiff_eV_per_A2": 0.00789420836577066,
+  "reference_fc_reproduce_freq_rms_THz": 0.0009631265085419183,
+  "hiphive_rotational_fit_required": false,
+  "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
+}

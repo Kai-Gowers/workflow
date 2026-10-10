@@ -318,3 +318,10 @@ template was changed; the default dry-run was verified byte-identical before/aft
 
 
 **Cell-relaxation campaign (`TWIST_VARIANT=cellrelax`), started 2026-10-08** — ISIF=4 residual-strain refinement of the 16 TMD reference cells that carry +0.7…+2.1 GPa PBE+D3 in-plane stress, for a fair all-48 cell-relaxation benchmark. Protocol, file list and stages in `cellrelax/README.md`; additive only (new files + `*_cellrelax` dirs, zero edits to existing scripts).
+- 2026-10-10: stage 4 → `FINAL_RESULTS_CELLRELAX/` (16, tracked); stage 5 → `FINAL_RESULTS_BARE_PBE_SUBTRACT_CELLRELAX/`
+  (16, tracked, via `cellrelax/subtract_d3_cellrelax.py`) + `nequix_datasets/v5_tmd_cellrelax/` manifests; stage 6: the
+  refined `a` (and monolayer dMX) are now the production values in `data/mp_material_overrides.json` (MoS2/WS2/WSe2) and
+  `data/bilayer_lattice_overrides.json` (13 bilayers), and `template_structures/` was regenerated. **Structures generated
+  after 2026-10-10 use the refined cells**; everything earlier (incl. twisted m1–m3 at a = 3.1922 Å and the pre-promotion
+  `FINAL_RESULTS*` entries) sits at the old ones. Pending: swapping the 16 entries of `FINAL_RESULTS_HEALTHY/` and
+  `FINAL_RESULTS/` for the `FINAL_RESULTS_CELLRELAX/` ones (see `cellrelax/README.md` stage 6).

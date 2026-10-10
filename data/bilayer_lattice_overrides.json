@@ -61,7 +61,7 @@
       "note": "DFT ISIF=4 residual-strain correction (2026-08-13, batch 5 TiS2-cluster full fix); corrects large residual in-plane stress (-10.82 kB) at the monolayer-derived lattice constant (3.348152 A), which produced the deepest BZ-wide (non-Gamma-only) phonon instability in the cluster (86/864 negative, min -2.73 THz at 4x4x1, worse at 5x5x1: 98/864, -4.01 THz) despite being a zero-lattice-mismatch homobilayer, ruling out lattice mismatch as the sole mechanism. Averaged in-plane 'a' over the last 50 of 400 ionic steps (NSW-limited, plateaued, std=0.000173 A). ISIF=4 residual stress dropped to ~-2.5 kB. Rerun ISIF=2 relaxation pending -- will confirm residual stress and phonon band at this geometry."
     },
     "WS2_TiS2_2H": {
-      "a": 3.221970,
+      "a": 3.22197,
       "note": "DFT ISIF=4 residual-strain correction (2026-08-15, batch 6 TiS2-cluster fix); corrects large residual in-plane stress (-14.16 kB) at the monolayer-derived lattice constant (3.266188 A), a -1.35% shift. This bilayer was UNSTABLE even after the hiphive constraint-based fit (band-path min worsened from -1.4792 to -1.7951 THz post-fit, plateauing under stronger rotational constraint -- a genuine, non-symmetry-artifact instability at the uncorrected geometry). Averaged in-plane 'a' over the last 50 of 400 ionic steps (NSW-limited, plateaued, std=0.000102 A). ISIF=4 residual stress dropped to ~-0.8 kB. Rerun ISIF=2 relaxation + 5x5x1 phonopy pending -- will confirm residual stress and phonon band at this geometry."
     },
     "WS2_TiS2_3R": {
@@ -155,6 +155,58 @@
     "GaSe_InSe_BA": {
       "a": 3.917361,
       "note": "DFT ISIF=4 residual-strain correction (2026-08-17, same audit as GaSe_InSe_AB -- see that entry's note). ISIF=4 run seeded from the existing ISIF=2-relaxed structure (job 57189610, 402/402 NSW-limited ionic steps). Averaged in-plane 'a' over the last 50 steps: plateaued, std=0.000002 A -- a tiny +0.26% correction. Verified c (vacuum) drift only 0.55% across the run (19.890-20.0 A), well under the 3% vacuum-collapse contamination threshold (see feedback_isif4_vacuum_volume_degeneracy memory) -- this result is trustworthy, not a divergence artifact. Rerun ISIF=2 relaxation pending -- will confirm residual stress and phonon band at this geometry."
+    },
+    "MoS2_bilayer_2H": {
+      "a": 3.153384,
+      "note": "DFT ISIF=4 residual-strain correction (cellrelax campaign 2026-10-09/10, promoted 2026-10-10); replaces the unrefined a=3.192238 A (+0.7..+2.1 GPa residual PBE+D3 in-plane stress). ISIF=4 residual-strain refinement from the production ISIF=2 CONTCAR (a=3.1922 A). Mean in-plane 'a' over the last 10 of 246 ionic steps (std 0.00006 A); final stress -1.52 kB. Phonons at the new cell: FINAL_RESULTS_CELLRELAX/MoS2_bilayer_2H (promoted into FINAL_RESULTS_HEALTHY)."
+    },
+    "WS2_bilayer_2H": {
+      "a": 3.159747,
+      "note": "DFT ISIF=4 residual-strain correction (cellrelax campaign 2026-10-09/10, promoted 2026-10-10); replaces the unrefined a=3.184223 A (+0.7..+2.1 GPa residual PBE+D3 in-plane stress). ISIF=4 residual-strain refinement from the production ISIF=2 CONTCAR (a=3.1842 A). Mean in-plane 'a' over the last 10 of 120 ionic steps (std 0.00018 A); final stress -2.08 kB. Phonons at the new cell: FINAL_RESULTS_CELLRELAX/WS2_bilayer_2H (promoted into FINAL_RESULTS_HEALTHY)."
+    },
+    "WS2_bilayer_3R": {
+      "a": 3.161744,
+      "note": "DFT ISIF=4 residual-strain correction (cellrelax campaign 2026-10-09/10, promoted 2026-10-10); replaces the unrefined a=3.184223 A (+0.7..+2.1 GPa residual PBE+D3 in-plane stress). ISIF=4 residual-strain refinement from the production ISIF=2 CONTCAR (a=3.1842 A). Mean in-plane 'a' over the last 10 of 29 ionic steps (std 0.00005 A); final stress -2.68 kB. Phonons at the new cell: FINAL_RESULTS_CELLRELAX/WS2_bilayer_3R (promoted into FINAL_RESULTS_HEALTHY)."
+    },
+    "MoS2_WS2_2H": {
+      "a": 3.15563,
+      "note": "DFT ISIF=4 residual-strain correction (cellrelax campaign 2026-10-09/10, promoted 2026-10-10); replaces the unrefined a=3.188230 A (+0.7..+2.1 GPa residual PBE+D3 in-plane stress). ISIF=4 residual-strain refinement from the production ISIF=2 CONTCAR (a=3.1882 A). Mean in-plane 'a' over the last 10 of 402 ionic steps (std 0.00020 A); final stress -1.07 kB. Phonons at the new cell: FINAL_RESULTS_CELLRELAX/MoS2_WS2_2H (promoted into FINAL_RESULTS_HEALTHY)."
+    },
+    "WS2_WSe2_2H": {
+      "a": 3.219125,
+      "note": "DFT ISIF=4 residual-strain correction (cellrelax campaign 2026-10-09/10, promoted 2026-10-10); replaces the unrefined a=3.252078 A (+0.7..+2.1 GPa residual PBE+D3 in-plane stress). ISIF=4 residual-strain refinement from the production ISIF=2 CONTCAR (a=3.2521 A). Mean in-plane 'a' over the last 10 of 402 ionic steps (std 0.00003 A); final stress -1.15 kB. Phonons at the new cell: FINAL_RESULTS_CELLRELAX/WS2_WSe2_2H (promoted into FINAL_RESULTS_HEALTHY)."
+    },
+    "WS2_WSe2_3R": {
+      "a": 3.221095,
+      "note": "DFT ISIF=4 residual-strain correction (cellrelax campaign 2026-10-09/10, promoted 2026-10-10); replaces the unrefined a=3.252078 A (+0.7..+2.1 GPa residual PBE+D3 in-plane stress). ISIF=4 residual-strain refinement from the production ISIF=2 CONTCAR (a=3.2521 A). Mean in-plane 'a' over the last 10 of 402 ionic steps (std 0.00001 A); final stress -1.20 kB. Phonons at the new cell: FINAL_RESULTS_CELLRELAX/WS2_WSe2_3R (promoted into FINAL_RESULTS_HEALTHY)."
+    },
+    "MoS2_MoSe2_3R": {
+      "a": 3.21698,
+      "note": "DFT ISIF=4 residual-strain correction (cellrelax campaign 2026-10-09/10, promoted 2026-10-10); replaces the unrefined a=3.237910 A (+0.7..+2.1 GPa residual PBE+D3 in-plane stress). ISIF=4 residual-strain refinement from the production ISIF=2 CONTCAR (a=3.2379 A). Mean in-plane 'a' over the last 10 of 402 ionic steps (std 0.00000 A); final stress -0.87 kB. Phonons at the new cell: FINAL_RESULTS_CELLRELAX/MoS2_MoSe2_3R (promoted into FINAL_RESULTS_HEALTHY)."
+    },
+    "MoSe2_WS2_2H": {
+      "a": 3.215744,
+      "note": "DFT ISIF=4 residual-strain correction (cellrelax campaign 2026-10-09/10, promoted 2026-10-10); replaces the unrefined a=3.233903 A (+0.7..+2.1 GPa residual PBE+D3 in-plane stress). ISIF=4 residual-strain refinement from the production ISIF=2 CONTCAR (a=3.2339 A). Mean in-plane 'a' over the last 10 of 402 ionic steps (std 0.00000 A); final stress -1.17 kB. Phonons at the new cell: FINAL_RESULTS_CELLRELAX/MoSe2_WS2_2H (promoted into FINAL_RESULTS_HEALTHY)."
+    },
+    "WSe2_WTe2_2H": {
+      "a": 3.391974,
+      "note": "DFT ISIF=4 residual-strain correction (cellrelax campaign 2026-10-09/10, promoted 2026-10-10); replaces the unrefined a=3.414874 A (+0.7..+2.1 GPa residual PBE+D3 in-plane stress). ISIF=4 residual-strain refinement from the production ISIF=2 CONTCAR (a=3.4149 A). Mean in-plane 'a' over the last 10 of 402 ionic steps (std 0.00007 A); final stress -1.32 kB. Phonons at the new cell: FINAL_RESULTS_CELLRELAX/WSe2_WTe2_2H (promoted into FINAL_RESULTS_HEALTHY)."
+    },
+    "MoTe2_WSe2_2H": {
+      "a": 3.387629,
+      "note": "DFT ISIF=4 residual-strain correction (cellrelax campaign 2026-10-09/10, promoted 2026-10-10); replaces the unrefined a=3.411446 A (+0.7..+2.1 GPa residual PBE+D3 in-plane stress). ISIF=4 residual-strain refinement from the production ISIF=2 CONTCAR (a=3.4114 A). Mean in-plane 'a' over the last 10 of 402 ionic steps (std 0.00001 A); final stress -1.19 kB. Phonons at the new cell: FINAL_RESULTS_CELLRELAX/MoTe2_WSe2_2H (promoted into FINAL_RESULTS_HEALTHY)."
+    },
+    "MoSe2_WS2_3R": {
+      "a": 3.21732,
+      "note": "DFT ISIF=4 residual-strain correction (cellrelax campaign 2026-10-09/10, promoted 2026-10-10); replaces the unrefined a=3.233903 A (+0.7..+2.1 GPa residual PBE+D3 in-plane stress). ISIF=4 residual-strain refinement from the production ISIF=2 CONTCAR (a=3.2339 A). Mean in-plane 'a' over the last 10 of 402 ionic steps (std 0.00009 A); final stress -1.24 kB. Phonons at the new cell: FINAL_RESULTS_CELLRELAX/MoSe2_WS2_3R (promoted into FINAL_RESULTS_HEALTHY)."
+    },
+    "MoTe2_WSe2_3R": {
+      "a": 3.390066,
+      "note": "DFT ISIF=4 residual-strain correction (cellrelax campaign 2026-10-09/10, promoted 2026-10-10); replaces the unrefined a=3.411446 A (+0.7..+2.1 GPa residual PBE+D3 in-plane stress). ISIF=4 residual-strain refinement from the production ISIF=2 CONTCAR (a=3.4114 A). Mean in-plane 'a' over the last 10 of 402 ionic steps (std 0.00004 A); final stress -1.05 kB. Phonons at the new cell: FINAL_RESULTS_CELLRELAX/MoTe2_WSe2_3R (promoted into FINAL_RESULTS_HEALTHY)."
+    },
+    "WSe2_WTe2_3R": {
+      "a": 3.394734,
+      "note": "DFT ISIF=4 residual-strain correction (cellrelax campaign 2026-10-09/10, promoted 2026-10-10); replaces the unrefined a=3.414874 A (+0.7..+2.1 GPa residual PBE+D3 in-plane stress). ISIF=4 residual-strain refinement from the production ISIF=2 CONTCAR (a=3.4149 A). Mean in-plane 'a' over the last 10 of 402 ionic steps (std 0.00000 A); final stress -1.14 kB. Phonons at the new cell: FINAL_RESULTS_CELLRELAX/WSe2_WTe2_3R (promoted into FINAL_RESULTS_HEALTHY)."
     }
   }
 }

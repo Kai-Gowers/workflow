@@ -16,6 +16,7 @@ Each version directory contains:
 | Version | Materials | Source | Notes |
 |---|---|---|---|
 | `v1_46materials` | 46 | `FINAL_RESULTS_HEALTHY` | Bilayer batches 1-3 complete; original curated set |
+| `v5_tmd_cellrelax` | 48 (39/3/6 split, same lists as `v4_tmd_only`) | `FINAL_RESULTS_HEALTHY` after the 2026-10-10 cellrelax promotion (16 cells ISIF=4-refined, see `cellrelax/README.md`); bare-PBE targets from `FINAL_RESULTS_BARE_PBE_SUBTRACT` (32) + `FINAL_RESULTS_BARE_PBE_SUBTRACT_CELLRELAX` (16) | Manifests only — the training db is built in nequix (`explicit_dispersion/build_bare_subtract_dataset_cellrelax.py` → `nequix/explicit_dispersion/data/v5_tmd_cellrelax_bare_subtract/`). No PBE+D3 `dataset.aselmdb` was built for v5. |
 
 ## Creating a new version
 

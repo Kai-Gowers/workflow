@@ -63,3 +63,26 @@ production method, 20/48 in `FINAL_RESULTS_HEALTHY`) cleared all four to exactly
 WSe2_WTe2_2H −0.013 — same ZA-noise class the production references carry, left as plain phonopy (not force-hiphive'd).
 Effect of the −0.5…−1.2 % cell change vs `FINAL_RESULTS_HEALTHY`: RMS band shift 0.05–0.24 THz, top optical modes
 +0.1…+0.16 THz. Next: stage 5 (D3-subtract the 16 FORCE_SETS into a new dir, build dataset, retrain e20).
+
+**Stage 6 (promotion) as run 2026-10-10 — PARTIAL, see below.**
+- `data/mp_material_overrides.json`: MoS2 / WS2 / WSe2 now carry full `(a, c=20, dMX)` entries (a from `isif4_lattice.json`,
+  dMX from `monolayer_examples_cellrelax/<m>/CONTCAR`); `data/bilayer_lattice_overrides.json`: the 13 bilayer `a` added
+  (copied from the variant file, 52 entries now). `template_structures/` regenerated (generator reproduces the previous
+  tracked files byte-for-byte before the change; after it, 33 of 48 templates differ: the 16 + 17 more bilayers built
+  from MoS2/WS2/WSe2 whose template dMX moves by ≤ 0.025 Å, and MoS2_MoSe2_2H whose template `a` goes from +0.72 % to
+  +0.14 % off its DFT reference — same ripple as the July MoSe2/MoTe2/WTe2 overrides). `twisted/build_twisted_bilayer.py`
+  also reads these overrides, so new MoS2 moiré cells will be built at a = 3.1551 Å (m1–m3 were 3.1922 Å).
+- **Not yet done (tool permission denied, user to run):** replace the 16 `FINAL_RESULTS_HEALTHY/<m>` and `FINAL_RESULTS/<m>`
+  entries with `FINAL_RESULTS_CELLRELAX/<m>` (old copies → `backups/pre_cellrelax_promotion_2026-10-10/`). Until then the two
+  production reference dirs still hold the old strained cells for the 16 and every eval that reads `FINAL_RESULTS_HEALTHY`
+  compares against them.
+
+**Stage 5 as run 2026-10-10.**
+- `cellrelax/subtract_d3_cellrelax.py stage1|stage2` (wrapper; runs the unchanged subtraction scripts with reference →
+  `FINAL_RESULTS_CELLRELAX`, output → `FINAL_RESULTS_BARE_PBE_SUBTRACT_CELLRELAX/`, tracked). hiphive refit on the 4 flagged
+  + forced on MoS2 (plain bare −0.098), MoS2_MoSe2_3R (−0.061), WSe2_WTe2_2H (−0.032) by the 2026-10-06 rule; all 16 final
+  ≥ −1e-4 THz; RMS vs refined-cell PBE+D3 0.006–0.040 THz.
+- `nequix_datasets/v5_tmd_cellrelax/` = v4 manifests (39/3/6) + README row; training db built in nequix by
+  `explicit_dispersion/build_bare_subtract_dataset_cellrelax.py` → `data/v5_tmd_cellrelax_bare_subtract/` (32 rows
+  byte-identical to v4; the 16 at the refined cells, PBE+D3 σ_xx now +0.03…+0.25 GPa, was +0.7…+2.1).
+- Retrain: `nequix-healthy-2d-pft-v5-tmd-cellrelax-omat-baresub-e20.yml`, job 3124312. Evals after it finishes.
