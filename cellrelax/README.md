@@ -85,3 +85,19 @@ Effect of the −0.5…−1.2 % cell change vs `FINAL_RESULTS_HEALTHY`: RMS band
   `explicit_dispersion/build_bare_subtract_dataset_cellrelax.py` → `data/v5_tmd_cellrelax_bare_subtract/` (32 rows
   byte-identical to v4; the 16 at the refined cells, PBE+D3 σ_xx now +0.03…+0.25 GPa, was +0.7…+2.1).
 - Retrain: `nequix-healthy-2d-pft-v5-tmd-cellrelax-omat-baresub-e20.yml`, job 3124312. Evals after it finishes.
+
+**Cleanup 2026-10-10 (after the v5 evals, user request).** The campaign's variant directories are gone from the tree:
+- `FINAL_RESULTS_BARE_PBE_SUBTRACT/` now holds the 16 refined-cell bare results (old 16 → `backups/pre_cellrelax_promotion_2026-10-10/`),
+  `summary.csv`/`README.md` regenerated with `postprocess_bare_pbe_subtract.py --summary-only` (24 hiphive: 19 flagged + 5 forced).
+  The `d3_subtraction.json` `source` of those 16 still says `FINAL_RESULTS_CELLRELAX/<m>` (historical; identical content is in
+  `FINAL_RESULTS_HEALTHY/<m>`).
+- `FINAL_RESULTS_CELLRELAX/`, `FINAL_RESULTS_BARE_PBE_SUBTRACT_CELLRELAX/`, `cellrelax/subtract_d3_cellrelax.py`,
+  `cellrelax/export_share_bundle.py` removed (git history ≤ dd0ab6c has them); nequix `scripts/eval_cellrelax_reference.py`,
+  `sbatch/eval_cellrelax_reference.sbatch`, `explicit_dispersion/build_bare_subtract_dataset_cellrelax.py` likewise retired.
+- Run dirs promoted: the 16 `{monolayer,bilayer}_examples/<m>` and `phonopy_*_examples/<m>_staticpoint` are now the refined-cell
+  runs (old ones → `backups/pre_cellrelax_promotion_2026-10-10/`); the remaining variant dirs (`*_isif4`, copied MoSe2/MoTe2/WTe2,
+  host-local templates) → `backups/cellrelax/`. nequix `explicit_dispersion/d3_cache/` 16 entries regenerated at the refined cells.
+- Verified: the unmodified `build_bare_subtract_dataset.py --dataset-dir v5_tmd_cellrelax` now reproduces the v5 summary 48/48 from
+  production paths. Still in place: `cellrelax/setup_isif4.py`, `setup_stage2.py`, `isif4_lattice.json`, `materials_16.txt`,
+  `data/bilayer_lattice_overrides_cellrelax.json` (records of stages 1–3).
+- v5 retrain verdict (nequix `EXPERIMENTS.md`): fixed-cell 0.051 vs e20 0.054, relax-cell 0.066 vs 0.056 (v5 over-contracts) → e20 stays.

@@ -1,6 +1,6 @@
 {
   "material": "MoS2",
-  "source": "FINAL_RESULTS_HEALTHY/MoS2",
+  "source": "FINAL_RESULTS_CELLRELAX/MoS2",
   "n_displacements": 3,
   "n_atoms_supercell": 48,
   "dim": "4 4 1",
@@ -13,31 +13,31 @@
     "cutoff_disp2_A": 50.2022,
     "cutoff_cn_A": 21.1671
   },
-  "E_d3_eq_eV": -14.999168199263321,
-  "max_abs_F_d3_eq_eV_per_A": 0.10129899723155393,
-  "max_abs_F_d3_disp_eV_per_A": 0.1016332120672758,
-  "max_abs_dF_d3_eV_per_A": 0.0005720609622118308,
-  "max_abs_F_ref_disp_eV_per_A": 0.22249553,
+  "E_d3_eq_eV": -15.32911294694067,
+  "max_abs_F_d3_eq_eV_per_A": 0.10430928426093901,
+  "max_abs_F_d3_disp_eV_per_A": 0.10464224221504692,
+  "max_abs_dF_d3_eV_per_A": 0.000591010160489165,
+  "max_abs_F_ref_disp_eV_per_A": 0.2322575,
   "stress_d3_eq_eV_per_A3": [
     [
-      0.005540240838197443,
-      -3.3896871910084047e-18,
-      3.43454258440375e-21
+      0.005785294265495418,
+      -3.942358120353905e-18,
+      -2.02148809314178e-20
     ],
     [
-      -3.4032692466379987e-18,
-      0.0055402408381975765,
-      9.194024068600368e-20
+      -3.954120127796657e-18,
+      0.005785294265494518,
+      3.451086082001401e-21
     ],
     [
-      3.435562514875413e-21,
-      9.924491722511595e-20,
-      0.0018138719307834819
+      -2.7710458878520804e-20,
+      -8.246791532906165e-22,
+      0.001926766243887
     ]
   ],
   "reference_fc_is_plain_phonopy_rebuild": true,
-  "reference_fc_reproduce_maxdiff_eV_per_A2": 0.00017773959964717534,
-  "reference_fc_reproduce_freq_rms_THz": 8.431762726606956e-05,
+  "reference_fc_reproduce_maxdiff_eV_per_A2": 0.00022640048196631568,
+  "reference_fc_reproduce_freq_rms_THz": 0.00010096718522914009,
   "hiphive_rotational_fit_required": false,
   "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
 }

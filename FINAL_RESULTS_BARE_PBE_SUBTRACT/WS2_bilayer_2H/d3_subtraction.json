@@ -1,6 +1,6 @@
 {
   "material": "WS2_bilayer_2H",
-  "source": "FINAL_RESULTS_HEALTHY/WS2_bilayer_2H",
+  "source": "FINAL_RESULTS_CELLRELAX/WS2_bilayer_2H",
   "n_displacements": 6,
   "n_atoms_supercell": 96,
   "dim": "4 4 1",
@@ -13,31 +13,31 @@
     "cutoff_disp2_A": 50.2022,
     "cutoff_cn_A": 21.1671
   },
-  "E_d3_eq_eV": -35.04513097023463,
-  "max_abs_F_d3_eq_eV_per_A": 0.1113841171715664,
-  "max_abs_F_d3_disp_eV_per_A": 0.11160909740878786,
-  "max_abs_dF_d3_eV_per_A": 0.0002260764123121345,
-  "max_abs_F_ref_disp_eV_per_A": 0.24087027,
+  "E_d3_eq_eV": -35.54623176684011,
+  "max_abs_F_d3_eq_eV_per_A": 0.11326901960360956,
+  "max_abs_F_d3_disp_eV_per_A": 0.11349194217770102,
+  "max_abs_dF_d3_eV_per_A": 0.0002241154839013465,
+  "max_abs_F_ref_disp_eV_per_A": 0.2480993,
   "stress_d3_eq_eV_per_A3": [
     [
-      0.013048544206026153,
-      -7.158425683220319e-18,
-      -5.300719980186239e-19
+      0.013415270998815414,
+      -8.282149760546286e-18,
+      -2.78481793641483e-19
     ],
     [
-      -7.182570690749334e-18,
-      0.013048544206025883,
-      -3.305924226548171e-19
+      -8.294966178363983e-18,
+      0.013415270998809993,
+      -8.479309249266248e-19
     ],
     [
-      -5.069807298281638e-19,
-      -3.3689219076867576e-19,
-      0.009431602660055959
+      -2.966073006318144e-19,
+      -7.754074239958699e-19,
+      0.009737545136811578
     ]
   ],
   "reference_fc_is_plain_phonopy_rebuild": true,
-  "reference_fc_reproduce_maxdiff_eV_per_A2": 0.00023676613054313123,
-  "reference_fc_reproduce_freq_rms_THz": 5.725119746813415e-05,
+  "reference_fc_reproduce_maxdiff_eV_per_A2": 0.00029263633492471186,
+  "reference_fc_reproduce_freq_rms_THz": 6.421526149664204e-05,
   "hiphive_rotational_fit_required": false,
   "note": "F_bare(disp) = F_ref(disp) - (F_D3(disp) - F_D3(eq)); geometry is the PBE+D3 minimum, not a bare-PBE one"
 }
