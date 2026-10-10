@@ -52,3 +52,14 @@ Production `monolayer_examples/`, `bilayer_examples/`, `FINAL_RESULTS*/` are rea
 - `FINAL_RESULTS_BARE_PBE/` (retired IVDW-off campaign, 6 of the 16) stays frozen.
 - Stage 4 as run: 153 statics via `TWIST_VARIANT=cellrelax phonopy/prepare_and_submit.py --{monolayer,bilayer} <name>
   --dim "4 4 1"` per name (not `--all`: the variant dirs also hold `*_isif4` and the copied MoSe2/MoTe2/WTe2).
+
+**Stage 4 as run (2026-10-10).** All 153 statics COMPLETED and converged; `TWIST_VARIANT=cellrelax
+phonopy/postprocess_results.py --{monolayer,bilayer} --all` → `FINAL_RESULTS_CELLRELAX/` (16 dirs, tracked).
+Plain phonopy: 12/16 clean; 4 bilayers (MoSe2_WS2_2H/3R, WS2_WSe2_3R, WSe2_WTe2_3R) showed the doubly-degenerate Γ
+shear dip (−0.21…−0.51 THz) that the old tensile cells had masked. `hiphive_fit_force_constants.py --bilayer` (the
+production method, 20/48 in `FINAL_RESULTS_HEALTHY`) cleared all four to exactly 0.0000 THz at every λ (fit RMSE
+≤ 0.0025 eV/Å, cutoff 5.8–6.1 Å; pre-fix files in `backups/pre_hiphive_fit_correction_*_20261010*`). Verified all 16 on a
+Γ-centred 96×96×1 mesh and a fine Γ→K / Γ→M scan (0–6 %): worst residual −0.033 THz (MoS2_MoSe2_3R), MoS2 −0.019,
+WSe2_WTe2_2H −0.013 — same ZA-noise class the production references carry, left as plain phonopy (not force-hiphive'd).
+Effect of the −0.5…−1.2 % cell change vs `FINAL_RESULTS_HEALTHY`: RMS band shift 0.05–0.24 THz, top optical modes
++0.1…+0.16 THz. Next: stage 5 (D3-subtract the 16 FORCE_SETS into a new dir, build dataset, retrain e20).
