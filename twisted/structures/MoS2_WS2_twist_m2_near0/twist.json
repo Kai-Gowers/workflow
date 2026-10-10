@@ -1,0 +1,35 @@
+{
+  "name": "MoS2_WS2_twist_m2_near0",
+  "material": "MoS2_WS2",
+  "materials": [
+    "MoS2",
+    "WS2"
+  ],
+  "family": "near0",
+  "seed_stacking": "3R",
+  "m": 2,
+  "n": 3,
+  "N_cells_per_layer": 19,
+  "n_atoms": 114,
+  "theta_deg": 13.173551107258918,
+  "a_layer_A": 3.1574074999999997,
+  "a_layer1_A": 3.155057,
+  "a_layer2_A": 3.159758,
+  "strain_pct_layer1": 0.07449944644422976,
+  "strain_pct_layer2": -0.07438860824152882,
+  "a_source": "mean of the two monolayers' get_material_lattice_params a (overrides-first, MP cache); bilayer lattice override deliberately not applied",
+  "dMX_A": [
+    1.566323,
+    1.576129
+  ],
+  "c_A": 20.0,
+  "gap_A": 2.903772879931749,
+  "gap_source": "FINAL_RESULTS_HEALTHY/MoS2_WS2_3R/POSCAR (gap only)",
+  "a_moire_A": 13.7628202160774,
+  "phonopy_k_recommended": 2,
+  "phonopy_supercell_atoms": 456,
+  "rotation_center": "layer-1 metal at origin, +theta about z, positions and cell",
+  "MX_distance_layer1_A": 2.4034229300481185,
+  "MX_distance_layer2_A": 2.4098250278792186,
+  "min_pair_distance_A": 2.403422930048113
+}

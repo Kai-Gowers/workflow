@@ -315,6 +315,20 @@ template was changed; the default dry-run was verified byte-identical before/aft
   comparable to the whole 48-TMD dataset). Run m1 → m2 → m3 so m3 can be dropped.
 - Not in scope here: comparing to Nequix. That is a separate step (the twisted `band.yaml` is in the same
   `FINAL_RESULTS` layout as everything else, so `scripts/share_bundle/evaluate_phonons.py`-style tooling applies).
+- **Restarted 2026-10-10 at the refined cells (user decision).** Everything above was built at the MP MoS2 a = 3.1922 Å
+  (+2.1 GPa residual in-plane PBE+D3 stress). The m1/m2 results, the m3 relaxation + its 222 prepped displacements, the run
+  dirs and the old `twisted/structures/` are archived in `backups/twisted_a3.1922/` (results also in git history ≤ 99f16ed);
+  `FINAL_RESULTS_TWISTED/` was removed and will be rebuilt. New campaign = **9 cells, three materials × m = 1, 2, 3 (near0)**:
+  `MoS2_twist_m{1,2,3}_near0` (a = 3.1551 Å, rebuilt by `build_twisted_bilayer.py`, which now picks up the promoted
+  overrides automatically; the near60 and m4/m5 model-demo structures were regenerated too), `MoTe2_twist_m{1,2,3}_near0`
+  (`--material MoTe2`, a = 3.5030 Å, gap 3.239 Å from MoTe2_bilayer_3R) and `MoS2_WS2_twist_m{1,2,3}_near0` (new additive
+  `twisted/build_twisted_heterobilayer.py`: one common a = mean(3.1551, 3.1598) = 3.1574 Å, ±0.074 % strain per layer, each
+  layer its own dMX, gap 2.904 Å from MoS2_WS2_3R; POSCAR species order Mo S W). Relaxations submitted 2026-10-10:
+  jobs 3127013–3127021 (m3 cells on 4 nodes); KPOINTS 9/5/4 (MoS2, MoS2_WS2), 8/5/4 (MoTe2); phonopy dim 2 2 1 / 1 1 1 / 1 1 1.
+  Then per cell: `prepare_and_submit.py --bilayer bilayer_examples_twisted/<name> --dim "$(cat …/phonopy_dim.txt)" --no-submit`,
+  check the POSCAR-XXX count == atom count, `setup_displacements.py <name>`, `postprocess_results.py --bilayer <name>_staticpoint`.
+  Run m1 → m2 → m3 so the 222-atom cells (≈ 3 × 1,200 node-hours) can be dropped if needed. The coworker bundle
+  `share/twisted_mos2_phonon_dataset_v1` (m1/m2 at the old a) is superseded once the new results land.
 
 
 **Cell-relaxation campaign (`TWIST_VARIANT=cellrelax`), started 2026-10-08** — ISIF=4 residual-strain refinement of the 16 TMD reference cells that carry +0.7…+2.1 GPa PBE+D3 in-plane stress, for a fair all-48 cell-relaxation benchmark. Protocol, file list and stages in `cellrelax/README.md`; additive only (new files + `*_cellrelax` dirs, zero edits to existing scripts).
