@@ -323,5 +323,5 @@ template was changed; the default dry-run was verified byte-identical before/aft
   refined `a` (and monolayer dMX) are now the production values in `data/mp_material_overrides.json` (MoS2/WS2/WSe2) and
   `data/bilayer_lattice_overrides.json` (13 bilayers), and `template_structures/` was regenerated. **Structures generated
   after 2026-10-10 use the refined cells**; everything earlier (incl. twisted m1–m3 at a = 3.1922 Å and the pre-promotion
-  `FINAL_RESULTS*` entries) sits at the old ones. Pending: swapping the 16 entries of `FINAL_RESULTS_HEALTHY/` and
-  `FINAL_RESULTS/` for the `FINAL_RESULTS_CELLRELAX/` ones (see `cellrelax/README.md` stage 6).
+  `FINAL_RESULTS*` entries) sits at the old ones. The 16 entries of `FINAL_RESULTS_HEALTHY/` and `FINAL_RESULTS/` are the
+  `FINAL_RESULTS_CELLRELAX/` ones since 2026-10-10 (old copies: git history ≤ 23855e5, `backups/pre_cellrelax_promotion_2026-10-10/`).

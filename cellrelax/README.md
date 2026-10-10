@@ -72,10 +72,9 @@ Effect of the −0.5…−1.2 % cell change vs `FINAL_RESULTS_HEALTHY`: RMS band
   from MoS2/WS2/WSe2 whose template dMX moves by ≤ 0.025 Å, and MoS2_MoSe2_2H whose template `a` goes from +0.72 % to
   +0.14 % off its DFT reference — same ripple as the July MoSe2/MoTe2/WTe2 overrides). `twisted/build_twisted_bilayer.py`
   also reads these overrides, so new MoS2 moiré cells will be built at a = 3.1551 Å (m1–m3 were 3.1922 Å).
-- **Not yet done (tool permission denied, user to run):** replace the 16 `FINAL_RESULTS_HEALTHY/<m>` and `FINAL_RESULTS/<m>`
-  entries with `FINAL_RESULTS_CELLRELAX/<m>` (old copies → `backups/pre_cellrelax_promotion_2026-10-10/`). Until then the two
-  production reference dirs still hold the old strained cells for the 16 and every eval that reads `FINAL_RESULTS_HEALTHY`
-  compares against them.
+- Done (after the user added `mkdir`/`mv` allow rules): the 16 `FINAL_RESULTS_HEALTHY/<m>` and `FINAL_RESULTS/<m>` entries
+  replaced by `FINAL_RESULTS_CELLRELAX/<m>` (verified identical); old copies in `backups/pre_cellrelax_promotion_2026-10-10/`
+  (untracked) and in git history (last at 23855e5). Stage 6 complete; `scripts/eval_cellrelax_reference.py` is now a no-op.
 
 **Stage 5 as run 2026-10-10.**
 - `cellrelax/subtract_d3_cellrelax.py stage1|stage2` (wrapper; runs the unchanged subtraction scripts with reference →
