@@ -35,18 +35,17 @@ from pathlib import Path
 import numpy as np
 import phonopy
 import yaml
-from ase.calculators.singlepoint import SinglePointCalculator
 from ase.io import read
 from ase.io import write as ase_write
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
-from export_shareable_dataset import BUNDLE_SCRIPT_DIR, fc_source, to_ase  # noqa: E402
+from export_shareable_dataset import BUNDLE_SCRIPT_DIR, fc_source  # noqa: E402
+sys.path.insert(0, str(ROOT / "twisted"))
+from write_labels_extxyz import build_frames, load_frames  # noqa: E402
 
 SOURCE = ROOT / "FINAL_RESULTS_TWISTED"
 STRUCTURES = ROOT / "twisted" / "structures"
-RELAX = ROOT / "bilayer_examples_twisted"
-STATIC = ROOT / "phonopy_bilayer_examples_twisted"
 PER_MATERIAL_FILES = ["POSCAR", "phonopy.yaml", "FORCE_SETS", "FORCE_CONSTANTS", "band.yaml", "band.pdf"]
 OPTIONAL_FILES = ["total_dos.dat"]  # written by phonopy/write_phonon_dos.py; shipped when present
 EV_A3_TO_GPA = 160.21766
@@ -62,10 +61,6 @@ def interlayer_gap(atoms) -> tuple[float, float]:
     gap = s[s > mid].min() - s[s < mid].max()
     sep = mo[mo > mid].mean() - mo[mo < mid].mean()
     return float(gap), float(sep)
-
-
-def kmesh(path: Path) -> str:
-    return " ".join(path.read_text().splitlines()[3].split()[:3])
 
 
 def readme(rows: list[dict], n_frames: int) -> str:
@@ -226,33 +221,15 @@ def main() -> None:
         ph_fs = phonopy.load(str(src / "phonopy.yaml"), force_sets_filename=str(src / "FORCE_SETS"), log_level=0)
         ph_fc = phonopy.load(str(src / "phonopy.yaml"), force_constants_filename=str(src / "FORCE_CONSTANTS"), log_level=0)
         disps = ph_fs.dataset["first_atoms"]
-        vaspruns = sorted((STATIC / f"{name}_staticpoint").glob("disp-*/vasprun.xml"))
-        if len(vaspruns) != len(disps):
-            sys.exit(f"{name}: {len(vaspruns)} vasprun.xml vs {len(disps)} displacements")
-        for i, (disp, sc, vr) in enumerate(zip(disps, ph_fs.supercells_with_displacements, vaspruns)):
-            v = read(vr, index=-1)
-            atoms = to_ase(sc)
-            dfrac = v.get_scaled_positions() - atoms.get_scaled_positions()
-            dfrac -= np.round(dfrac)
-            if np.abs(v.get_forces() - disp["forces"]).max() > 1e-5 or np.abs(dfrac).max() > 1e-5 \
-                    or np.abs(v.cell.array - atoms.cell.array).max() > 1e-5:
-                sys.exit(f"{name} disp {i}: vasprun does not match FORCE_SETS / phonopy supercell")
-            atoms.calc = SinglePointCalculator(atoms, energy=v.get_potential_energy(), forces=v.get_forces(), stress=v.get_stress())
-            atoms.info.update(material=name, displacement_index=i, displaced_atom=int(disp["number"]),
-                              displacement=np.array(disp["displacement"]), config_type="phonon_displacement",
-                              functional="PBE+D3(BJ)", theta_deg=tw["theta_deg"])
-            frames.append(atoms)
-
-        # relaxed cell + its energetics (must be the shipped POSCAR)
-        o = read(RELAX / name / "OUTCAR", index=-1)
+        # labels: prefer the tracked FINAL_RESULTS_TWISTED/<name>/*.extxyz (written by twisted/write_labels_extxyz.py
+        # on the computing host), fall back to rebuilding them from the local run dirs
+        loaded = load_frames(name)
+        label_src = "tracked extxyz" if loaded else "run dirs"
+        cell_frames, eq = loaded if loaded else build_frames(name)
+        if len(cell_frames) != len(disps):
+            sys.exit(f"{name}: {len(cell_frames)} labelled frames vs {len(disps)} displacements")
+        frames.extend(cell_frames)
         p = read(src / "POSCAR")
-        if len(o) != len(p) or np.abs(o.cell.array - p.cell.array).max() > 1e-3 or \
-                np.abs(o.get_scaled_positions() - p.get_scaled_positions()).max() > 1e-4:
-            sys.exit(f"{name}: relaxation OUTCAR geometry != FINAL_RESULTS_TWISTED POSCAR")
-        eq = p.copy()
-        eq.calc = SinglePointCalculator(eq, energy=o.get_potential_energy(), forces=o.get_forces(), stress=o.get_stress())
-        eq.info.update(material=name, config_type="relaxed_cell", functional="PBE+D3(BJ)", theta_deg=tw["theta_deg"],
-                       kmesh=kmesh(RELAX / name / "KPOINTS"), note="relaxation run (ISIF=2, EDIFFG=-1e-4), moire cell fixed")
         eq_rows.append(eq)
 
         band = yaml.safe_load((src / "band.yaml").read_text())
@@ -261,7 +238,7 @@ def main() -> None:
         dim = ph_fs.supercell_matrix.diagonal()
         gap_rel, sep_rel = interlayer_gap(p)
         gap_ab, _ = interlayer_gap(read(STRUCTURES / name / "POSCAR"))
-        s = o.get_stress() * EV_A3_TO_GPA
+        s = eq.get_stress() * EV_A3_TO_GPA
         rows.append(dict(
             material=name, theta_deg=f"{tw['theta_deg']:.6f}", m=tw["m"], n=tw["n"], family=tw["family"],
             seed_stacking=tw["seed_stacking"], n_atoms_unitcell=len(p), a_layer_A=f"{tw['a_layer_A']:.6f}",
@@ -270,14 +247,14 @@ def main() -> None:
             n_atoms_supercell=len(ph_fs.supercell), n_displacements=len(disps), n_qpoints=freqs.shape[0],
             n_bands=freqs.shape[1], min_freq_THz=f"{freqs.min():.4f}", max_freq_THz=f"{freqs.max():.4f}",
             force_constants_source=fc_source(ph_fs, ph_fc, q_list),
-            relax_energy_pbe_d3_eV=f"{o.get_potential_energy():.6f}", relax_stress_xx_GPa=f"{s[0]:.4f}",
-            relax_max_force_eV_per_A=f"{np.abs(o.get_forces()).max():.2e}",
-            kmesh_relax=kmesh(RELAX / name / "KPOINTS"), kmesh_static=kmesh(vaspruns[0].parent / "KPOINTS"),
+            relax_energy_pbe_d3_eV=f"{eq.get_potential_energy():.6f}", relax_stress_xx_GPa=f"{s[0]:.4f}",
+            relax_max_force_eV_per_A=f"{np.abs(eq.get_forces()).max():.2e}",
+            kmesh_relax=eq.info["kmesh"], kmesh_static=eq.info["kmesh_static"],
         ))
         r = rows[-1]
         print(f"{name:<22} θ={float(r['theta_deg']):5.2f}°  {r['n_atoms_unitcell']:>3} atoms  {r['supercell']} ({r['n_atoms_supercell']})  "
               f"{r['n_displacements']:>3} disp  gap {r['gap_asbuilt_A']}->{r['gap_relaxed_A']} Å  fc={r['force_constants_source']}  "
-              f"min {r['min_freq_THz']} THz  σxx {r['relax_stress_xx_GPa']} GPa", flush=True)
+              f"min {r['min_freq_THz']} THz  σxx {r['relax_stress_xx_GPa']} GPa  labels: {label_src}", flush=True)
 
     with (out / "materials.csv").open("w", newline="") as fh:
         w = csv.DictWriter(fh, fieldnames=list(rows[0].keys()))

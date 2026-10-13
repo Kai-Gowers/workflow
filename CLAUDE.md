@@ -333,6 +333,11 @@ template was changed; the default dry-run was verified byte-identical before/aft
   The other five cells (MoS2_WS2 m2, MoTe2 m2, MoS2 m3 relaxed; MoS2_WS2 m3, MoTe2 m3 relaxed from scratch) run on NERSC from a
   hand-off bundle (relaxed CONTCAR/OUTCAR/OSZICAR/vasprun + `HANDOFF.md` instructions; run dirs are gitignored, so git alone
   cannot carry them). Each host commits its own `FINAL_RESULTS_TWISTED/<name>/`; sync by pull. The Andromeda watchdog was stopped.
+- **Labels in git (added 2026-10-13):** `twisted/write_labels_extxyz.py <name>` writes `FINAL_RESULTS_TWISTED/<name>/
+  {displacements,equilibrium}.extxyz` (PBE+D3 energy/forces/stress of every displaced supercell and of the relaxed cell, read
+  from the run dirs and cross-checked against FORCE_SETS / POSCAR). Run it on the computing host BEFORE committing a cell, since
+  FORCE_SETS alone has no energies or stresses; `twisted/export_share_bundle.py` prefers these files and only falls back to the
+  run dirs when they are absent (regression: MoS2 m1 bundle byte-identical either way).
 
 
 **Cell-relaxation campaign (`TWIST_VARIANT=cellrelax`), started 2026-10-08** — ISIF=4 residual-strain refinement of the 16 TMD reference cells that carry +0.7…+2.1 GPa PBE+D3 in-plane stress, for a fair all-48 cell-relaxation benchmark. Protocol, file list and stages in `cellrelax/README.md`; additive only (new files + `*_cellrelax` dirs, zero edits to existing scripts).
