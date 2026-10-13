@@ -15,7 +15,10 @@ Bundle layout (share/<name>/):
 and a zip next to it. Additive: reuses scripts/export_shareable_dataset.py helpers, changes nothing there.
 
 Usage (workflow conda env; no dftd3 needed):
-  python3 twisted/export_share_bundle.py [--materials MoS2_twist_m1_near0 MoS2_twist_m2_near0] [--name twisted_mos2_phonon_dataset_v1]
+  python3 twisted/export_share_bundle.py [--materials MoS2_twist_m1_near0 ...] [--name twisted_mos2_phonon_dataset_v2]
+
+v1 (2026-10-10, m1+m2 at the MP a = 3.1922 Å, +2.1 GPa strained) is superseded by v2 (refined cells at the PBE+D3
+equilibrium a; campaign restarted 2026-10-10). Pass --materials to add cells as their FINAL_RESULTS_TWISTED land.
 """
 from __future__ import annotations
 
@@ -45,8 +48,9 @@ STRUCTURES = ROOT / "twisted" / "structures"
 RELAX = ROOT / "bilayer_examples_twisted"
 STATIC = ROOT / "phonopy_bilayer_examples_twisted"
 PER_MATERIAL_FILES = ["POSCAR", "phonopy.yaml", "FORCE_SETS", "FORCE_CONSTANTS", "band.yaml", "band.pdf"]
+OPTIONAL_FILES = ["total_dos.dat"]  # written by phonopy/write_phonon_dos.py; shipped when present
 EV_A3_TO_GPA = 160.21766
-DEFAULT_MATERIALS = ["MoS2_twist_m1_near0", "MoS2_twist_m2_near0"]
+DEFAULT_MATERIALS = ["MoS2_twist_m1_near0"]
 
 
 def interlayer_gap(atoms) -> tuple[float, float]:
@@ -65,17 +69,26 @@ def kmesh(path: Path) -> str:
 
 
 def readme(rows: list[dict], n_frames: int) -> str:
+    a_layer = float(rows[0]["a_layer_A"])
+    dmx = float(json.loads((STRUCTURES / rows[0]["material"] / "twist.json").read_text())["dMX_A"])
+    gap0 = float(rows[0]["gap_asbuilt_A"])
+    sxx = float(rows[0]["relax_stress_xx_GPa"])
+    ex = rows[0]["material"]
     tab = "\n".join(
         f"| `{r['material']}` | {float(r['theta_deg']):.2f}° | ({r['m']}, {r['n']}) | {r['n_atoms_unitcell']} | "
         f"{float(r['a_moire_A']):.3f} | {r['supercell']} ({r['n_atoms_supercell']} atoms) | {r['n_displacements']} | "
         f"{float(r['gap_relaxed_A']):.2f} (as-built {float(r['gap_asbuilt_A']):.2f}) | {r['force_constants_source']} | "
         f"{float(r['min_freq_THz']):+.3f} |" for r in rows)
-    return f"""# Twisted MoS2 bilayer phonon references (DFT, PBE+D3(BJ)) — v1
+    return f"""# Twisted MoS2 bilayer phonon references (DFT, PBE+D3(BJ)) — v2
 
 Harmonic phonon reference data for commensurate twisted MoS2 homobilayers (moiré cells), computed with the
 same code, functional and phonon protocol as `tmd48_phonon_dataset_v1` (untwisted mono/bilayers), so a model
-benchmarked there can be tested here unchanged. Built {date.today().isoformat()}. {len(rows)} cells; a third angle
-(m = 3, θ = 9.43°, 222 atoms) is being computed and will be added in a later version.
+benchmarked there can be tested here unchanged. Built {date.today().isoformat()}. {len(rows)} cell(s) so far; the campaign
+is MoS2, MoTe2 and the MoS2/WS2 heterobilayer at m = 1, 2, 3 (θ = 21.8 / 13.2 / 9.4°, 42 / 114 / 222 atoms) and cells are
+added to this bundle as they finish. **v2 supersedes v1** (2026-10-10): v1's cells sat at the Materials-Project a = 3.1922 Å
+with +2.1 GPa residual in-plane PBE+D3 stress; every v2 cell is built at the PBE+D3 equilibrium lattice constant of the
+refined untwisted references (the same cells as `tmd48_bare_pbe_subtract_v3` / the refreshed PBE+D3 set), so there is no
+residual strain and cell-relaxing models are compared on equal footing.
 
 | cell | θ | (m, n) | atoms | a_moiré (Å) | phonon supercell | displacements | S–S gap (Å) | force constants | min DFT freq (THz) |
 |---|---|---|---|---|---|---|---|---|---|
@@ -83,19 +96,17 @@ benchmarked there can be tested here unchanged. Built {date.today().isoformat()}
 
 **Geometry.** Commensurate (m, n = m+1) twisted homobilayers of the "near-0°" family: the untwisted limit is the
 3R (AB, same-orientation) homobilayer; the top layer is rotated by +θ about a Mo atom of the bottom layer. The
-as-built rigid cell (`POSCAR_asbuilt`, `twist.json`: one in-plane MoS2 lattice constant **a = 3.1922 Å** for both
-layers, dMX = 1.564 Å, S–S gap 2.90 Å from the relaxed untwisted 3R bilayer, c = 20 Å) was relaxed with DFT at fixed
+as-built rigid cell (`POSCAR_asbuilt`, `twist.json`: one in-plane MoS2 lattice constant **a = {a_layer:.4f} Å** for both
+layers, dMX = {dmx:.3f} Å, S–S gap {gap0:.2f} Å from the relaxed untwisted 3R bilayer, c = 20 Å) was relaxed with DFT at fixed
 cell (positions only), which opens the gap to the values in the table; `POSCAR` is the relaxed cell the phonons were
 computed on. Both layers share one lattice constant by construction (commensurability), so there is no lattice
 mismatch and the moiré is a pure rotation.
 
-> **Caveat — residual in-plane strain.** a = 3.1922 Å is the Materials-Project value, at which PBE+D3 MoS2 carries
-> **+2.1 GPa residual in-plane stress** (the PBE+D3 equilibrium is a = 3.155 Å; the untwisted MoS2 references in
-> `tmd48_bare_pbe_subtract_v3` / the refreshed PBE+D3 set were re-relaxed to it on 2026-10-10, these twisted cells
-> were not). The relaxed cells here are therefore slightly tensile-strained (+1.2 %). Evaluate models at this fixed
-> cell (`--relax none` or `--relax positions`); a model that also relaxes the cell will contract it and its phonons
-> will drift away from these references for a physical, not a model, reason. Stress is reported in `materials.csv`
-> and `equilibrium.extxyz` so you can check your model's stress against DFT at this cell.
+> **Strain.** a = {a_layer:.4f} Å is the PBE+D3 equilibrium of the untwisted MoS2 bilayer (ISIF = 4 refinement of the
+> reference set, 2026-10-10), so the moiré cell carries no residual in-plane stress by construction (DFT σxx of the
+> relaxed cell = {sxx:+.2f} GPa, see `materials.csv` / `equilibrium.extxyz`). Evaluate models at this fixed cell
+> (`--relax none` or `--relax positions`); the moiré a is fixed by commensurability, and a model's own cell relaxation
+> should leave it essentially unchanged — a sizeable drift is a model error, not a reference artefact.
 
 ## Contents
 
@@ -114,6 +125,8 @@ materials/<name>/
     FORCE_SETS                  raw DFT (PBE+D3) forces for every symmetry-inequivalent 0.01 Å displacement
     FORCE_CONSTANTS             harmonic force constants used for the reference dispersion (eV/Å²)
     band.yaml / band.pdf        reference dispersion (THz) on Γ–K–M–Γ of the moiré Brillouin zone
+    total_dos.dat               total phonon DOS (states/THz/cell) from FORCE_CONSTANTS on a Γ-centred mesh
+                                (grid in the header; 200 Å mesh length, converged to 1e-5 states/THz/atom)
 ```
 
 `materials.csv` columns: `theta_deg`, `m`, `n`, `family`, `seed_stacking`, `n_atoms_unitcell`, `a_layer_A`,
@@ -149,9 +162,9 @@ tensile), `relax_max_force_eV_per_A`, `kmesh_relax`, `kmesh_static`.
 ```python
 import phonopy, yaml
 from ase.io import read
-ph = phonopy.load("materials/MoS2_twist_m2_near0/phonopy.yaml",
-                  force_constants_filename="materials/MoS2_twist_m2_near0/FORCE_CONSTANTS")
-band = yaml.safe_load(open("materials/MoS2_twist_m2_near0/band.yaml"))
+ph = phonopy.load("materials/{ex}/phonopy.yaml",
+                  force_constants_filename="materials/{ex}/FORCE_CONSTANTS")
+band = yaml.safe_load(open("materials/{ex}/band.yaml"))
 q = [p["q-position"] for p in band["phonon"]]; f = [[b["frequency"] for b in p["band"]] for p in band["phonon"]]
 frames = read("displacements.extxyz", index=":")      # PBE+D3 energy / forces / stress per displaced supercell
 cells = read("equilibrium.extxyz", index=":")         # relaxed moiré cells with PBE+D3 energy / forces / stress
@@ -164,8 +177,8 @@ parameters above before comparing here.
 
 ## Benchmarking a model
 
-Same script and modes as the untwisted bundle; the only practical difference is size (the m = 2 cell has 114 atoms
-and its phonon supercell is the cell itself):
+Same script and modes as the untwisted bundle; the only practical difference is size (m = 2 / 3 cells have 114 / 222
+atoms and their phonon supercell is the cell itself):
 
 ```bash
 pip install -r requirements.txt   # + your model's package
@@ -186,7 +199,7 @@ Dataset produced by Kai Gowers (Boston College). Please get in touch before publ
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--materials", nargs="*", default=DEFAULT_MATERIALS)
-    ap.add_argument("--name", default="twisted_mos2_phonon_dataset_v1")
+    ap.add_argument("--name", default="twisted_mos2_phonon_dataset_v2")
     ap.add_argument("--out-root", default="share")
     args = ap.parse_args()
 
@@ -203,6 +216,9 @@ def main() -> None:
             if not (src / f).exists():
                 sys.exit(f"{name}: missing {f}")
             shutil.copy2(src / f, dst / f)
+        for f in OPTIONAL_FILES:
+            if (src / f).exists():
+                shutil.copy2(src / f, dst / f)
         shutil.copy2(STRUCTURES / name / "POSCAR", dst / "POSCAR_asbuilt")
         shutil.copy2(STRUCTURES / name / "twist.json", dst / "twist.json")
         tw = json.loads((STRUCTURES / name / "twist.json").read_text())
