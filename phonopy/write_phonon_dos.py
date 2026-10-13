@@ -7,7 +7,7 @@ The header records every setting needed to reproduce the identical frequency gri
 (nequix/scripts/eval_twisted_phonons.py reads it), so DFT and ML curves can be compared point-wise:
 
     # natoms = 42
-    # mesh = 14 14 1 gamma_center
+    # mesh = 28 28 1 gamma_center
     # sigma = 0.1 THz
     # freq_min = -1.0 freq_max = 15.0 freq_pitch = 0.02
     # columns: frequency_THz total_dos_states_per_THz_per_cell
@@ -87,7 +87,7 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("dirs", nargs="*", type=Path, help="FINAL_RESULTS*/<name> dirs (phonopy.yaml + FORCE_CONSTANTS)")
     ap.add_argument("--all", action="store_true", help="every subdir of the active variant's FINAL_RESULTS dir")
-    ap.add_argument("--mesh-length", type=float, default=100.0, help="A; N = round(length*|a*|) (default 100)")
+    ap.add_argument("--mesh-length", type=float, default=200.0, help="A; N = round(length*|a*|) (default 200: 28x28x1 for the 42-atom MoS2 m1 cell, converged to <1e-4 states/THz/atom vs 42x42x1; 100 -> 14x14x1 was NOT converged, 0.003 off in 0-5 THz)")
     ap.add_argument("--mesh", type=int, nargs=3, default=None, help="explicit mesh, overrides --mesh-length")
     ap.add_argument("--sigma", type=float, default=0.1, help="THz smearing (default 0.1)")
     ap.add_argument("--freq-min", type=float, default=-1.0)
