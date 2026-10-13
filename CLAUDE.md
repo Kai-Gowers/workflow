@@ -329,6 +329,10 @@ template was changed; the default dry-run was verified byte-identical before/aft
   check the POSCAR-XXX count == atom count, `setup_displacements.py <name>`, `postprocess_results.py --bilayer <name>_staticpoint`.
   Run m1 → m2 → m3 so the 222-atom cells (≈ 3 × 1,200 node-hours) can be dropped if needed. The coworker bundle
   `share/twisted_mos2_phonon_dataset_v1` (m1/m2 at the old a) is superseded once the new results land.
+- **2026-10-13 split across hosts (user decision):** Andromeda finishes the statics of MoS2_WS2 m1, MoTe2 m1, MoS2 m2.
+  The other five cells (MoS2_WS2 m2, MoTe2 m2, MoS2 m3 relaxed; MoS2_WS2 m3, MoTe2 m3 relaxed from scratch) run on NERSC from a
+  hand-off bundle (relaxed CONTCAR/OUTCAR/OSZICAR/vasprun + `HANDOFF.md` instructions; run dirs are gitignored, so git alone
+  cannot carry them). Each host commits its own `FINAL_RESULTS_TWISTED/<name>/`; sync by pull. The Andromeda watchdog was stopped.
 
 
 **Cell-relaxation campaign (`TWIST_VARIANT=cellrelax`), started 2026-10-08** — ISIF=4 residual-strain refinement of the 16 TMD reference cells that carry +0.7…+2.1 GPa PBE+D3 in-plane stress, for a fair all-48 cell-relaxation benchmark. Protocol, file list and stages in `cellrelax/README.md`; additive only (new files + `*_cellrelax` dirs, zero edits to existing scripts).
