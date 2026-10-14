@@ -8,6 +8,7 @@ shear curvature K = d2E/dd2 per cell independently of finite-difference force no
 
   python3 twisted/sliding_scan.py MoS2_twist_m1_near0 --disp 0 0.1 0.2 0.3 0.5 [--submit]
   python3 twisted/sliding_scan.py MoS2_twist_m1_near0 --analyze     # fit E(d), print K and rigid-shear frequency
+  python3 twisted/sliding_scan.py MoS2_twist_m1_near0 --root backups/twisted_a3.1922 --tag _a3.1922 --submit   # old strained cell
 """
 import argparse, json, re, shutil, subprocess, sys
 from pathlib import Path
@@ -39,9 +40,9 @@ def write_poscar(p, comment, cell, species, counts, pos):
         for r in pos: f.write("  %.12f %.12f %.12f\n" % tuple(r))
 
 
-def build(cell_name, disps, submit):
-    src = ROOT / "bilayer_examples_twisted" / cell_name
-    sp = ROOT / "phonopy_bilayer_examples_twisted" / f"{cell_name}_staticpoint" / "disp-001"
+def build(cell_name, disps, submit, root=ROOT, tag=""):
+    src = root / "bilayer_examples_twisted" / cell_name
+    sp = root / "phonopy_bilayer_examples_twisted" / f"{cell_name}_staticpoint" / "disp-001"
     comment, cell, species, counts, pos = read_poscar(src / "CONTCAR")
     assert species == read_poscar(sp / "POSCAR")[2], "species order differs from staticpoint POSCAR"
     layer2 = pos[:, 2] > np.median(pos[:, 2])
@@ -49,7 +50,7 @@ def build(cell_name, disps, submit):
     incar = (TEMPLATE / "INCAR").read_text()
     incar = re.sub(r"^EDIFF\s*=.*$", "EDIFF = 1E-7", incar, flags=re.M)
     incar += "\n# sliding scan: no symmetry so d=0 and d>0 are treated identically\nISYM = 0\n"
-    out = ROOT / "sliding_scan_twisted" / cell_name; out.mkdir(parents=True, exist_ok=True)
+    out = ROOT / "sliding_scan_twisted" / (cell_name + tag); out.mkdir(parents=True, exist_ok=True)
     jobs = {}
     for d in disps:
         wd = out / f"dx_{d:.2f}"; wd.mkdir(exist_ok=True)
@@ -59,17 +60,17 @@ def build(cell_name, disps, submit):
         for f in ("KPOINTS", "POTCAR"): shutil.copy2(sp / f, wd / f)
         shutil.copy2(TEMPLATE / "bat", wd / "bat")
         if submit:
-            r = subprocess.run(["sbatch", "--parsable", f"--job-name={cell_name}-slide-{d:.2f}", "bat"],
+            r = subprocess.run(["sbatch", "--parsable", f"--job-name={cell_name}{tag}-slide-{d:.2f}", "bat"],
                                cwd=wd, capture_output=True, text=True, check=True)
             jobs[f"{d:.2f}"] = r.stdout.strip().split(";")[0]
             (wd / "latest_job_id").write_text(jobs[f"{d:.2f}"] + "\n")
         print(f"  {wd.relative_to(ROOT)}  job {jobs.get(f'{d:.2f}', '-')}")
-    (out / "scan.json").write_text(json.dumps({"cell": cell_name, "disp_A": list(disps), "axis": "x",
+    (out / "scan.json").write_text(json.dumps({"cell": cell_name, "source_root": str(root), "disp_A": list(disps), "axis": "x",
                                                 "layer2_atoms": int(layer2.sum()), "jobs": jobs}, indent=2))
 
 
-def analyze(cell_name):
-    out = ROOT / "sliding_scan_twisted" / cell_name
+def analyze(cell_name, tag=""):
+    out = ROOT / "sliding_scan_twisted" / (cell_name + tag)
     _, _, species, counts, pos = read_poscar(out / sorted(out.glob("dx_*"))[0] / "POSCAR")
     layer2 = pos[:, 2] > np.median(pos[:, 2])
     masses = np.repeat([MASS[s] for s in species], counts)
@@ -95,5 +96,7 @@ def analyze(cell_name):
 if __name__ == "__main__":
     ap = argparse.ArgumentParser(); ap.add_argument("cell"); ap.add_argument("--disp", type=float, nargs="+", default=[0, 0.1, 0.2, 0.3, 0.5])
     ap.add_argument("--submit", action="store_true"); ap.add_argument("--analyze", action="store_true")
+    ap.add_argument("--root", type=Path, default=ROOT, help="workflow root holding bilayer_examples_twisted/ (e.g. backups/twisted_a3.1922)")
+    ap.add_argument("--tag", default="", help="suffix for the output dir / job names, e.g. _a3.1922")
     a = ap.parse_args()
-    analyze(a.cell) if a.analyze else build(a.cell, a.disp, a.submit)
+    analyze(a.cell, a.tag) if a.analyze else build(a.cell, a.disp, a.submit, a.root.resolve(), a.tag)
