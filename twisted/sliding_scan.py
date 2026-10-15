@@ -40,7 +40,7 @@ def write_poscar(p, comment, cell, species, counts, pos):
         for r in pos: f.write("  %.12f %.12f %.12f\n" % tuple(r))
 
 
-def build(cell_name, disps, submit, root=ROOT, tag=""):
+def build(cell_name, disps, submit, root=ROOT, tag="", kmesh=None):
     src = root / "bilayer_examples_twisted" / cell_name
     sp = root / "phonopy_bilayer_examples_twisted" / f"{cell_name}_staticpoint" / "disp-001"
     comment, cell, species, counts, pos = read_poscar(src / "CONTCAR")
@@ -58,6 +58,7 @@ def build(cell_name, disps, submit, root=ROOT, tag=""):
         write_poscar(wd / "POSCAR", f"{comment.strip()} | layer2 slid {d:.2f} A along x", cell, species, counts, p)
         (wd / "INCAR").write_text(incar)
         for f in ("KPOINTS", "POTCAR"): shutil.copy2(sp / f, wd / f)
+        if kmesh: (wd / "KPOINTS").write_text(f"Automatic mesh\n0\nGamma\n{kmesh} {kmesh} 1\n0 0 0\n")
         shutil.copy2(TEMPLATE / "bat", wd / "bat")
         if submit:
             r = subprocess.run(["sbatch", "--parsable", f"--job-name={cell_name}{tag}-slide-{d:.2f}", "bat"],
@@ -65,7 +66,7 @@ def build(cell_name, disps, submit, root=ROOT, tag=""):
             jobs[f"{d:.2f}"] = r.stdout.strip().split(";")[0]
             (wd / "latest_job_id").write_text(jobs[f"{d:.2f}"] + "\n")
         print(f"  {wd.relative_to(ROOT)}  job {jobs.get(f'{d:.2f}', '-')}")
-    (out / "scan.json").write_text(json.dumps({"cell": cell_name, "source_root": str(root), "disp_A": list(disps), "axis": "x",
+    (out / "scan.json").write_text(json.dumps({"cell": cell_name, "source_root": str(root), "disp_A": list(disps), "axis": "x", "kmesh": kmesh,
                                                 "layer2_atoms": int(layer2.sum()), "jobs": jobs}, indent=2))
 
 
@@ -98,5 +99,6 @@ if __name__ == "__main__":
     ap.add_argument("--submit", action="store_true"); ap.add_argument("--analyze", action="store_true")
     ap.add_argument("--root", type=Path, default=ROOT, help="workflow root holding bilayer_examples_twisted/ (e.g. backups/twisted_a3.1922)")
     ap.add_argument("--tag", default="", help="suffix for the output dir / job names, e.g. _a3.1922")
+    ap.add_argument("--kmesh", type=int, default=None, help="override KPOINTS with a Gamma n n 1 mesh (default: copy the staticpoint KPOINTS)")
     a = ap.parse_args()
-    analyze(a.cell, a.tag) if a.analyze else build(a.cell, a.disp, a.submit, a.root.resolve(), a.tag)
+    analyze(a.cell, a.tag) if a.analyze else build(a.cell, a.disp, a.submit, a.root.resolve(), a.tag, a.kmesh)
