@@ -78,7 +78,7 @@ def process_dir(d: Path, args) -> bool:
     natoms = len(ph.primitive)
     write_dos_dat(out, freq, dos, natoms=natoms, mesh=mesh, sigma=args.sigma, freq_min=args.freq_min,
                   freq_max=args.freq_max, freq_pitch=args.freq_pitch)
-    integral = getattr(np, "trapezoid", np.trapz)(dos, freq)
+    integral = (getattr(np, "trapezoid", None) or np.trapz)(dos, freq)
     print(f"  {d.name}: mesh {mesh} natoms {natoms} integral {integral:.3f} (expect {3 * natoms}) -> {out}")
     return True
 
