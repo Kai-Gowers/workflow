@@ -12,6 +12,11 @@ old strained cell and in the m1 1x1x1 grid test, i.e. its sign is cell-specific 
 hiphive cannot repair it (cutoff capped at half the cell -> rigid-shear curvature 10x the sliding
 scan). The other three cells (MoS2 m1, MoS2_WS2 m1, MoTe2 m1) are already 2x2x1 supercells.
 
+EDIFF (2026-10-22): the grid-tight template's EDIFF=1E-8 cannot be met by this 456-atom cell: |dE| drops
+below 1E-8 by SCF step ~33 but the band-energy change `d eps` is pinned at ~1.0E-7 (numerical floor), so VASP never
+exits the SCF and every job hits the 48 h limit without forces (logs/2026-10-22.md). This builder therefore
+overrides EDIFF to 1E-6 after customize_incar (still ~2E-9 eV/atom). The 168-atom cells keep the template's 1E-8.
+
 What this builds (user decision 2026-10-19):
   phonopy_bilayer_examples_twisted_gridtight/MoS2_twist_m2_near0_dim221_staticpoint/
     POSCAR, POTCAR            copied from the 1x1x1 grid-tight staticpoint (refined PBE+D3 cell)
@@ -55,6 +60,7 @@ DIM = "2 2 1"
 AMPLITUDE = "0.01"
 KMESH = "2 2 1"
 NODES, RANKS_PER_NODE, PARTITION, TIME = 4, 44, "medium", "48:00:00"
+EDIFF = "1E-6"  # overrides the template 1E-8; see module docstring (2026-10-22)
 
 
 def write_bat(dst: Path) -> None:
@@ -82,6 +88,12 @@ def build(dry_run: bool) -> Path:
     shutil.copy2(src / "POSCAR", dst / "POSCAR")
     shutil.copy2(src / "POTCAR", dst / "POTCAR")
     customize_incar(templates_dir("staticpoint") / "INCAR", dst / "INCAR", NEW_NAME, suffix="phonon")
+    incar = (dst / "INCAR").read_text()
+    incar, n_sub = re.subn(r"^EDIFF = \S+.*$", f"EDIFF = {EDIFF}   # 2026-10-22: template 1E-8 never converges at 456 atoms (d-eps floor ~1E-7)",
+                          incar, count=1, flags=re.M)
+    if n_sub != 1:
+        sys.exit("EDIFF line not found in the templated INCAR")
+    (dst / "INCAR").write_text(incar)
     (dst / "KPOINTS").write_text(f"Automatic mesh\n0\nGamma\n{KMESH}\n0 0 0\n")
     subprocess.run(["phonopy-init", "-d", "--dim", DIM, "--amplitude", AMPLITUDE, "-c", "POSCAR"],
                    cwd=dst, check=True, capture_output=True, text=True)
@@ -98,6 +110,7 @@ def build(dry_run: bool) -> Path:
         "copied": ["POSCAR", "POTCAR"],
         "incar_template": str((templates_dir("staticpoint") / "INCAR").relative_to(REPO_ROOT)),
         "kpoints": f"Gamma {KMESH}",
+        "ediff_override": f"EDIFF {EDIFF} (template 1E-8 unreachable at 456 atoms, 2026-10-22)",
         "phonopy": f"phonopy-init -d --dim '{DIM}' --amplitude {AMPLITUDE}",
         "sbatch": f"{NODES} nodes x {RANKS_PER_NODE} ranks, {PARTITION}, {TIME}",
         "reason": "2x2x1 supercell rerun of the 1x1x1 grid-tight statics: ZA interpolation dip (-0.057 THz), 2026-10-19",
