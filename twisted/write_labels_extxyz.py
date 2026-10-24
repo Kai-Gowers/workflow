@@ -39,7 +39,7 @@ from export_shareable_dataset import to_ase  # noqa: E402
 SOURCE = ROOT / "FINAL_RESULTS_TWISTED"
 STRUCTURES = ROOT / "twisted" / "structures"
 RELAX = ROOT / "bilayer_examples_twisted"
-STATIC = ROOT / "phonopy_bilayer_examples_twisted"
+STATIC = ROOT / "phonopy_bilayer_examples_twisted"   # overridden by --static-root (e.g. the twisted_gridtight run dirs)
 FUNCTIONAL = "PBE+D3(BJ)"
 
 
@@ -115,7 +115,12 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("names", nargs="*", help="cell names (default: every dir in FINAL_RESULTS_TWISTED)")
     ap.add_argument("--force", action="store_true", help="overwrite existing extxyz files")
+    ap.add_argument("--static-root", default=None, help="staticpoint run-dir root to read vasprun.xml from "
+                    "(default phonopy_bilayer_examples_twisted; use phonopy_bilayer_examples_twisted_gridtight for grid-tight cells)")
     args = ap.parse_args()
+    if args.static_root:
+        global STATIC
+        STATIC = ROOT / args.static_root
     names = args.names or sorted(p.name for p in SOURCE.iterdir() if (p / "FORCE_SETS").exists())
     for name in names:
         n, d = write_labels(name, args.force)

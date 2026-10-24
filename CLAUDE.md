@@ -343,6 +343,11 @@ template was changed; the default dry-run was verified byte-identical before/aft
   (bending-rigidity) errors — MoTe2 m2 keeps a −0.06 THz lobe (flagged in its json) — and needs supercells ≥ ~14 Å. The
   48-TMD references keep their hiphive treatment (not affected). The m2 `dim221` 456-atom campaign was dropped the same day
   (114 held jobs cancelled): MoS2 m2 at 1×1×1 is clean after projection. Method notes: twist/logs/2026-10-24.md.
+- **Promotion (2026-10-24):** `FINAL_RESULTS_TWISTED/{MoS2_twist_m1_near0,MoS2_WS2_twist_m1_near0,MoS2_twist_m2_near0}` are now the
+  grid-tight + invariance-projected cells (labels rebuilt from the `_twisted_gridtight` run dirs via `write_labels_extxyz.py
+  --static-root phonopy_bilayer_examples_twisted_gridtight`, DOS regenerated); the production-INCAR versions are archived in
+  `backups/twisted_prodincar_final_results_2026-10-24/` (and git history ≤ ad4fe9b). Do the same for every further cell once its
+  grid-tight statics are postprocessed and projected. Coworker bundle: `share/twisted_phonon_dataset_v3` (exporter default).
 - **Labels in git (added 2026-10-13):** `twisted/write_labels_extxyz.py <name>` writes `FINAL_RESULTS_TWISTED/<name>/
   {displacements,equilibrium}.extxyz` (PBE+D3 energy/forces/stress of every displaced supercell and of the relaxed cell, read
   from the run dirs and cross-checked against FORCE_SETS / POSCAR). Run it on the computing host BEFORE committing a cell, since
