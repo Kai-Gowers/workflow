@@ -333,6 +333,16 @@ template was changed; the default dry-run was verified byte-identical before/aft
   The other five cells (MoS2_WS2 m2, MoTe2 m2, MoS2 m3 relaxed; MoS2_WS2 m3, MoTe2 m3 relaxed from scratch) run on NERSC from a
   hand-off bundle (relaxed CONTCAR/OUTCAR/OSZICAR/vasprun + `HANDOFF.md` instructions; run dirs are gitignored, so git alone
   cannot carry them). Each host commits its own `FINAL_RESULTS_TWISTED/<name>/`; sync by pull. The Andromeda watchdog was stopped.
+- **Invariance projection = the twisted post-processing step (adopted 2026-10-24).** Grid-tight twisted FCs still carry a
+  ≈−0.05 THz near-Γ ZA dip (per-atom rotational-sum-rule violation, not stress). After `postprocess_results.py`, run from the
+  nequix uv env `uv run python ../workflow/phonopy/project_invariant_force_constants.py ../workflow/FINAL_RESULTS_TWISTED_GRIDTIGHT/<name>`:
+  cutoff-free projection onto translational + Born–Huang rotational + Huang invariance with the rigid-layer Γ block and the 3
+  lowest optical Γ modes pinned (K, shear pair, breathing unchanged; optical modes move < 0.002 THz). It keeps the raw FCs/bands
+  in `<name>/plain_phonopy/`, overwrites `FORCE_CONSTANTS`/`band.*` and writes `invariance_projection.json`; rerun
+  `write_phonon_dos.py` afterwards if the cell has a `total_dos.dat`. Do NOT hiphive twisted cells. It cannot fix q⁴-level
+  (bending-rigidity) errors — MoTe2 m2 keeps a −0.06 THz lobe (flagged in its json) — and needs supercells ≥ ~14 Å. The
+  48-TMD references keep their hiphive treatment (not affected). The m2 `dim221` 456-atom campaign was dropped the same day
+  (114 held jobs cancelled): MoS2 m2 at 1×1×1 is clean after projection. Method notes: twist/logs/2026-10-24.md.
 - **Labels in git (added 2026-10-13):** `twisted/write_labels_extxyz.py <name>` writes `FINAL_RESULTS_TWISTED/<name>/
   {displacements,equilibrium}.extxyz` (PBE+D3 energy/forces/stress of every displaced supercell and of the relaxed cell, read
   from the run dirs and cross-checked against FORCE_SETS / POSCAR). Run it on the computing host BEFORE committing a cell, since
