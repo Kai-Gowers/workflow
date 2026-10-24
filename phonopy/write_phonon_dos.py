@@ -54,7 +54,7 @@ def write_dos_dat(path: Path, freq, dos, *, natoms: int, mesh, sigma: float, fre
     with open(path, "w") as f:
         f.write(f"# natoms = {natoms}\n")
         f.write(f"# mesh = {mesh[0]} {mesh[1]} {mesh[2]} gamma_center\n")
-        f.write(f"# sigma = {sigma} THz\n")
+        f.write(f"# sigma = {'tetrahedron' if sigma is None else f'{sigma} THz'}\n")
         f.write(f"# freq_min = {freq_min} freq_max = {freq_max} freq_pitch = {freq_pitch}\n")
         f.write("# columns: frequency_THz total_dos_states_per_THz_per_cell\n")
         for x, y in zip(freq, dos):
@@ -87,14 +87,15 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("dirs", nargs="*", type=Path, help="FINAL_RESULTS*/<name> dirs (phonopy.yaml + FORCE_CONSTANTS)")
     ap.add_argument("--all", action="store_true", help="every subdir of the active variant's FINAL_RESULTS dir")
-    ap.add_argument("--mesh-length", type=float, default=200.0, help="A; N = round(length*|a*|) (default 200: 28x28x1 for the 42-atom MoS2 m1 cell, converged to <1e-4 states/THz/atom vs 42x42x1; 100 -> 14x14x1 was NOT converged, 0.003 off in 0-5 THz)")
+    ap.add_argument("--mesh-length", type=float, default=400.0, help="A; N = round(length*|a*|) (default 400 since 2026-10-24: 56x56x1 for the 42-atom MoS2 m1 cell, converged for the tetrahedron DOS vs 112x112x1; the old Gaussian default was 200 -> 28x28x1)")
     ap.add_argument("--mesh", type=int, nargs=3, default=None, help="explicit mesh, overrides --mesh-length")
-    ap.add_argument("--sigma", type=float, default=0.1, help="THz smearing (default 0.1)")
+    ap.add_argument("--sigma", default="tetrahedron", help="Gaussian smearing in THz, or 'tetrahedron' (default since 2026-10-24: linear tetrahedron method, no smearing, sharp van Hove structure; the PI found sigma=0.1 too smooth)")
     ap.add_argument("--freq-min", type=float, default=-1.0)
     ap.add_argument("--freq-max", type=float, default=15.0)
-    ap.add_argument("--freq-pitch", type=float, default=0.02)
+    ap.add_argument("--freq-pitch", type=float, default=0.01)
     ap.add_argument("--force", action="store_true", help="overwrite an existing total_dos.dat")
     args = ap.parse_args()
+    args.sigma = None if str(args.sigma).lower() in ("tetrahedron", "none") else float(args.sigma)
 
     dirs = list(args.dirs)
     if args.all:
