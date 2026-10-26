@@ -365,3 +365,14 @@ template was changed; the default dry-run was verified byte-identical before/aft
   production run dirs (`*_examples/<m>`, `phonopy_*_examples/<m>_staticpoint`) are the refined-cell ones; the variant result dirs
   and wrappers were removed again (old copies: git history ≤ dd0ab6c, `backups/pre_cellrelax_promotion_2026-10-10/`,
   `backups/cellrelax/`). See `cellrelax/README.md` "Cleanup".
+
+**Registry × gap scan (`scripts/registry_gap_scan.py`, started 2026-10-26)** — interlayer-landscape training data for
+Nequix: the fine-tuned model predicts an imaginary Γ shear pair in twisted cells because its training set holds one Hessian
+per bilayer at the symmetric registry and nothing about how the sliding/breathing landscape varies with registry.
+Each `FINAL_RESULTS_HEALTHY/<bilayer>/POSCAR` (refined PBE+D3 cell) gets its top layer shifted on a 4×4 fractional grid ×
+dz ∈ {−0.3, 0, +0.3} Å plus a breathing curve dz ∈ {−0.5, −0.15, +0.15, +0.5, +1.0} at (0,0) = 53 bare-PBE, grid-tight
+(LREAL=F, ADDGRID, EDIFF 1E-8), ISYM=0, ISIF=2 single points, as energy/force/stress labels (no Hessian). Run dirs:
+`bilayer_examples_registry_scan/<bilayer>/<cfg>/`, one resumable SLURM job per bilayer (`bat` loops, skips finished
+vasprun.xml), `scan.json` with job ids; templates `common/staticpoint_templates_registry_scan/` (host-local, `--init-templates`).
+Scope = all 42 TMD bilayers (user 2026-10-26: eventually train on all 48); pilot = the 4 strain-pilot train bilayers first.
+Labels go into the PFT `extra_train_path` slot (energy/force/stress loss) alongside the 48 Hessian rows — joint, not sequential.
